@@ -6,26 +6,945 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>828</width>
+    <height>466</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>21</height>
-    </rect>
-   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(32, 136, 180);color:white;
+</string>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>16</width>
+    <height>16</height>
+   </size>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QPushButton" name="pushButtonExit">
+    <property name="geometry">
+     <rect>
+      <x>800</x>
+      <y>8</y>
+      <width>16</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16</width>
+      <height>16</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{background-color:transparent;}
+</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="res.qrc">
+      <normaloff>:/images/btn-close1.png</normaloff>:/images/btn-close1.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>16</width>
+      <height>16</height>
+     </size>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButtonMain">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>54</y>
+      <width>112</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">    QPushButton {
+            color: white;
+            border: 1px solid #D8BDFF;
+            background-color: #6b7ca6;
+            padding: 0px 0px;
+            outline: none;
+			border-radius:16px;
+spacing:15px;
+        }
+
+    QPushButton:hover    { background-color: #7b8cb6; border: 1px solid #EAEAEA;}
+    QPushButton:pressed  { background-color: #D8D8D8; color: white; }
+    QPushButton:checked  { background-color: #df6e35; color: white; }</string>
+    </property>
+    <property name="text">
+     <string>数字激光</string>
+    </property>
+    <property name="icon">
+     <iconset resource="res.qrc">
+      <normaloff>:/images/123.png</normaloff>:/images/123.png</iconset>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+    <property name="autoExclusive">
+     <bool>true</bool>
+    </property>
+    <attribute name="buttonGroup">
+     <string notr="true">buttonGroupMain</string>
+    </attribute>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>224</x>
+      <y>54</y>
+      <width>112</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">    QPushButton {
+            color: white;
+            border: 1px solid #D8BDFF;
+            background-color: #6b7ca6;
+            padding: 0px 0px;
+            outline: none;
+			border-radius:16px;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+    QPushButton:pressed  { background-color: #D8D8D8; color: white; }
+    QPushButton:checked  { background-color: #df6e35; color: white; }</string>
+    </property>
+    <property name="text">
+     <string>放大镜</string>
+    </property>
+    <property name="icon">
+     <iconset resource="res.qrc">
+      <normaloff>:/images/find.png</normaloff>:/images/find.png</iconset>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="autoExclusive">
+     <bool>true</bool>
+    </property>
+    <attribute name="buttonGroup">
+     <string notr="true">buttonGroupMain</string>
+    </attribute>
+   </widget>
+   <widget class="QPushButton" name="pushButton_3">
+    <property name="geometry">
+     <rect>
+      <x>348</x>
+      <y>54</y>
+      <width>112</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">    QPushButton {
+            color: white;
+            border: 1px solid #D8BDFF;
+            background-color: #6b7ca6;
+            padding: 0px 0px;
+            outline: none;
+			border-radius:16px;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+    QPushButton:pressed  { background-color: #D8D8D8; color: white; }
+    QPushButton:checked  { background-color: #df6e35; color: white; }</string>
+    </property>
+    <property name="text">
+     <string>聚光灯</string>
+    </property>
+    <property name="icon">
+     <iconset resource="res.qrc">
+      <normaloff>:/images/spot.png</normaloff>:/images/spot.png</iconset>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="autoExclusive">
+     <bool>true</bool>
+    </property>
+    <attribute name="buttonGroup">
+     <string notr="true">buttonGroupMain</string>
+    </attribute>
+   </widget>
+   <widget class="QPushButton" name="pushButton_4">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>54</y>
+      <width>112</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">    QPushButton {
+            color: white;
+            border: 1px solid #D8BDFF;
+            background-color: #6b7ca6;
+            padding: 0px 0px;
+            outline: none;
+			border-radius:16px;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+    QPushButton:pressed  { background-color: #D8D8D8; color: white; }
+    QPushButton:checked  { background-color: #df6e35; color: white; }</string>
+    </property>
+    <property name="text">
+     <string>定时提醒</string>
+    </property>
+    <property name="icon">
+     <iconset resource="res.qrc">
+      <normaloff>:/images/time.png</normaloff>:/images/time.png</iconset>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="autoExclusive">
+     <bool>true</bool>
+    </property>
+    <attribute name="buttonGroup">
+     <string notr="true">buttonGroupMain</string>
+    </attribute>
+   </widget>
+   <widget class="QPushButton" name="pushButton_5">
+    <property name="geometry">
+     <rect>
+      <x>594</x>
+      <y>54</y>
+      <width>112</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">    QPushButton {
+            color: white;
+            border: 1px solid #D8BDFF;
+            background-color: #6b7ca6;
+            padding: 0px 0px;
+            outline: none;
+			border-radius:16px;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+    QPushButton:pressed  { background-color: #D8D8D8; color: white; }
+    QPushButton:checked  { background-color: #df6e35; color: white; }</string>
+    </property>
+    <property name="text">
+     <string>麦克风/倒计时</string>
+    </property>
+    <property name="icon">
+     <iconset resource="res.qrc">
+      <normaloff>:/images/mic.png</normaloff>:/images/mic.png</iconset>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="autoExclusive">
+     <bool>true</bool>
+    </property>
+    <attribute name="buttonGroup">
+     <string notr="true">buttonGroupMain</string>
+    </attribute>
+   </widget>
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>102</x>
+      <y>88</y>
+      <width>609</width>
+      <height>250</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Shadow::Raised</enum>
+    </property>
+    <widget class="QStackedWidget" name="stackedWidget0">
+     <property name="geometry">
+      <rect>
+       <x>4</x>
+       <y>4</y>
+       <width>600</width>
+       <height>242</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">#page01{background-color: rgb(170, 255, 255);}</string>
+     </property>
+     <property name="currentIndex">
+      <number>3</number>
+     </property>
+     <widget class="QWidget" name="page00">
+      <property name="styleSheet">
+       <string notr="true">#page00{background-image: url(:/images/bk0.png);}</string>
+      </property>
+      <widget class="QLabel" name="labelColor">
+       <property name="geometry">
+        <rect>
+         <x>246</x>
+         <y>24</y>
+         <width>80</width>
+         <height>80</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border-radius:40px;
+background-color:red;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="page01">
+      <property name="styleSheet">
+       <string notr="true">#page01{background-image: url(:/images/bk1.png);}</string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="page02">
+      <property name="styleSheet">
+       <string notr="true">#page02{background-image: url(:/images/bk2.png);}</string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="page03">
+      <property name="styleSheet">
+       <string notr="true">#page03{background-image: url(:/images/bk3.png);}</string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="page04">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="pushButton_6">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>441</y>
+      <width>101</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">    QPushButton {
+            color: white;
+            border: none;
+            background: none;
+            padding: 0px 0px;
+            outline: none;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+    QPushButton:pressed  { background-color: #D8D8D8; color: white; }
+    QPushButton:checked  { background-color: #df6e35; color: white; }</string>
+    </property>
+    <property name="text">
+     <string>电子说明书</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="autoExclusive">
+     <bool>true</bool>
+    </property>
+    <attribute name="buttonGroup">
+     <string notr="true">buttonGroup_2</string>
+    </attribute>
+   </widget>
+   <widget class="QPushButton" name="pushButton_7">
+    <property name="geometry">
+     <rect>
+      <x>112</x>
+      <y>441</y>
+      <width>101</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">    QPushButton {
+            color: white;
+            border: none;
+            background: none;
+            padding: 0px 0px;
+            outline: none;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+    QPushButton:pressed  { background-color: #D8D8D8; color: white; }
+    QPushButton:checked  { background-color: #df6e35; color: white; }</string>
+    </property>
+    <property name="text">
+     <string>关于我们</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="autoExclusive">
+     <bool>true</bool>
+    </property>
+    <attribute name="buttonGroup">
+     <string notr="true">buttonGroup_2</string>
+    </attribute>
+   </widget>
+   <widget class="QPushButton" name="pushButton_8">
+    <property name="geometry">
+     <rect>
+      <x>2</x>
+      <y>441</y>
+      <width>101</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">    QPushButton {
+            color: white;
+            border: none;
+            background: none;
+            padding: 0px 0px;
+            outline: none;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+    QPushButton:pressed  { background-color: #D8D8D8; color: white; }
+    QPushButton:checked  { background-color: #df6e35; color: white; }</string>
+    </property>
+    <property name="text">
+     <string>语言设置</string>
+    </property>
+    <property name="icon">
+     <iconset resource="res.qrc">
+      <normaloff>:/images/setting.png</normaloff>:/images/setting.png</iconset>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="autoExclusive">
+     <bool>true</bool>
+    </property>
+    <attribute name="buttonGroup">
+     <string notr="true">buttonGroup_2</string>
+    </attribute>
+   </widget>
+   <widget class="QStackedWidget" name="stackedWidget1">
+    <property name="geometry">
+     <rect>
+      <x>102</x>
+      <y>340</y>
+      <width>611</width>
+      <height>96</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="currentIndex">
+     <number>1</number>
+    </property>
+    <widget class="QWidget" name="page10"/>
+    <widget class="QWidget" name="page11">
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>14</x>
+        <y>0</y>
+        <width>109</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>点击选择颜色</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>18</x>
+        <y>72</y>
+        <width>59</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开机启动</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>126</x>
+        <y>74</y>
+        <width>65</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>云端分享</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>242</x>
+        <y>74</y>
+        <width>73</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>按键自定义</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox">
+      <property name="geometry">
+       <rect>
+        <x>84</x>
+        <y>74</y>
+        <width>16</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QWidget" name="layoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>16</x>
+        <y>20</y>
+        <width>304</width>
+        <height>38</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="pushButton_C1">
+         <property name="styleSheet">
+          <string notr="true">    QPushButton {
+            color: white;
+            border: none;
+            background-color: red;
+            padding: 0px 0px;
+            outline: none;
+width:28px;
+height:28px;
+			border-radius:14px;
+        }
+
+    QPushButton:hover    { background-color:red; border: 1px solid #EAEAEA;}
+    QPushButton:checked  { 
+	background-color: red;
+ 	color: white; 
+	border: 1px solid #EAEAEA;
+ 	background-image:url(:/images/checkflag.png); 
+   	background-repeat: no-repeat; 
+    background-position: center center;
+ }</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupColor</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_C2">
+         <property name="styleSheet">
+          <string notr="true">    QPushButton {
+            color: white;
+            border: none;
+            background-color: #00FF00;
+            padding: 0px 0px;
+            outline: none;
+width:28px;
+height:28px;
+			border-radius:14px;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+QPushButton:checked
+{
+ 	background-color: #00FF00; 
+ 	color: white; 
+	border: 1px solid #EAEAEA;
+ 	background-image:url(:/images/checkflag.png); 
+   	background-repeat: no-repeat; 
+    background-position: center center;
+ }</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupColor</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_C3">
+         <property name="styleSheet">
+          <string notr="true">    QPushButton {
+            color: white;
+            border: none;
+            background-color: blue;
+            padding: 0px 0px;
+            outline: none;
+			width:28px;
+			height:28px;
+			border-radius:14px;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+    QPushButton:pressed  { background-color: #D8D8D8; color: white; }
+    QPushButton:checked  { background-color: blue; color: white;
+
+	border: 1px solid #EAEAEA;
+ 	background-image:url(:/images/checkflag.png); 
+   	background-repeat: no-repeat; 
+    background-position: center center;
+
+ }</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupColor</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_C4">
+         <property name="styleSheet">
+          <string notr="true">    QPushButton {
+            color: white;
+            border: none;
+            background-color: white;
+            padding: 0px 0px;
+            outline: none;
+width:28px;
+height:28px;
+			border-radius:14px;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+    QPushButton:checked  { background-color: white; color: white;
+
+	border: 1px solid black;
+ 	background-image:url(:/images/checkflag2.png); 
+   	background-repeat: no-repeat; 
+    background-position: center center;
+ }</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupColor</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_C5">
+         <property name="styleSheet">
+          <string notr="true">    QPushButton {
+            color: white;
+            border: none;
+            background-color: #FFA500;
+            padding: 0px 0px;
+            outline: none;
+width:28px;
+height:28px;
+			border-radius:14px;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+    QPushButton:checked  { background-color: #FFA500; color: white; 
+
+	border: 1px solid #EAEAEA;
+ 	background-image:url(:/images/checkflag.png); 
+   	background-repeat: no-repeat; 
+    background-position: center center;
+}</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupColor</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_C6">
+         <property name="styleSheet">
+          <string notr="true">    QPushButton {
+            color: white;
+            border: none;
+            background-color: #800080;
+            padding: 0px 0px;
+            outline: none;
+width:28px;
+height:28px;
+			border-radius:14px;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+    QPushButton:checked  { background-color: #800080; color: white;	border: 1px solid #EAEAEA;
+ 	background-image:url(:/images/checkflag.png); 
+   	background-repeat: no-repeat; 
+    background-position: center center;
+ }</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupColor</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_C7">
+         <property name="styleSheet">
+          <string notr="true">    QPushButton {
+            color: white;
+            border: none;
+            background-color: #FFFF00;
+            padding: 0px 0px;
+            outline: none;
+width:28px;
+height:28px;
+			border-radius:14px;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+    QPushButton:pressed  { background-color: #D8D8D8; color: white; }
+    QPushButton:checked  { background-color: #FFFF00; color: white;
+	border: 1px solid #EAEAEA;
+ 	background-image:url(:/images/checkflag.png); 
+   	background-repeat: no-repeat; 
+    background-position: center center; }</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupColor</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_C8">
+         <property name="styleSheet">
+          <string notr="true">    QPushButton {
+            color: white;
+            border: none;
+            background-color: #00FFFF;
+            padding: 0px 0px;
+            outline: none;
+width:28px;
+height:28px;
+			border-radius:14px;
+        }
+
+    QPushButton:hover    { background-color: #00FFFF; border: 1px solid #EAEAEA;}
+    QPushButton:checked  { background-color: #00FFFF; color: white; 
+	border: 1px solid #EAEAEA;
+ 	background-image:url(:/images/checkflag.png); 
+   	background-repeat: no-repeat; 
+    background-position: center center;}</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupColor</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_C9">
+         <property name="styleSheet">
+          <string notr="true">    QPushButton {
+            color: white;
+            border: none;
+            background-color: black;
+            padding: 0px 0px;
+            outline: none;
+width:28px;
+height:28px;
+			border-radius:14px;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+    QPushButton:checked  { background-color: black; color: white; 
+	border: 1px solid #EAEAEA;
+ 	background-image:url(:/images/checkflag.png); 
+   	background-repeat: no-repeat; 
+    background-position: center center;}</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupColor</string>
+         </attribute>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="layoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>346</x>
+        <y>2</y>
+        <width>261</width>
+        <height>94</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>画笔粗细调节</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="horizontalSlider1">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>画笔透明度调节</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="horizontalSlider2">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>754</x>
+      <y>6</y>
+      <width>34</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="res.qrc">:/images/batt.png</pixmap>
+    </property>
+   </widget>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroupMain"/>
+  <buttongroup name="buttonGroupColor"/>
+ </buttongroups>
 </ui>

@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/123.png</file>
+        <file>images/bk0.png</file>
+        <file>images/bk1.png</file>
+        <file>images/find.png</file>
+        <file>images/mic.png</file>
+        <file>images/spot.png</file>
+        <file>images/time.png</file>
+        <file>images/setting.png</file>
+        <file>images/checkflag.png</file>
+        <file>images/checkflag1.png</file>
+        <file>images/checkflag2.png</file>
+        <file>images/batt.png</file>
+        <file>images/share.png</file>
+        <file>images/btn-close1.png</file>
+        <file>images/bk2.png</file>
+        <file>images/bk3.png</file>
+    </qresource>
+</RCC>
