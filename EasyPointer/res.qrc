@@ -16,5 +16,21 @@
         <file>images/btn-close1.png</file>
         <file>images/bk2.png</file>
         <file>images/bk3.png</file>
+        <file>images/BoxChecked.png</file>
+        <file>images/BoxUncheck.png</file>
+        <file>images/down-arrow.png</file>
+        <file>images/Imagedown.png</file>
+        <file>images/bk4.png</file>
+        <file>images/radio-checked.png</file>
+        <file>images/radio-unchecked.png</file>
+        <file>images/setting1.png</file>
+        <file>images/share1.png</file>
+        <file>images/a-checked.png</file>
+        <file>images/a-empty.png</file>
+        <file>images/btn-empty.png</file>
+        <file>images/douyin.png</file>
+        <file>images/jd.png</file>
+        <file>images/redbook.png</file>
+        <file>images/tmall.png</file>
     </qresource>
 </RCC>

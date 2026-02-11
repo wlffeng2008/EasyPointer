@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "qpushbutton.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -28,6 +29,6 @@ private:
     Ui::MainWindow *ui;
     QPoint m_dragPosition;
     bool m_dragging = false;
-
+    QAbstractButton *m_pActive=nullptr;
 };
 #endif // MAINWINDOW_H

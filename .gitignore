@@ -1,2 +1,4 @@
 .qtcreator
 build
+/EasyPointer/bin/*.ilk
+/EasyPointer/bin/*.pdb
