@@ -70,38 +70,40 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->buttonGroupMain,&QButtonGroup::idClicked,this,[=](int id){
         int index = abs(id)-2;
-        if(m_pActive)m_pActive->setChecked(false);
-        m_pActive = ui->buttonGroupMain->buttons().at(index);
         ui->stackedWidget0->setCurrentIndex(index);
         ui->stackedWidget1->setCurrentIndex(index);
 
-        ui->frame->setHidden(index == 4);
-        ui->stackedWidget1->setHidden(index == 4);
-        ui->labelNotice->setHidden(index != 4);
-        ui->labelContect->setHidden(true);
-    });
-
-    connect(ui->buttonGroupBottom,&QButtonGroup::idClicked,this,[=](int id){
-        int index = abs(id)-2;
-        if(m_pActive)m_pActive->setChecked(false);
-        m_pActive = ui->buttonGroupBottom->buttons().at(index);
-        ui->stackedWidget0->setCurrentIndex(5+index);
-
-        ui->frame->setHidden(true);
+        ui->labelContact->setHidden(true);
+        ui->frameColor->setHidden(true);
         ui->stackedWidget1->setHidden(true);
         ui->labelNotice->setHidden(true);
-        if(index == 0)
-        {
-            ui->labelContect->setHidden(true);
-            ui->labelNotice->setHidden(false);
-        }
 
-        if(index == 1)
+        switch(index)
         {
-            ui->labelContect->setHidden(false);
-            ui->labelNotice->setHidden(true);
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+            ui->frameColor->setHidden(false);
+            ui->stackedWidget1->setHidden(false);
+            break;
+        case 4:
+            ui->labelNotice->setHidden(false);
+            break;
+        case 5:
+            ui->labelNotice->setHidden(false);
+            break;
+
+        case 6:
+            ui->labelContact->setHidden(false);
+            break;
+
+        case 7:
+            break;
         }
     });
+
+
     connect(ui->buttonGroupColor,&QButtonGroup::idClicked,this,[=](int id){
         int index = abs(id)-2;
         QStringList colors={"#FF0000","#00FF00","#0000FF","#FFFFFF","#FF8000","#800080","#FFFF00","#00FFFF","#000000"};
