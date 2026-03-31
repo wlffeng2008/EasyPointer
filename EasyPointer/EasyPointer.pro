@@ -28,10 +28,12 @@ LIBS += -L$$PWD -lhidapi
 
 
 SOURCES += \
+    hidworker.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    hidworker.h \
     mainwindow.h
 
 FORMS += \

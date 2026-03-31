@@ -4,6 +4,8 @@
 #include "qpushbutton.h"
 #include <QMainWindow>
 
+#include "hidworker.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -30,5 +32,6 @@ private:
     QPoint m_dragPosition;
     bool m_dragging = false;
     QAbstractButton *m_pActive=nullptr;
+    CHidWorker *m_pHID = nullptr;
 };
 #endif // MAINWINDOW_H

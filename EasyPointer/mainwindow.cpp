@@ -5,6 +5,13 @@
 #include <QStyleOption>
 #include <QMouseEvent>
 
+
+static void QLog(const char *buf,int nlen=16)
+{
+    QByteArray data(buf + 1, nlen);
+    qDebug() << "tmp :" << data.left(nlen).toHex(' ').toUpper();
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -115,6 +122,128 @@ MainWindow::MainWindow(QWidget *parent)
     QPainter p(&batt);
     p.fillRect(QRect(3,3,23,10),QBrush(Qt::green));
     ui->labelBattery->setPixmap(QPixmap::fromImage(batt));
+
+
+    m_pHID = new CHidWorker();
+    m_pHID->start();
+
+    {
+        QList<quint16> VidList = {0x3151, 0x38EE, 0x25A7, 0x05AC, 0x0461};
+        foreach (quint16 VID, VidList)
+        {
+            hid_device_info *pRoot = hid_enumerate(VID, 0);
+            hid_device_info *pTemp = pRoot;
+
+            QString path1,path2;
+            while (pTemp)
+            {
+                if(pTemp->usage_page == 0xFFFF)
+                {
+                    if(pTemp->usage == 1) path1 = pTemp->path;
+                    if(pTemp->usage == 2) path2 = pTemp->path;
+                }
+
+                if(!path1.isEmpty() && !path2.isEmpty())
+                {
+                    hid_device *pDev = hid_open_path(path2.toStdString().c_str());
+                    if (!pDev) continue;
+
+                    quint16 PID = pTemp->product_id;
+
+                    QByteArray cmd(120, 0);
+                    cmd[1] = 0x8F;
+                    cmd[8] = 0xFF - cmd[1];
+
+                    hid_send_feature_report(pDev, (quint8 *)cmd.data(), 65);
+                    QThread::msleep(20);
+
+                    char buf[128] = {0};
+                    int nlen = hid_get_feature_report(pDev, (quint8 *)buf, 65);
+                    if (nlen > 0)
+                    {
+                        QByteArray data(buf + 1, nlen - 1);
+                        quint32 id = *(quint32 *)(data.data() + 1);
+
+                        int connectType=0;
+                        if(id>0x1000)
+                        {
+                            {
+                                QByteArray tmp(120, 0);
+                                tmp[1] = 0xf6;
+                                tmp[2] = 0x0A;
+                                tmp[8] = 0xFF - tmp[1] - tmp[2];
+                                hid_send_feature_report(pDev, (quint8 *)tmp.data(), 65);
+                                QThread::msleep(10);
+                                nlen = hid_get_feature_report(pDev, (quint8 *)buf, 65);
+                                QLog(buf);
+
+                                while(1)
+                                {
+                                    tmp[1] = 0xf7;
+                                    tmp[2] = 0x00;
+                                    tmp[8] = 0xFF - tmp[1] - tmp[2];
+                                    hid_send_feature_report(pDev, (quint8 *)tmp.data(), 65);
+                                    QThread::msleep(15);
+                                    nlen = hid_get_feature_report(pDev, (quint8 *)buf, 65);
+                                    if(buf[6] == 1)
+                                        break;
+                                }
+                                QLog(buf);
+
+                                tmp[1] = 0x8F;
+                                tmp[2] = 0x00;
+                                tmp[8] = 0xFF - tmp[1] - tmp[2];
+                                hid_send_feature_report(pDev, (quint8 *)tmp.data(), 65);
+                                QThread::msleep(20);
+                                nlen = hid_get_feature_report(pDev, (quint8 *)buf, 65);
+
+                                while(1)
+                                {
+                                    tmp[1] = 0xf7;
+                                    tmp[2] = 0x00;
+                                    tmp[8] = 0xFF - tmp[1] - tmp[2];
+                                    hid_send_feature_report(pDev, (quint8 *)tmp.data(), 65);
+                                    QThread::msleep(15);
+                                    nlen = hid_get_feature_report(pDev, (quint8 *)buf, 65);
+                                    if(buf[0] == 0)
+                                        break;
+                                }
+
+                                tmp[1] = 0xfc;
+                                tmp[2] = 0x00;
+                                tmp[8] = 0xFF - tmp[1] - tmp[2];
+                                hid_send_feature_report(pDev, (quint8 *)tmp.data(), 65);
+                                QThread::msleep(15);
+                                nlen = hid_get_feature_report(pDev, (quint8 *)buf, 65);
+
+                                connectType=1;
+                            }
+
+                            if (nlen > 0)
+                            {
+                                QByteArray data(buf + 1, nlen - 1);
+                                id = *(quint32 *)(data.data() + 1);
+                                qDebug() << "get_:" << data.left(16).toHex(' ').toUpper() << id << Qt::hex << PID;
+                            }
+                        }
+                        else
+                        {
+                            qDebug() << "get_:" << data.left(16).toHex(' ').toUpper() << id << Qt::hex << PID;
+                        }
+
+                        path1.clear();
+                        path2.clear();
+                    }
+
+                    hid_close(pDev);
+                }
+                pTemp = pTemp->next;
+            }
+            hid_free_enumeration(pRoot);
+        }
+    }
+
+
 }
 
 MainWindow::~MainWindow()
