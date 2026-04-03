@@ -48,7 +48,7 @@ void CHidWorker::run()
         hid_device_info *pTDev = pEDev;
         while(pTDev)
         {
-            qDebug() << pTDev->path << pTDev->usage_page << pTDev->usage;
+            qDebug() << pTDev->path << Qt::hex << pTDev->usage_page << pTDev->usage;
             pTDev = pTDev->next;
         }
 
@@ -60,11 +60,11 @@ void CHidWorker::run()
             if(strstr(pTDev->path,"KBD"))
             //    if(pTDev->usage_page == 12)
             {
-                pDev = hid_open_path(pTDev->path);
-                if(pDev) break;
             }
             if(pTDev->usage_page == 0xFF91)
             {
+                pDev = hid_open_path(pTDev->path);
+                if(pDev) break;
             }
 
             pTDev = pTDev->next;
@@ -88,8 +88,9 @@ void CHidWorker::run()
         while(true)
         {
             unsigned char *szBuf = szBufs[nUesed++%20] ;
-            int nRet = hid_read_timeout(pDev,szBuf,32,500);
+            int nRet = hid_read_timeout(pDev,szBuf,64,5000000);
             //int nRet = hid_get_feature_report(pDev,szBuf,13);
+            //int nRet = hid_get_input_report(pDev,szBuf,13);
             if(nRet == -1)
             {
                 //qDebug()<<"Hid Read Error!" ;
