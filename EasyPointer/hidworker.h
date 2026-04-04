@@ -15,7 +15,7 @@ public:
     CHidWorker();
     ~CHidWorker();
     void readSN() ;
-    void setDPI(int nIndex=0) ;
+    void setDPI(int nIndex=0);
     void setURL(int nOpen=1);
     void setSnap(int nOpen=1);
     void startRecord();
