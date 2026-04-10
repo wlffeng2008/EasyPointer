@@ -1,5 +1,6 @@
 
 #include <QDebug>
+#include <QTimer>
 #include <QMutexLocker>
 
 #include "hidapi.h"
@@ -7,25 +8,27 @@
 
 CHidWorker::CHidWorker()
 {
-    m_pDev = nullptr ;
+    m_pDev = nullptr;
+    QTimer::singleShot(200,this,[=]{ start(); });
 }
 
 CHidWorker::~CHidWorker()
 {
     m_bEndWork = true;
+    close();
 }
 
 void CHidWorker::close()
 {
     if(m_pDev)
         hid_close(m_pDev);
-    m_pDev = nullptr ;
+    m_pDev = nullptr;
 }
 
 void CHidWorker::setHidVIDPID(unsigned short VID,unsigned short PID)
 {
-    m_VID = VID ;
-    m_PID = PID ;
+    m_VID = VID;
+    m_PID = PID;
 }
 
 void CHidWorker::run()
@@ -57,10 +60,11 @@ void CHidWorker::run()
         while(pTDev)
         {
             m_strDevPath = pTDev->path;
+
             if(strstr(pTDev->path,"KBD"))
-            //    if(pTDev->usage_page == 12)
             {
             }
+
             if(pTDev->usage_page == 0xFF91)
             {
                 pDev = hid_open_path(pTDev->path);
@@ -71,7 +75,7 @@ void CHidWorker::run()
         }
         hid_free_enumeration(pEDev);
 
-        if(!pDev) continue ;
+        if(!pDev) continue;
 
         QThread::msleep(200);
 
@@ -80,70 +84,56 @@ void CHidWorker::run()
         m_pDev = pDev ;
         readSN();
 
-        qDebug() << "readSN:";
-        bool bAsk =false ;
-
-        unsigned char szBufs[20][32] = {{0}} ;
-        int nUesed = 0 ;
+        unsigned char szBufs[20][64] = {{0}};
+        int nUesed = 0;
         while(true)
         {
             unsigned char *szBuf = szBufs[nUesed++%20] ;
             int nRet = hid_read_timeout(pDev,szBuf,64,100);
             //int nRet = hid_get_feature_report(pDev,szBuf,13);
             //int nRet = hid_get_input_report(pDev,szBuf,13);
-            if(nRet == -1)
-            {
-                //qDebug()<<"Hid Read Error!" ;
-                //emit onDisconnect();
-                //break;
-            }
+
             if(nRet <= 0)
             {
                 QThread::msleep(2);
                 continue ;
             }
 
-            QMutexLocker Lock(&m_mutex) ;
-
-            if(!bAsk)
-               // setSnap(0) ;
-            bAsk = true ;
-
+            QMutexLocker Lock(&m_mutex);
             QByteArray Log((const char *)szBuf,32);
-            qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') ;
+            qDebug().noquote()<<"USB <=: "<< Log.toHex(' ');
 
             emit onDataIn(szBuf,32);
         }
 
-        hid_close(pDev) ;
-        m_pDev = nullptr ;
+        hid_close(pDev);
+        m_pDev = nullptr;
     }
 }
 
 void CHidWorker::sendCmd(unsigned char nCmd,unsigned char nVal)
 {
     if(!m_pDev)
-        return ;
+        return;
 
-    unsigned char nLen = 0x01 ;
-    unsigned char nSet = nVal ;
+    unsigned char nLen = 0x01;
+    unsigned char nSet = nVal;
     if(nVal != 0xFF)
-        nLen = 0x02 ;
+        nLen = 0x02;
     else
-        nSet = 0x00 ;
+        nSet = 0x00;
 
-    //unsigned char szCmd[33]={0x00,0x02,0xA8,0x94,nLen,nCmd,nSet} ;
     unsigned char szCmd[33]={0x0C,0x4D,0x04,0x61,00,0x4C} ;
     int nRet = hid_write(m_pDev,szCmd,33) ;
     Q_UNUSED(nRet) ;
     QByteArray Log((const char *)szCmd,32);
     qDebug().noquote()<<"USB =>: "<< Log.toHex(' ') ;
-    //%02x
+
 }
 
 void CHidWorker::readSN()
 {
-    sendCmd(0x05) ;
+    sendCmd(0x05);
 }
 
 void CHidWorker::setDPI(int nIndex)
@@ -153,7 +143,7 @@ void CHidWorker::setDPI(int nIndex)
 
 void CHidWorker::setURL(int nOpen)
 {
-    sendCmd((unsigned char)(nOpen>0?0x06:0x07));
+    sendCmd((unsigned char)(nOpen > 0 ? 0x06 : 0x07));
 }
 
 void CHidWorker::setSnap(int nOpen)
@@ -163,10 +153,10 @@ void CHidWorker::setSnap(int nOpen)
 
 void CHidWorker::startRecord()
 {
-    sendCmd(0x03) ;
+    sendCmd(0x03);
 }
 
 void CHidWorker::stopRecord()
 {
-    sendCmd(0x04) ;
+    sendCmd(0x04);
 }

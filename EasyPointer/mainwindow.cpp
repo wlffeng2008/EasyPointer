@@ -110,7 +110,6 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-
     connect(ui->buttonGroupColor,&QButtonGroup::idClicked,this,[=](int id){
         int index = abs(id)-2;
         QStringList colors={"#FF0000","#00FF00","#0000FF","#FFFFFF","#FF8000","#800080","#FFFF00","#00FFFF","#000000"};
@@ -125,10 +124,10 @@ MainWindow::MainWindow(QWidget *parent)
     p.fillRect(QRect(3,3,23,10),QBrush(Qt::green));
     ui->labelBattery->setPixmap(QPixmap::fromImage(batt));
 
-
     m_pHID = new CHidWorker();
-    m_pHID->start();
+    //m_pHID->start();
 
+    return;
     {
         QList<quint16> VidList = {0x3151, 0x38EE, 0x25A7, 0x05AC, 0x0461};
         foreach (quint16 VID, VidList)
@@ -166,7 +165,6 @@ MainWindow::MainWindow(QWidget *parent)
                         QByteArray data(buf + 1, nlen - 1);
                         quint32 id = *(quint32 *)(data.data() + 1);
 
-                        int connectType=0;
                         if(id>0x1000)
                         {
                             {
@@ -217,8 +215,6 @@ MainWindow::MainWindow(QWidget *parent)
                                 hid_send_feature_report(pDev, (quint8 *)tmp.data(), 65);
                                 QThread::msleep(15);
                                 nlen = hid_get_feature_report(pDev, (quint8 *)buf, 65);
-
-                                connectType=1;
                             }
 
                             if (nlen > 0)
@@ -244,8 +240,6 @@ MainWindow::MainWindow(QWidget *parent)
             hid_free_enumeration(pRoot);
         }
     }
-
-
 }
 
 MainWindow::~MainWindow()
@@ -275,7 +269,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     {
         if (event->pos().y() < 200)
         {
-            m_dragPosition = event->globalPos() - frameGeometry().topLeft();
+            m_dragPosition = event->globalPosition().toPoint() - frameGeometry().topLeft();
             event->accept();
             m_dragging = true;
             return;
@@ -288,7 +282,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
     if (event->buttons() & Qt::LeftButton && m_dragging)
     {
-        move(event->globalPos() - m_dragPosition);
+        move(event->globalPosition().toPoint() - m_dragPosition);
         event->accept();
     }
 }
