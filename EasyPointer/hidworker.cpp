@@ -78,7 +78,7 @@ void CHidWorker::run()
         qDebug() << "Open HID:"<< m_strDevPath;
 
         m_pDev = pDev ;
-        //readSN();
+        readSN();
 
         qDebug() << "readSN:";
         bool bAsk =false ;
@@ -88,7 +88,7 @@ void CHidWorker::run()
         while(true)
         {
             unsigned char *szBuf = szBufs[nUesed++%20] ;
-            int nRet = hid_read_timeout(pDev,szBuf,64,5000000);
+            int nRet = hid_read_timeout(pDev,szBuf,64,100);
             //int nRet = hid_get_feature_report(pDev,szBuf,13);
             //int nRet = hid_get_input_report(pDev,szBuf,13);
             if(nRet == -1)
@@ -99,7 +99,7 @@ void CHidWorker::run()
             }
             if(nRet <= 0)
             {
-                QThread::msleep(200);
+                QThread::msleep(2);
                 continue ;
             }
 
@@ -132,11 +132,13 @@ void CHidWorker::sendCmd(unsigned char nCmd,unsigned char nVal)
     else
         nSet = 0x00 ;
 
-    unsigned char szCmd[33]={0x00,0x02,0xA8,0x94,nLen,nCmd,nSet} ;
+    //unsigned char szCmd[33]={0x00,0x02,0xA8,0x94,nLen,nCmd,nSet} ;
+    unsigned char szCmd[33]={0x0C,0x4D,0x04,0x61,00,0x4C} ;
     int nRet = hid_write(m_pDev,szCmd,33) ;
     Q_UNUSED(nRet) ;
     QByteArray Log((const char *)szCmd,32);
     qDebug().noquote()<<"USB =>: "<< Log.toHex(' ') ;
+    //%02x
 }
 
 void CHidWorker::readSN()

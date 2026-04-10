@@ -39,7 +39,7 @@ private:
     hid_device *m_pDev=nullptr ;
 
     //unsigned short m_VID = 0x35BB ;
-    //unsigned short m_PID = 0x1600 ;
+    //unsigned short m_PID = 0x1500 ;
     unsigned short m_VID = 0x248A;
     unsigned short m_PID = 0x60AB;
 
