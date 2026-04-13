@@ -91,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent)
         case 1:
         case 2:
         case 3:
+            if(index == 3 || index == 0)
             ui->frameColor->setHidden(false);
             ui->stackedWidget1->setHidden(false);
             break;
@@ -108,6 +109,8 @@ MainWindow::MainWindow(QWidget *parent)
         case 7:
             break;
         }
+
+
     });
 
     connect(ui->buttonGroupColor,&QButtonGroup::idClicked,this,[=](int id){
