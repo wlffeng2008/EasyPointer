@@ -2065,7 +2065,7 @@ background-image: url(:/images/jd.png);
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_15">
+      <widget class="QLabel" name="labelSN">
        <property name="minimumSize">
         <size>
          <width>200</width>
@@ -2173,10 +2173,10 @@ background-image: url(:/images/jd.png);
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupColor"/>
-  <buttongroup name="buttonGroupShape"/>
-  <buttongroup name="buttonGroupMain"/>
-  <buttongroup name="buttonGroupCount"/>
   <buttongroup name="buttonGroupVoice"/>
+  <buttongroup name="buttonGroupCount"/>
+  <buttongroup name="buttonGroupColor"/>
+  <buttongroup name="buttonGroupMain"/>
+  <buttongroup name="buttonGroupShape"/>
  </buttongroups>
 </ui>

@@ -4,7 +4,99 @@
 #include <QPainter>
 #include <QStyleOption>
 #include <QMouseEvent>
+#include <QProcess>
 
+#include <windows.h>
+#include <mmdeviceapi.h>
+#include <endpointvolume.h>
+#include <devicetopology.h>
+#include <propkey.h>
+#include <Functiondiscoverykeys_devpkey.h>
+const PROPERTYKEY PKEY_AudioEndpoint_ControlPanel_ListenToThisDevice =
+    {
+        {0xa45c254e, 0xdf1c, 0x4efd, {0x80,0x20,0x67,0xd1,0x46,0xa8,0x50,0xe0}},
+        19
+};
+
+// 打开/关闭 麦克风侦听此设备
+// enable = true 开启侦听，false 关闭侦听
+bool setMicrophoneListen(bool enable)
+{
+    HRESULT hr;
+    IMMDeviceEnumerator* pEnumerator = nullptr;
+    IMMDevice* pDevice = nullptr;
+
+    // 1. 创建设备枚举器
+    hr = CoCreateInstance(__uuidof(MMDeviceEnumerator),
+                          nullptr,
+                          CLSCTX_ALL,
+                          __uuidof(IMMDeviceEnumerator),
+                          (void**)&pEnumerator);
+    if (FAILED(hr)) return false;
+
+    // 2. 获取默认录音设备（麦克风）
+    hr = pEnumerator->GetDefaultAudioEndpoint(eCapture, eConsole, &pDevice);
+    if (FAILED(hr)) {
+        pEnumerator->Release();
+        return false;
+    }
+
+    // 3. 打开设备属性
+    IPropertyStore* pProps = nullptr;
+    hr = pDevice->OpenPropertyStore(STGM_READWRITE, &pProps);
+    if (FAILED(hr)) {
+        pDevice->Release();
+        pEnumerator->Release();
+        return false;
+    }
+
+    // 4. 关键：侦听此设备 对应的 PROPERTYKEY
+    PROPERTYKEY key = PKEY_AudioEndpoint_ControlPanel_ListenToThisDevice;
+
+    // 5. 写入值 VT_BOOL
+    PROPVARIANT var;
+    PropVariantInit(&var);
+    var.vt = VT_BOOL;
+    var.boolVal = enable ? VARIANT_TRUE : VARIANT_FALSE;
+
+    hr = pProps->SetValue(key, var);
+    PropVariantClear(&var);
+
+    // 释放资源
+    pProps->Release();
+    pDevice->Release();
+    pEnumerator->Release();
+
+    return SUCCEEDED(hr);
+}
+
+// 获取当前侦听状态
+bool getMicrophoneListenStatus()
+{
+    // 逻辑类似上面，我直接给你完整可用版本
+    IMMDeviceEnumerator* pEnumerator = nullptr;
+    IMMDevice* pDevice = nullptr;
+    CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL,
+                     __uuidof(IMMDeviceEnumerator), (void**)&pEnumerator);
+
+    pEnumerator->GetDefaultAudioEndpoint(eCapture, eConsole, &pDevice);
+    IPropertyStore* pProps = nullptr;
+    pDevice->OpenPropertyStore(STGM_READ, &pProps);
+
+    PROPERTYKEY key = PKEY_AudioEndpoint_ControlPanel_ListenToThisDevice;
+    PROPVARIANT var;
+    PropVariantInit(&var);
+    pProps->GetValue(key, &var);
+
+    bool status = (var.boolVal == VARIANT_TRUE);
+    PropVariantClear(&var);
+
+    pProps->Release();
+    pDevice->Release();
+    pEnumerator->Release();
+
+    return status;
+}
 
 static void QLog(const char *buf,int nlen=16)
 {
@@ -72,6 +164,7 @@ MainWindow::MainWindow(QWidget *parent)
         border: none;
         image: url(:/images/radio-checked.png);}
 )");
+    CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
     connect(ui->pushButtonExit,&QPushButton::clicked,this,[=]{ qApp->exit(); });
 
@@ -107,6 +200,10 @@ MainWindow::MainWindow(QWidget *parent)
             break;
 
         case 7:
+            //QProcess::execute("./123.bat",{});
+            //setMicrophoneListen(false);
+            //qDebug() << "当前侦听状态：" << getMicrophoneListenStatus();
+            QProcess::startDetached("control", QStringList() << "mmsys.cpl" << "sounds,,0");
             break;
         }
 
@@ -128,6 +225,40 @@ MainWindow::MainWindow(QWidget *parent)
     ui->labelBattery->setPixmap(QPixmap::fromImage(batt));
 
     m_pHID = new CHidWorker();
+
+    connect(m_pHID,&CHidWorker::onDataIn,this,[=](unsigned char *data,int len){
+
+         quint8 cmd = data[3];
+        // 0c 4d 14 61 4d 4c 20 24 12 14 02 40 00 07 05 23 00 ce 5f 27 00 00 00 00 00 00 00 00 00 00 00 00
+        // 10字节设备SN号
+        // 1字节录音状态：1: 16k  0:8k
+        // 1字节光电类型：附录给出定义
+        // 1字节当前DPI档位
+        // 1字节设备型号低8位
+        // 1字节电量值：0-0x64
+        // 1字节软件版本号
+        // 1字节设备型号高8位
+        switch(cmd)
+        {
+        case 0x91: qDebug() << "单击" ; break;
+        case 0x92: qDebug() << "双击" ; break;
+        case 0x93: qDebug() << "长按" ; break;
+        case 0x94: qDebug() << "松开" ; break;
+
+        case 0x9f: qDebug() << "声音外放....." ; break;
+        case 0xa0: qDebug() << "结束" ; break;
+
+        case 0x61:
+        {
+            QString strSN=QString("SN: ") ;//+ QString((char)data[4]) + QString((char)data[5]);
+            for(int i=0;i<10;i++)
+                strSN += QString::asprintf("%02X",data[i+6]);
+
+            ui->labelSN->setText(strSN);
+        }
+        }
+
+    });
     //m_pHID->start();
 
     return;

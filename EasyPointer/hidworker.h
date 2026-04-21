@@ -8,6 +8,14 @@
 #include <QStringList>
 #include <QMutex>
 
+#include <QAudioFormat>
+#include <QAudioDevice>
+#include <QMediaDevices>
+#include <QAudioSink>
+#include <QBuffer>
+#include <QCoreApplication>
+#include <QIODevice>
+
 class CHidWorker : public QThread
 {
     Q_OBJECT

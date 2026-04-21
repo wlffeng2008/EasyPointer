@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,14 +25,16 @@ win32 {
 }
 
 LIBS += -L$$PWD -lhidapi
-
+LIBS += -luser32 -ladvapi32 -lole32 -lpropsys -luuid
 
 SOURCES += \
+    caudioplayer.cpp \
     hidworker.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    caudioplayer.h \
     hidworker.h \
     mainwindow.h
 
