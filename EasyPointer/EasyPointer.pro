@@ -28,17 +28,20 @@ LIBS += -L$$PWD -lhidapi
 LIBS += -luser32 -ladvapi32 -lole32 -lpropsys -luuid
 
 SOURCES += \
+    DialogBoard.cpp \
     caudioplayer.cpp \
     hidworker.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    DialogBoard.h \
     caudioplayer.h \
     hidworker.h \
     mainwindow.h
 
 FORMS += \
+    DialogBoard.ui \
     mainwindow.ui
 
 TRANSLATIONS += \

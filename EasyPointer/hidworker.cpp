@@ -214,8 +214,10 @@ void CHidWorker::run()
             else
             {
                 static CAudioPlayer A;
+
                 static short aBuf[1024]={0};
-                adpcm_to_pcm((short *)szBuf,aBuf,nRet);
+                adpcm_to_pcm((short *)szBuf,aBuf,nRet/2);
+
                 A.pushBuf(QByteArray((char *)aBuf,nRet));
             }
 
