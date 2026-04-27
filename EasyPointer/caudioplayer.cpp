@@ -10,21 +10,20 @@
 CAudioPlayer::CAudioPlayer(QObject *parent)
     : QThread{parent}
 {
-    start() ;
+    start();
 }
 
 void CAudioPlayer::pushBuf(const QByteArray&buf)
 {
     QMutexLocker lock(&m_Mutex);
-    m_ABufs.push_back(buf) ;
+    m_ABufs.push_back(buf);
 }
 
 void CAudioPlayer::run()
 {
-    // 设置音频格式
     QAudioFormat format;
-    format.setSampleRate(8000); // G.711通常使用8kHz采样率
-    format.setChannelCount(2);   // 单声道
+    format.setSampleRate(16000); // G.711通常使用8kHz采样率
+    format.setChannelCount(1);   // 单声道
     format.setSampleFormat(QAudioFormat::Int16); // 16位PCM
 
     QAudioDevice audioDevice = QMediaDevices::defaultAudioOutput();
@@ -45,7 +44,7 @@ void CAudioPlayer::run()
         }
 
         QByteArray tmp = m_ABufs[0];
-        m_ABufs.pop_front() ;
+        m_ABufs.pop_front();
 
         pDevice->write(tmp);
         QThread::usleep(10);

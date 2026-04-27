@@ -114,6 +114,7 @@ void adpcm_to_pcm (signed short *ps, signed short *pd, int len)
     }
 }
 
+
 CHidWorker::CHidWorker()
 {
     m_pDev = nullptr;
@@ -133,7 +134,7 @@ void CHidWorker::close()
     m_pDev = nullptr;
 }
 
-void CHidWorker::setHidVIDPID(unsigned short VID,unsigned short PID)
+void CHidWorker::setHidVIDPID(quint16 VID, quint16 PID)
 {
     m_VID = VID;
     m_PID = PID;
@@ -156,14 +157,14 @@ void CHidWorker::run()
             QThread::msleep(500);
         }
 
-        hid_device_info *pTDev = pEDev;
+        hid_device_info *pTDev = pEDev; // trace
         while(pTDev)
         {
             qDebug() << pTDev->path << Qt::hex << pTDev->usage_page << pTDev->usage;
             pTDev = pTDev->next;
         }
 
-        hid_device *pDev = nullptr;
+        hid_device *pDev = nullptr; // to open
         pTDev = pEDev;
         while(pTDev)
         {
@@ -197,7 +198,7 @@ void CHidWorker::run()
         while(true)
         {
             unsigned char *szBuf = szBufs[nUesed++%20] ;
-            int nRet = hid_read_timeout(pDev,szBuf,64,100);
+            int nRet = hid_read_timeout(pDev,szBuf,65,100);
 
             if(nRet <= 0)
             {
@@ -206,19 +207,21 @@ void CHidWorker::run()
             }
 
             QMutexLocker Lock(&m_mutex);
-            QByteArray Log((const char *)szBuf,32);
+            QByteArray Log((const char *)(szBuf),nRet);
             if(szBuf[0] != 0x1b)
             {
-                qDebug().noquote()<<"USB <=: "<< Log.toHex(' ');
+                qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
             }
             else
             {
+                static quint8  eBuf[1024] = {0};
+                encrypt(szBuf+1,eBuf,32);
+
+                static short aBuf[1024] = {0};
+                adpcm_to_pcm((short *)eBuf,aBuf,16);
+
                 static CAudioPlayer A;
-
-                static short aBuf[1024]={0};
-                adpcm_to_pcm((short *)szBuf,aBuf,nRet/2);
-
-                A.pushBuf(QByteArray((char *)aBuf,nRet));
+                A.pushBuf(QByteArray((char *)aBuf,32));
             }
 
             emit onDataIn(szBuf,32);
@@ -229,52 +232,112 @@ void CHidWorker::run()
     }
 }
 
-void CHidWorker::sendCmd(unsigned char nCmd,unsigned char nVal)
+void CHidWorker::sendCmd(quint8 *pCmd)
 {
     if(!m_pDev)
         return;
 
-    unsigned char nLen = 0x01;
-    unsigned char nSet = nVal;
-    if(nVal != 0xFF)
-        nLen = 0x02;
-    else
-        nSet = 0x00;
+    QByteArray Log((char *)pCmd,32);
+    qDebug().noquote()<<"USB =>: "<< Log.toHex(' ');
+    hid_write(m_pDev,pCmd,32);
+}
 
-    unsigned char szCmd[33]={0x0C,0x4D,0x04,0x61,00,0x4C} ;
-    int nRet = hid_write(m_pDev,szCmd,33) ;
-    Q_UNUSED(nRet) ;
-    QByteArray Log((const char *)szCmd,32);
-    qDebug().noquote()<<"USB =>: "<< Log.toHex(' ') ;
-
+void CHidWorker::hearBeat()
+{
+    quint8 szCmd[33]={0x0C,0x4D,0x05,0x10,00,0x4C};
+    sendCmd(szCmd);
 }
 
 void CHidWorker::readSN()
 {
-    sendCmd(0x05);
+    quint8 szCmd[33]={0x0C,0x4D,0x01,0x61,00,0x4C};
+    sendCmd(szCmd);
 }
 
-void CHidWorker::setDPI(int nIndex)
+void CHidWorker::setMouse(bool on)
 {
-    sendCmd(0x01,(unsigned char)nIndex);
+    quint8 nSet = on ? 0xB0 : 0xB1;
+    quint8 szCmd[33]={0x0C,0x4D,0x05,nSet,00,0x4C};
+    sendCmd(szCmd);
 }
 
-void CHidWorker::setURL(int nOpen)
+void CHidWorker::setLaser(bool on)
 {
-    sendCmd((unsigned char)(nOpen > 0 ? 0x06 : 0x07));
+    quint8 nSet = on ? 0xB4 : 0xB5;
+    quint8 szCmd[33]={0x0C,0x4D,0x05,nSet,00,0x4C};
+    sendCmd(szCmd);
 }
 
-void CHidWorker::setSnap(int nOpen)
+void CHidWorker::setDPI(quint8 index) //1-3
 {
-    sendCmd(0x08,(unsigned char)nOpen);
+    quint8 szCmd[33]={0x0C,0x4D,0x05,0x68,index,0x4C};
+    sendCmd(szCmd);
+}
+
+void CHidWorker::setURL(bool on)
+{
+    quint8 nSet = on ? 0x66 : 0x67;
+    quint8 szCmd[33]={0x0C,0x4D,0x05,nSet,00,0x4C};
+    sendCmd(szCmd);
+}
+
+void CHidWorker::setSample(quint8 index)
+{
+    quint8 szCmd[33]={0x0C,0x4D,0x05,0x6D,index,0x4C};
+    sendCmd(szCmd);
+}
+
+void CHidWorker::sendKey(quint8 key1,quint8 key0)
+{
+    quint8 szCmd[33]={0x0C,0x4D,0x06,0x20,key0,key1,0x4C};
+    sendCmd(szCmd);
+}
+
+void CHidWorker::setOnline(bool on)
+{
+    quint8 nSet = on ? 0x66 : 0x67;
+    quint8 szCmd[33]={0x0C,0x4D,0x05,nSet,0,0x4C};
+    sendCmd(szCmd);
+}
+
+void CHidWorker::askStatus()
+{
+    quint8 szCmd[33]={0x0C,0x4D,0x05,0x69,00,0x4C};
+    sendCmd(szCmd);
 }
 
 void CHidWorker::startRecord()
 {
-    sendCmd(0x03);
+    quint8 szCmd[33]={0x0C,0x4D,0x05,0xB2,00,0x4C};
+    sendCmd(szCmd);
+}
+/*
+16. 空鼠键
+①　单击:  0xC0 //消除
+②　双击:  0xC1 //物理激光
+           0xC2 //数码激光
+           0xC3 //聚光灯
+           0xC4 //放大镜
+           0xC5 //划线
+③　长按:  0xC6 //物理激光按下
+           0xC7 //数码激光按下
+           0xC8 //聚光灯按下
+           0xC9 //放大镜按下
+           0xCA //划线按下
+④　抬起:  0xCB //物理激光抬起
+           0xCC //数码激光抬起
+           0xCD //聚光灯抬起
+           0xCE //放大镜抬起
+           0xCF //划线抬起
+*/
+void CHidWorker::setMouseBtn(quint8 func)
+{
+    quint8 szCmd[33]={0x0C,0x4D,0x04,func,00,0x4C};
+    sendCmd(szCmd);
 }
 
 void CHidWorker::stopRecord()
 {
-    sendCmd(0x04);
+    quint8 szCmd[33]={0x0C,0x4D,0x05,0xB3,00,0x4C};
+    sendCmd(szCmd);
 }

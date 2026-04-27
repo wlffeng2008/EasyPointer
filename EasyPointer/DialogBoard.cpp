@@ -22,7 +22,7 @@ DialogBoard::DialogBoard(QWidget *parent)
 
     m_tmBlack = new QTimer(this);
     connect(m_tmBlack,&QTimer::timeout,this,[=]{
-        if(m_mode == 4)
+        if(m_mode == 4 && this->isVisible())
         {
             m_tmCount--;
             update();
@@ -41,6 +41,12 @@ void DialogBoard::capScreen()
     m_screen = QApplication::screens().at(0)->grabWindow();
 }
 
+void DialogBoard::setMode(int mode)
+{
+    m_mode = mode;
+    m_tmCount=1800;
+}
+
 bool DialogBoard::event(QEvent *event)
 {
    return QDialog::event(event);
@@ -49,13 +55,56 @@ bool DialogBoard::event(QEvent *event)
 void DialogBoard::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
 
     painter.drawPixmap(0,0,m_screen);
 
-    painter.setRenderHint(QPainter::SmoothPixmapTransform);
     switch(m_mode)
     {
     case 0:
+    {
+        int dist = 15;
+        qreal factor = 1;
+        QRect tarRect(m_curPos-QPoint(dist*factor,dist*factor),m_curPos+QPoint(dist*factor,dist*factor));
+
+        QPainterPath path;
+        path.addEllipse(tarRect);
+        painter.setClipPath(path);
+
+        painter.fillRect(tarRect,QBrush(Qt::red));
+    }
+    break;
+
+    case 1:
+    {
+        painter.fillRect(this->rect(),QBrush(Qt::black));
+
+        int dist = 120;
+
+        QPainterPath path;
+        path.addEllipse(QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
+        painter.setClipPath(path);
+        painter.drawPixmap(m_curPos-QPoint(dist,dist),m_screen,QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
+    }
+    break;
+
+    case 2:
+    {
+        int dist = 120;
+        qreal factor = 1.5;
+
+        QPixmap tmp = m_screen.copy(QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
+        QRect tarRect(m_curPos-QPoint(dist*factor,dist*factor),m_curPos+QPoint(dist*factor,dist*factor));
+
+        QPainterPath path;
+        path.addEllipse(tarRect);
+        painter.setClipPath(path);
+        painter.drawPixmap(tarRect,tmp);
+    }
+        break;
+
+
+    case 3:
     {
         painter.setRenderHint(QPainter::Antialiasing);
         painter.setPen(QPen(QBrush(Qt::red),15,Qt::SolidLine,Qt::RoundCap));
@@ -74,53 +123,7 @@ void DialogBoard::paintEvent(QPaintEvent *event)
             painter.drawLine(m_record[i],m_record[i+1]);
         }
     }
-        break;
-
-    case 1:
-    {
-        painter.fillRect(this->rect(),QBrush(Qt::black));
-
-        int dist = 120;
-
-        QPainterPath path;
-        path.addEllipse(QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
-        painter.setClipPath(path);
-        painter.drawPixmap(m_curPos-QPoint(dist,dist),m_screen,QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
-    }
     break;
-
-    case 2:
-    {
-        painter.drawPixmap(0,0,m_screen);
-        int dist = 120;
-        qreal factor = 1.5;
-
-        QPixmap tmp = m_screen.copy(QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
-        QRect tarRect(m_curPos-QPoint(dist*factor,dist*factor),m_curPos+QPoint(dist*factor,dist*factor));
-
-        QPainterPath path;
-        path.addEllipse(tarRect);
-        painter.setClipPath(path);
-        painter.drawPixmap(tarRect,tmp);
-    }
-        break;
-
-    case 3:
-    {
-        painter.drawPixmap(0,0,m_screen);
-        painter.drawLine(m_curPos,m_curPos+QPoint(1,1));
-
-        int dist = 15;
-        qreal factor = 1;
-        QRect tarRect(m_curPos-QPoint(dist*factor,dist*factor),m_curPos+QPoint(dist*factor,dist*factor));
-
-        QPainterPath path;
-        path.addEllipse(tarRect);
-        painter.setClipPath(path);
-
-        painter.fillRect(tarRect,QBrush(Qt::red));
-    }
-        break;
 
     case 4:
     {
@@ -131,13 +134,38 @@ void DialogBoard::paintEvent(QPaintEvent *event)
         font.setPixelSize(90);
         painter.setPen(pen);
         painter.setFont(font);
-        int hour = m_tmCount/3600;
-        int min = m_tmCount%3600/60;
-        int sec = m_tmCount%60;
+
+        int remain = m_tmCount;
+        int hour = remain/3600;
+        int min = remain%3600/60;
+        int sec = remain%60;
         QString strInfo = QString::asprintf("%02d:%02d:%02d",hour,min,sec);
+
         painter.drawText(this->rect(), Qt::AlignCenter, strInfo);
     }
     break;
+    }
+}
+
+void DialogBoard::clearLines()
+{
+    m_lines.clear();
+    m_record.clear();
+    update();
+}
+
+void DialogBoard::setDrage(bool set)
+{
+    m_bDraging=set;
+    if(set)
+    {
+        m_record.clear();
+        m_record.push_back(QCursor::pos());
+    }
+    else
+    {
+        m_lines.push_back(m_record);
+        update();
     }
 }
 
@@ -180,9 +208,22 @@ void DialogBoard::mouseMoveEvent(QMouseEvent *event)
     QDialog::mouseMoveEvent(event);
 }
 
-void DialogBoard::wheelEvent(QWheelEvent *event) {}
-void DialogBoard::keyPressEvent(QKeyEvent *event) {
+void DialogBoard::wheelEvent(QWheelEvent *event)
+{
+    QDialog::wheelEvent(event);
+}
+
+void DialogBoard::keyPressEvent(QKeyEvent *event)
+{
+    if(m_mode==4)
+        hide();
+    QDialog::keyPressEvent(event);
+}
+
+void DialogBoard:: keyReleaseEvent(QKeyEvent *event)
+{
     if(event->key() == Qt::Key_Escape)
         hide();
+    QDialog::keyReleaseEvent(event);
 }
-void DialogBoard:: keyReleaseEvent(QKeyEvent *event) {}
+

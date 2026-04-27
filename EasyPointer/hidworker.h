@@ -22,37 +22,44 @@ class CHidWorker : public QThread
 public:
     CHidWorker();
     ~CHidWorker();
-    void readSN() ;
-    void setDPI(int nIndex=0);
-    void setURL(int nOpen=1);
-    void setSnap(int nOpen=1);
+    void readSN();
+    void setDPI(quint8 index=1);
+    void setURL(bool on=true);
     void startRecord();
     void stopRecord();
-    void close() ;
 
-    void setHidVIDPID(unsigned short VID,unsigned short PID);
+    void hearBeat();
+    void setMouse(bool on=true);
+    void setMouseBtn(quint8 func=0xC0);
+    void setLaser(bool on=true);
+    void askStatus();
+    void setSample(quint8 index=1);
+    void setOnline(bool on=true);
+    void sendKey(quint8 key1, quint8 key0=0);
+
+    void close();
+
+    void setHidVIDPID(quint16 VID, quint16 PID);
     QString getHidPath(){return m_strDevPath;}
 
 protected:
-    void run() override ;
+    void run() override;
 
 signals:
-    void onDataIn(unsigned char *,int) ;
-    void onDisconnect() ;
+    void onDataIn(unsigned char *,int);
+    void onDisconnect();
 
 private:
 
     QMutex m_mutex;
     QString m_strDevPath;
-    hid_device *m_pDev=nullptr ;
+    hid_device *m_pDev=nullptr;
 
-    //unsigned short m_VID = 0x35BB ;
-    //unsigned short m_PID = 0x1500 ;
-    unsigned short m_VID = 0x248A;
-    unsigned short m_PID = 0x60AB;
+    quint16 m_VID = 0x248A;
+    quint16 m_PID = 0x60AB;
 
     bool m_bEndWork = false;
-    void sendCmd(unsigned char nCmd,unsigned char nVal=0xFF);
+    void sendCmd(quint8 *pCmd);
 };
 
 #endif // HIDWORKER_H

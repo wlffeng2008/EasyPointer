@@ -169,6 +169,8 @@ MainWindow::MainWindow(QWidget *parent)
 )");
     CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
+    static DialogBoard *pFuncPad = new DialogBoard();
+
     connect(ui->pushButtonExit,&QPushButton::clicked,this,[=]{ qApp->exit(); });
 
     connect(ui->buttonGroupMain,&QButtonGroup::idClicked,this,[=](int id){
@@ -209,11 +211,10 @@ MainWindow::MainWindow(QWidget *parent)
             //QProcess::startDetached("control", QStringList() << "mmsys.cpl" << "sounds,,0");
 
             {
-                static DialogBoard *pad = new DialogBoard(this);
-                pad->capScreen();
-                pad->setMode(4);
-                QTimer::singleShot(100,this,[=]{
-                    pad->showFullScreen();
+                pFuncPad->capScreen();
+                pFuncPad->setMode(4);
+                QTimer::singleShot(50,this,[=]{
+                    pFuncPad->showFullScreen();
                 });
             }
             break;
@@ -238,7 +239,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(m_pHID,&CHidWorker::onDataIn,this,[=](unsigned char *data,int len){
 
-         quint8 cmd = data[3];
+        quint8 cmd = data[3];
         // 0c 4d 14 61 4d 4c 20 24 12 14 02 40 00 07 05 23 00 ce 5f 27 00 00 00 00 00 00 00 00 00 00 00 00
         // 10字节设备SN号
         // 1字节录音状态：1: 16k  0:8k
@@ -248,23 +249,57 @@ MainWindow::MainWindow(QWidget *parent)
         // 1字节电量值：0-0x64
         // 1字节软件版本号
         // 1字节设备型号高8位
+        static quint8 nFunc = 0;
         switch(cmd)
         {
-        case 0x91: qDebug() << "单击" ; break;
-        case 0x92: qDebug() << "双击" ; break;
-        case 0x93: qDebug() << "长按" ; break;
-        case 0x94: qDebug() << "松开" ; break;
+        case 0x91: qDebug() << "单击" ;
+            m_pHID->setMouse(false);
+            pFuncPad->hide();
+            break;
+
+        case 0x92:
+        {
+            qDebug() << "双击";
+            int mode = nFunc % 5;
+            nFunc++;
+            pFuncPad->hide();
+            QTimer::singleShot(100,this,[=]{
+                m_pHID->setMouse(true);
+                pFuncPad->capScreen();
+                pFuncPad->setMode(mode);
+                pFuncPad->showFullScreen();
+                pFuncPad->raise();
+            });
+        }
+            break;
+
+        case 0x93: qDebug() << "长按" ;
+            pFuncPad->setDrage();
+            break;
+
+        case 0x94: qDebug() << "松开" ;
+            pFuncPad->setDrage(false);
+            break;
 
         case 0x9f: qDebug() << "声音外放....." ; break;
         case 0xa0: qDebug() << "结束" ; break;
 
         case 0x61:
         {
-            QString strSN=QString("SN: ") ;//+ QString((char)data[4]) + QString((char)data[5]);
-            for(int i=0;i<10;i++)
+            QString strSN = QString("SN: ");
+            for(int i=0; i<10; i++)
                 strSN += QString::asprintf("%02X",data[i+6]);
 
             ui->labelSN->setText(strSN);
+            quint8 offset = 16;
+            quint8 status = data[offset];
+            quint8 type = data[offset+1];
+            quint8 dpi = data[offset+2];
+            quint16 model = (data[offset+6] << 8)| data[offset+3];
+            quint8 batt = data[offset+4];
+            quint8 ver = data[offset+5];
+
+            qDebug() << status << type << dpi << model << batt << ver;
         }
         }
 

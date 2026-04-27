@@ -20,7 +20,9 @@ public:
     explicit DialogBoard(QWidget *parent = nullptr);
     ~DialogBoard();
     void capScreen();
-    void setMode(int mode){ m_mode = mode; };
+    void setMode(int mode);
+    void clearLines();
+    void setDrage(bool set=true);
 
 protected:
     bool event(QEvent *event) override;
