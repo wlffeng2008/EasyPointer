@@ -1,4 +1,4 @@
-QT       += core gui multimedia
+QT       += core gui multimedia websockets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,13 +32,17 @@ SOURCES += \
     caudioplayer.cpp \
     hidworker.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    xftexttospeech.cpp \
+    xftexttranslate.cpp
 
 HEADERS += \
     DialogBoard.h \
     caudioplayer.h \
     hidworker.h \
-    mainwindow.h
+    mainwindow.h \
+    xftexttospeech.h \
+    xftexttranslate.h
 
 FORMS += \
     DialogBoard.ui \

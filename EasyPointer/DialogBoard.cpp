@@ -45,6 +45,7 @@ void DialogBoard::setMode(int mode)
 {
     m_mode = mode;
     m_tmCount=1800;
+    clearLines();
 }
 
 bool DialogBoard::event(QEvent *event)

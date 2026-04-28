@@ -119,6 +119,11 @@ CHidWorker::CHidWorker()
 {
     m_pDev = nullptr;
     QTimer::singleShot(200,this,[=]{ start(); });
+    QTimer *tmReadSN = new QTimer();
+    tmReadSN->start(5000);
+    connect(tmReadSN,&QTimer::timeout,this,[=]{
+        readSN();
+    });
 }
 
 CHidWorker::~CHidWorker()
