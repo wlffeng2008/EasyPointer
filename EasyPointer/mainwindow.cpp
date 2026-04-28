@@ -286,21 +286,38 @@ MainWindow::MainWindow(QWidget *parent)
 
         case 0x61:
         {
-            QString strSN = QString("SN: ");
-            for(int i=0; i<10; i++)
-                strSN += QString::asprintf("%02X",data[i+6]);
+            quint8 *stBuf=nullptr;
+            if(data[2] == 0x14)
+            {
+                QString strSN = QString("SN: ");
+                for(int i=0; i<10; i++)
+                    strSN += QString::asprintf("%02X",data[i+6]);
 
-            ui->labelSN->setText(strSN);
-            quint8 offset = 16;
-            quint8 status = data[offset];
-            quint8 type = data[offset+1];
-            quint8 dpi = data[offset+2];
-            quint16 model = (data[offset+6] << 8)| data[offset+3];
-            quint8 batt = data[offset+4];
-            quint8 ver = data[offset+5];
+                ui->labelSN->setText(strSN);
 
-            qDebug() << status << type << dpi << model << batt << ver;
+                stBuf = data + 16;
+                m_pHID->askStatus();
+            }
+
+            if(data[2] == 0x08)
+            {
+
+            }
+
+            if(stBuf)
+            {
+                quint8 offset = 0;
+                quint8 status = stBuf[offset];
+                quint8 type = stBuf[offset+1];
+                quint8 dpi = stBuf[offset+2];
+                quint16 model = (stBuf[offset+6] << 8) | stBuf[offset+3];
+                quint8 batt = stBuf[offset+4];
+                quint8 ver = stBuf[offset+5];
+
+                qDebug() << status << type << dpi << model << batt << ver;
+            }
         }
+            break;
         }
 
     });

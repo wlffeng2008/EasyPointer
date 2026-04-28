@@ -104,7 +104,6 @@ void DialogBoard::paintEvent(QPaintEvent *event)
     }
         break;
 
-
     case 3:
     {
         painter.setRenderHint(QPainter::Antialiasing);
@@ -132,7 +131,7 @@ void DialogBoard::paintEvent(QPaintEvent *event)
         QPen pen = painter.pen();
         pen.setColor(Qt::white);
         QFont font = painter.font();
-        font.setPixelSize(90);
+        font.setPixelSize(100);
         painter.setPen(pen);
         painter.setFont(font);
 
@@ -216,6 +215,7 @@ void DialogBoard::wheelEvent(QWheelEvent *event)
 
 void DialogBoard::keyPressEvent(QKeyEvent *event)
 {
+    qDebug() << event;
     if(m_mode==4)
         hide();
     QDialog::keyPressEvent(event);

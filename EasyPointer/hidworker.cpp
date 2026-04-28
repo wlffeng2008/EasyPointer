@@ -173,16 +173,14 @@ void CHidWorker::run()
         pTDev = pEDev;
         while(pTDev)
         {
-            m_strDevPath = pTDev->path;
-
-            if(strstr(pTDev->path,"KBD"))
-            {
-            }
-
             if(pTDev->usage_page == 0xFF91)
             {
                 pDev = hid_open_path(pTDev->path);
-                if(pDev) break;
+                if(pDev)
+                {
+                    m_strDevPath = pTDev->path;
+                    break;
+                }
             }
 
             pTDev = pTDev->next;
@@ -198,11 +196,11 @@ void CHidWorker::run()
         m_pDev = pDev ;
         readSN();
 
-        unsigned char szBufs[20][64] = {{0}};
+        quint8 szBufs[20][64] = {{0}};
         int nUesed = 0;
         while(true)
         {
-            unsigned char *szBuf = szBufs[nUesed++%20] ;
+            quint8 *szBuf = szBufs[nUesed++%20] ;
             int nRet = hid_read_timeout(pDev,szBuf,65,100);
 
             if(nRet <= 0)
@@ -307,7 +305,7 @@ void CHidWorker::setOnline(bool on)
 
 void CHidWorker::askStatus()
 {
-    quint8 szCmd[33]={0x0C,0x4D,0x05,0x69,00,0x4C};
+    quint8 szCmd[33]={0x0C,0x4D,0x02,0x69,00,0x4C};
     sendCmd(szCmd);
 }
 
@@ -316,6 +314,7 @@ void CHidWorker::startRecord()
     quint8 szCmd[33]={0x0C,0x4D,0x05,0xB2,00,0x4C};
     sendCmd(szCmd);
 }
+
 /*
 16. 空鼠键
 ①　单击:  0xC0 //消除

@@ -46,7 +46,7 @@ protected:
     void run() override;
 
 signals:
-    void onDataIn(unsigned char *,int);
+    void onDataIn(quint8 *,int);
     void onDisconnect();
 
 private:

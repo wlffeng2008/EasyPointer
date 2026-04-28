@@ -12,17 +12,20 @@ class CAudioPlayer : public QThread
     Q_OBJECT
 public:
     explicit CAudioPlayer(QObject *parent = nullptr);
-    virtual ~CAudioPlayer(){m_bExit = true ;};
+    virtual ~CAudioPlayer(){ m_bExit = true; };
 
-    void forceExit(){m_bExit = true ;};
-    void pushBuf(const QByteArray&buf) ;
+    void setAudioInfo(quint32 sampleRate,quint8 channels){m_sampleRate=sampleRate; m_channels=channels;};
+    void forceExit(){ m_bExit = true; };
+    void pushBuf(const QByteArray&buf);
 
 protected:
     void run() override;
 
-    QByteArrayList m_ABufs ;
+    quint32 m_sampleRate=16000;
+    quint8  m_channels=1;
+    QByteArrayList m_ABufs;
     QMutex m_Mutex;
-    bool m_bExit = false ;
+    bool m_bExit = false;
 };
 
 #endif // CAUDIOPLAYER_H
