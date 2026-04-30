@@ -6,6 +6,7 @@
 #include <QMouseEvent>
 #include <QProcess>
 #include <QTimer>
+#include <QApplication>
 
 #include "DialogBoard.h"
 
@@ -296,7 +297,7 @@ MainWindow::MainWindow(QWidget *parent)
                 ui->labelSN->setText(strSN);
 
                 stBuf = data + 16;
-                m_pHID->askStatus();
+                //m_pHID->askStatus();
             }
 
             if(data[2] == 0x08)
@@ -337,8 +338,8 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
     p.setRenderHint(QPainter::Antialiasing, true);
 
-    p.drawImage(this->rect(), QImage("./images/bground.png"));
-    p.drawImage(QRect(0,2,132,44), QImage("./images/nmylogo.png"));
+    p.drawImage(this->rect(), QImage(QApplication::applicationDirPath()+"/images/bground.png"));
+    p.drawImage(QRect(0,2,132,44), QImage(QApplication::applicationDirPath()+"/images/nmylogo.png"));
 
     QMainWindow::paintEvent(event);
 }
