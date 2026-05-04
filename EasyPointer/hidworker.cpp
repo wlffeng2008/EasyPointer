@@ -122,7 +122,7 @@ CHidWorker::CHidWorker()
     QTimer *tmReadSN = new QTimer();
     tmReadSN->start(5000);
     connect(tmReadSN,&QTimer::timeout,this,[=]{
-        readSN();
+        //readSN();
     });
 }
 
@@ -193,14 +193,15 @@ void CHidWorker::run()
 
         qDebug() << "Open HID:"<< m_strDevPath;
 
-        m_pDev = pDev ;
+        m_pDev = pDev;
         readSN();
+        setMouse(false);
 
         quint8 szBufs[20][64] = {{0}};
         int nUesed = 0;
         while(true)
         {
-            quint8 *szBuf = szBufs[nUesed++%20] ;
+            quint8 *szBuf = szBufs[nUesed++ % 20];
             int nRet = hid_read_timeout(pDev,szBuf,65,100);
 
             if(nRet <= 0)
@@ -221,10 +222,10 @@ void CHidWorker::run()
                 encrypt(szBuf+1,eBuf,32);
 
                 static short aBuf[1024] = {0};
-                adpcm_to_pcm((short *)eBuf,aBuf,16);
+                adpcm_to_pcm((short *)eBuf,aBuf,56);
 
                 static CAudioPlayer A;
-                A.pushBuf(QByteArray((char *)aBuf,32));
+                A.pushBuf(QByteArray((char *)aBuf,112));
             }
 
             emit onDataIn(szBuf,32);
@@ -241,7 +242,7 @@ void CHidWorker::sendCmd(quint8 *pCmd)
         return;
 
     QByteArray Log((char *)pCmd,32);
-    qDebug().noquote()<<"USB =>: "<< Log.toHex(' ');
+    //qDebug().noquote()<<"USB =>: "<< Log.toHex(' ');
     hid_write(m_pDev,pCmd,32);
 }
 

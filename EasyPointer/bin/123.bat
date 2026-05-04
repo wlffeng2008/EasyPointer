@@ -1,1 +1,0 @@
-control mmsys.cpl sounds,,1

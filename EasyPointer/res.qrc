@@ -32,5 +32,7 @@
         <file>images/jd.png</file>
         <file>images/redbook.png</file>
         <file>images/tmall.png</file>
+        <file>images/drop-down.png</file>
+        <file>images/logo.png</file>
     </qresource>
 </RCC>

@@ -1,4 +1,5 @@
 #include "caudioplayer.h"
+#include "qdebug.h"
 #include <QAudioFormat>
 #include <QAudioDevice>
 #include <QMediaDevices>
@@ -12,8 +13,8 @@ CAudioPlayer::CAudioPlayer(QObject *parent)
     : QThread{parent}
 {
     QTimer::singleShot(500,this,[=]{
-        start();
     });
+    start();
 }
 
 void CAudioPlayer::pushBuf(const QByteArray&buf)

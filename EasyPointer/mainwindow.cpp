@@ -6,9 +6,14 @@
 #include <QMouseEvent>
 #include <QProcess>
 #include <QTimer>
+#include <QMenu>
 #include <QApplication>
 
 #include "DialogBoard.h"
+#include "DialogTypeWord.h"
+#include "DialogCloudCmd.h"
+#include "DialogDeviceSet.h"
+#include "DialogMKeySet.h"
 
 #include <windows.h>
 #include <mmdeviceapi.h>
@@ -117,6 +122,8 @@ MainWindow::MainWindow(QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowTitle("Nmy Pointer");
     resize(828,466);
+    ui->labelAudioSet->installEventFilter(this);
+    ui->labelCloudCmd->installEventFilter(this);
 
     setStyleSheet(R"(
 
@@ -209,14 +216,15 @@ MainWindow::MainWindow(QWidget *parent)
             //QProcess::execute("./123.bat",{});
             //setMicrophoneListen(false);
             //qDebug() << "当前侦听状态：" << getMicrophoneListenStatus();
-            //QProcess::startDetached("control", QStringList() << "mmsys.cpl" << "sounds,,0");
-
             {
-                pFuncPad->capScreen();
-                pFuncPad->setMode(4);
-                QTimer::singleShot(50,this,[=]{
-                    pFuncPad->showFullScreen();
-                });
+                // pFuncPad->capScreen();
+                // pFuncPad->setMode(4);
+                // QTimer::singleShot(50,this,[=]{
+                //     pFuncPad->showFullScreen();
+                // });
+
+                DialogDeviceSet dlg(this);
+                dlg.exec();
             }
             break;
         }
@@ -256,33 +264,66 @@ MainWindow::MainWindow(QWidget *parent)
         case 0x91: qDebug() << "单击" ;
             m_pHID->setMouse(false);
             pFuncPad->hide();
+            m_press = 0;
             break;
 
         case 0x92:
         {
-            qDebug() << "双击";
-            int mode = nFunc % 5;
+            m_pHID->setLaser(false);
+            qDebug() << "双击";   // 仅切换功能
+            m_mode = nFunc % 4;
             nFunc++;
+            m_press = 0;
             pFuncPad->hide();
-            QTimer::singleShot(100,this,[=]{
-                m_pHID->setMouse(true);
-                pFuncPad->capScreen();
-                pFuncPad->setMode(mode);
-                pFuncPad->showFullScreen();
-                pFuncPad->raise();
-            });
         }
             break;
 
         case 0x93: qDebug() << "长按" ;
-            pFuncPad->setDrage();
+            m_pHID->setMouse(true);
+            m_press ++;
+            if(m_mode != 3 || m_press >= 2)
+                pFuncPad->setDrage();
+
+            QTimer::singleShot(100,this,[=]{
+                pFuncPad->capScreen();
+                pFuncPad->setMode(m_mode);
+                pFuncPad->showFullScreen();
+                pFuncPad->raise();
+            });
             break;
 
         case 0x94: qDebug() << "松开" ;
+            if(m_mode != 3)
+            {
+                pFuncPad->hide();
+                m_pHID->setMouse(false);
+            }
+
             pFuncPad->setDrage(false);
             break;
 
-        case 0x9f: qDebug() << "声音外放....." ; break;
+        case 0x9b:
+        {
+            if(pFuncPad->isHidden())
+            {
+                pFuncPad->setMode(4);
+                pFuncPad->showFullScreen();
+                pFuncPad->raise();
+            }
+            else
+            {
+                pFuncPad->hide();
+            }
+        }
+            break;
+        case 0x9d: // s2 单击
+            break;
+        case 0x9e:  // s2 双击
+            break;
+
+        case 0x9f: qDebug() << "声音外放....." ;
+            m_pHID->startRecord();
+            break;
         case 0xa0: qDebug() << "结束" ; break;
 
         case 0x61:
@@ -320,8 +361,59 @@ MainWindow::MainWindow(QWidget *parent)
         }
             break;
         }
-
     });
+
+    connect(ui->pushButtonTypeword,&QPushButton::clicked,this,[=]{
+        DialogTypeWord dlg(this);
+        dlg.exec();
+    });
+    connect(ui->pushButtonMin,&QPushButton::clicked,this,[=]{
+        this->showMinimized();
+    });
+
+    connect(ui->pushButtonMKey,&QPushButton::clicked,this,[=]{
+        DialogMKeySet dlg(this);
+        dlg.exec();
+    });
+
+    {
+        trayIcon = new QSystemTrayIcon(this);
+        trayIcon->setIcon(QIcon(":/images/logo.png"));
+        trayIcon->setToolTip("NMY Pen");
+        trayIcon->show();
+
+        connect(trayIcon,&QSystemTrayIcon::activated,this,[=](QSystemTrayIcon::ActivationReason reason){
+            if(reason != QSystemTrayIcon::Context)
+            {
+                if(this->isHidden() || this->isMinimized())
+                    this->showNormal();
+                else
+                    this->hide();
+            }
+        });
+
+        QAction *showAction = new QAction("", this);
+        QAction *hideAction = new QAction("", this);
+        QAction *exitAction = new QAction("", this);
+
+        m_act0 = showAction;
+        m_act1 = hideAction;
+        m_act2 = exitAction;
+
+        QMenu *trayMenu = new QMenu(this);
+        trayMenu->addAction(showAction);
+        trayMenu->addAction(hideAction);
+        trayMenu->addSeparator();
+        trayMenu->addAction(exitAction);
+
+        connect(exitAction, &QAction::triggered, this, &QApplication::quit);
+        connect(showAction, &QAction::triggered, this, &QMainWindow::showNormal);
+        connect(hideAction, &QAction::triggered, this, &QMainWindow::hide);
+        trayIcon->setContextMenu(trayMenu);
+
+        //updateDeviceInfo();
+    }
+
 }
 
 MainWindow::~MainWindow()
@@ -344,6 +436,28 @@ void MainWindow::paintEvent(QPaintEvent *event)
     QMainWindow::paintEvent(event);
 }
 
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if(watched == ui->labelAudioSet && event->type() == QEvent::MouseButtonRelease)
+    {
+        QProcess::startDetached("control", QStringList() << "mmsys.cpl" << "sounds,,0");
+        QProcess::startDetached("sndvol", QStringList{});
+    }
+
+    if(watched == ui->labelCloudCmd && event->type() == QEvent::MouseButtonRelease)
+    {
+        DialogCloudCmd dlg(this);
+        dlg.exec();
+    }
+
+    return QMainWindow::eventFilter(watched,event);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    qDebug() << event->key();
+    QMainWindow::keyPressEvent(event);
+}
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
@@ -367,14 +481,28 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
         move(event->globalPosition().toPoint() - m_dragPosition);
         event->accept();
     }
+    QMainWindow::mouseMoveEvent(event);
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 {
+    //qDebug() << event->button();
     if (event->button() == Qt::LeftButton)
     {
         m_dragging = false;
         event->accept();
     }
+    QMainWindow::mouseReleaseEvent(event);
 }
 
+
+void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    qDebug() << "mouseDoubleClickEvent";
+    if (event->button() == Qt::LeftButton)
+    {
+        m_dragging = false;
+        event->accept();
+    }
+    QMainWindow::mouseDoubleClickEvent(event);
+}

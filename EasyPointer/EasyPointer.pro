@@ -29,24 +29,39 @@ LIBS += -luser32 -ladvapi32 -lole32 -lpropsys -luuid
 
 SOURCES += \
     DialogBoard.cpp \
+    DialogCloudCmd.cpp \
+    DialogDeviceSet.cpp \
+    DialogMKeySet.cpp \
+    DialogTypeWord.cpp \
     caudioplayer.cpp \
     hidworker.cpp \
     main.cpp \
     mainwindow.cpp \
+    typeword.cpp \
     xftexttospeech.cpp \
     xftexttranslate.cpp
 
 HEADERS += \
     DialogBoard.h \
+    DialogCloudCmd.h \
+    DialogDeviceSet.h \
+    DialogMKeySet.h \
+    DialogTypeWord.h \
     caudioplayer.h \
     hidworker.h \
     mainwindow.h \
+    typeword.h \
     xftexttospeech.h \
     xftexttranslate.h
 
 FORMS += \
     DialogBoard.ui \
-    mainwindow.ui
+    DialogCloudCmd.ui \
+    DialogDeviceSet.ui \
+    DialogMKeySet.ui \
+    DialogTypeWord.ui \
+    mainwindow.ui \
+    typeword.ui
 
 TRANSLATIONS += \
     EasyPointer_zh_CN.ts
