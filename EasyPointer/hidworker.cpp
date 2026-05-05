@@ -202,7 +202,7 @@ void CHidWorker::run()
         while(true)
         {
             quint8 *szBuf = szBufs[nUesed++ % 20];
-            int nRet = hid_read_timeout(pDev,szBuf,65,100);
+            int nRet = hid_read_timeout(pDev,szBuf,65,0xFFFF);
 
             if(nRet <= 0)
             {
@@ -218,7 +218,7 @@ void CHidWorker::run()
             }
             else
             {
-                static quint8  eBuf[1024] = {0};
+                static quint8 eBuf[1024] = {0};
                 encrypt(szBuf+1,eBuf,32);
 
                 static short aBuf[1024] = {0};

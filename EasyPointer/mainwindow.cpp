@@ -121,7 +121,7 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint);
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowTitle("Nmy Pointer");
-    resize(828,466);
+    //resize(828,466);
     ui->labelAudioSet->installEventFilter(this);
     ui->labelCloudCmd->installEventFilter(this);
 
@@ -146,7 +146,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     QSlider::handle:horizontal:disabled { border: 2px solid #B3B3B3; }
 
-    QLabel{color:white;font-weight:600;}
+    //QLabel{color:white;font-weight:600;}
     QLabel#labelLarge{color:white; font-size: 24px; font-weight:600;}
     QPushButton{color:white;font-weight:600;}
 
@@ -182,7 +182,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButtonExit,&QPushButton::clicked,this,[=]{ qApp->exit(); });
 
     connect(ui->buttonGroupMain,&QButtonGroup::idClicked,this,[=](int id){
-        int index = abs(id)-2;
+        int index = abs(id);
+        qDebug() << id ;
+        if(index>=4)
+            index-=4;
+        else
+            index+=4;
+        //QString name=btn->objectName();
+        //int index =name.right(1).toInt();
         ui->stackedWidget0->setCurrentIndex(index);
         ui->stackedWidget1->setCurrentIndex(index);
 
@@ -233,10 +240,25 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->buttonGroupColor,&QButtonGroup::idClicked,this,[=](int id){
         int index = abs(id)-2;
         QStringList colors={"#FF0000","#00FF00","#0000FF","#FFFFFF","#FF8000","#800080","#FFFF00","#00FFFF","#000000"};
-        ui->labelColor->setStyleSheet(QString("QLabel{background-color:%1; border-radius:40px;}").arg(colors[index]));
+        int size = ui->horizontalSlider0->value();
+        ui->labelColor->setFixedSize(size, size);
+        int opticy = ui->horizontalSlider1->value();
+        ui->labelColor->setStyleSheet(QString("QLabel{ background-color:%1; border-radius:%2px;}").arg(colors[index]).arg(size/2));
+        qDebug() << size ;
     });
 
-    ui->pushButtonMain->click();
+    connect(ui->horizontalSlider0,&QSlider::valueChanged,this,[=](int value){
+
+    });
+    connect(ui->horizontalSlider1,&QSlider::valueChanged,this,[=](int value){
+
+    });
+
+    ui->horizontalSlider0->setValue(40);
+    ui->horizontalSlider1->setValue(60);
+
+    ui->pushButton0->click();
+    ui->pushButton_C1->click();
 
     QImage batt(":/images/batt.png");
 
@@ -410,8 +432,6 @@ MainWindow::MainWindow(QWidget *parent)
         connect(showAction, &QAction::triggered, this, &QMainWindow::showNormal);
         connect(hideAction, &QAction::triggered, this, &QMainWindow::hide);
         trayIcon->setContextMenu(trayMenu);
-
-        //updateDeviceInfo();
     }
 
 }
@@ -463,7 +483,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
-        if (event->pos().y() < 200)
+        if (event->pos().y() < 60)
         {
             m_dragPosition = event->globalPosition().toPoint() - frameGeometry().topLeft();
             event->accept();
