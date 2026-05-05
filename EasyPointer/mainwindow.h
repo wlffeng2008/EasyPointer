@@ -41,6 +41,11 @@ private:
     int m_mode = 0;
     int m_press = 0;
 
+    int m_index=0;
+    quint32 m_curColor;
+    void updateValue();
+
+
     QSystemTrayIcon *trayIcon = nullptr;
     QAction *m_act0 = nullptr;
     QAction *m_act1 = nullptr;

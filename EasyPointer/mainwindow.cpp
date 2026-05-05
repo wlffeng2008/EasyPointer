@@ -7,6 +7,7 @@
 #include <QProcess>
 #include <QTimer>
 #include <QMenu>
+#include <QPainterPath>
 #include <QApplication>
 
 #include "DialogBoard.h"
@@ -113,6 +114,8 @@ static void QLog(const char *buf,int nlen=16)
     qDebug() << "tmp :" << data.left(nlen).toHex(' ').toUpper();
 }
 
+static QList<quint32> colors={0xFF0000,0x00FF00,0x0000FF,0xFFFFFF,0xFF8000,0x800080,0xFFFF00,0x00FFFF,0x000000};
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -124,6 +127,7 @@ MainWindow::MainWindow(QWidget *parent)
     //resize(828,466);
     ui->labelAudioSet->installEventFilter(this);
     ui->labelCloudCmd->installEventFilter(this);
+    m_curColor = colors[0];
 
     setStyleSheet(R"(
 
@@ -146,7 +150,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     QSlider::handle:horizontal:disabled { border: 2px solid #B3B3B3; }
 
-    //QLabel{color:white;font-weight:600;}
+    QLabel{color:white;font-weight:600;}
     QLabel#labelLarge{color:white; font-size: 24px; font-weight:600;}
     QPushButton{color:white;font-weight:600;}
 
@@ -183,13 +187,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->buttonGroupMain,&QButtonGroup::idClicked,this,[=](int id){
         int index = abs(id);
-        qDebug() << id ;
-        if(index>=4)
-            index-=4;
+        if(index >= 4)
+            index -= 4;
         else
-            index+=4;
-        //QString name=btn->objectName();
-        //int index =name.right(1).toInt();
+            index += 3;
+
         ui->stackedWidget0->setCurrentIndex(index);
         ui->stackedWidget1->setCurrentIndex(index);
 
@@ -197,6 +199,8 @@ MainWindow::MainWindow(QWidget *parent)
         ui->frameColor->setHidden(true);
         ui->stackedWidget1->setHidden(true);
         ui->labelNotice->setHidden(true);
+
+        m_index = index;
 
         switch(index)
         {
@@ -208,9 +212,11 @@ MainWindow::MainWindow(QWidget *parent)
             ui->frameColor->setHidden(false);
             ui->stackedWidget1->setHidden(false);
             break;
+
         case 4:
             ui->labelNotice->setHidden(false);
             break;
+
         case 5:
             ui->labelNotice->setHidden(false);
             break;
@@ -218,44 +224,53 @@ MainWindow::MainWindow(QWidget *parent)
         case 6:
             ui->labelContact->setHidden(false);
             break;
-
-        case 7:
-            //QProcess::execute("./123.bat",{});
-            //setMicrophoneListen(false);
-            //qDebug() << "当前侦听状态：" << getMicrophoneListenStatus();
-            {
-                // pFuncPad->capScreen();
-                // pFuncPad->setMode(4);
-                // QTimer::singleShot(50,this,[=]{
-                //     pFuncPad->showFullScreen();
-                // });
-
-                DialogDeviceSet dlg(this);
-                dlg.exec();
-            }
-            break;
         }
     });
 
     connect(ui->buttonGroupColor,&QButtonGroup::idClicked,this,[=](int id){
         int index = abs(id)-2;
-        QStringList colors={"#FF0000","#00FF00","#0000FF","#FFFFFF","#FF8000","#800080","#FFFF00","#00FFFF","#000000"};
-        int size = ui->horizontalSlider0->value();
-        ui->labelColor->setFixedSize(size, size);
-        int opticy = ui->horizontalSlider1->value();
-        ui->labelColor->setStyleSheet(QString("QLabel{ background-color:%1; border-radius:%2px;}").arg(colors[index]).arg(size/2));
-        qDebug() << size ;
+        m_curColor = colors[index];
+        updateValue();
     });
 
     connect(ui->horizontalSlider0,&QSlider::valueChanged,this,[=](int value){
-
-    });
+        updateValue();
+        ui->labelValue00->setText(QString("%1").arg(value));
+    });    
     connect(ui->horizontalSlider1,&QSlider::valueChanged,this,[=](int value){
+        updateValue();
+        ui->labelValue01->setText(QString::asprintf("%1%%").arg(value));
+    });
 
+    connect(ui->horizontalSlider2,&QSlider::valueChanged,this,[=](int value){
+        updateValue();
+        ui->labelValue10->setText(QString::asprintf("%1").arg(value));
+    });
+
+    connect(ui->horizontalSlider4,&QSlider::valueChanged,this,[=](int value){
+        updateValue();
+        ui->labelValue20->setText(QString::asprintf("%1").arg(value));
+    });
+    connect(ui->horizontalSlider5,&QSlider::valueChanged,this,[=](int value){
+        updateValue();
+        ui->labelValue21->setText(QString::asprintf("%1%%").arg(value));
+    });
+
+    connect(ui->horizontalSlider6,&QSlider::valueChanged,this,[=](int value){
+        updateValue();
+        ui->labelValue30->setText(QString::asprintf("%1").arg(value));
+    });
+    connect(ui->horizontalSlider7,&QSlider::valueChanged,this,[=](int value){
+        updateValue();
+        ui->labelValue31->setText(QString::asprintf("%1%%").arg(value));
     });
 
     ui->horizontalSlider0->setValue(40);
-    ui->horizontalSlider1->setValue(60);
+    ui->horizontalSlider1->setValue(80);
+    ui->horizontalSlider4->setValue(20);
+    ui->horizontalSlider5->setValue(80);
+    ui->horizontalSlider6->setValue(20);
+    ui->horizontalSlider7->setValue(80);
 
     ui->pushButton0->click();
     ui->pushButton_C1->click();
@@ -268,7 +283,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_pHID = new CHidWorker();
 
-    connect(m_pHID,&CHidWorker::onDataIn,this,[=](unsigned char *data,int len){
+    connect(m_pHID,&CHidWorker::onDataIn,this,[=](quint8 *data,int len){
 
         quint8 cmd = data[3];
         // 0c 4d 14 61 4d 4c 20 24 12 14 02 40 00 07 05 23 00 ce 5f 27 00 00 00 00 00 00 00 00 00 00 00 00
@@ -393,6 +408,10 @@ MainWindow::MainWindow(QWidget *parent)
         this->showMinimized();
     });
 
+    connect(ui->pushButtonDevice,&QPushButton::clicked,this,[=]{
+        DialogDeviceSet dlg(this);
+        dlg.exec();
+    });
     connect(ui->pushButtonMKey,&QPushButton::clicked,this,[=]{
         DialogMKeySet dlg(this);
         dlg.exec();
@@ -433,12 +452,29 @@ MainWindow::MainWindow(QWidget *parent)
         connect(hideAction, &QAction::triggered, this, &QMainWindow::hide);
         trayIcon->setContextMenu(trayMenu);
     }
-
+    ui->page00->installEventFilter(this);
+    ui->page01->installEventFilter(this);
+    ui->page02->installEventFilter(this);
+    ui->page03->installEventFilter(this);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::updateValue()
+{
+    switch(m_index)
+    {
+    case 0:
+    {
+        ui->labelColor->hide();
+    }
+        break;
+    }
+
+    update();
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)
@@ -452,6 +488,9 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
     p.drawImage(this->rect(), QImage(QApplication::applicationDirPath()+"/images/bground.png"));
     p.drawImage(QRect(0,2,132,44), QImage(QApplication::applicationDirPath()+"/images/nmylogo.png"));
+
+
+    // p.fillRect(ui->stackedWidget0->geometry().adjusted(20,20,-50,50),Qt::blue);
 
     QMainWindow::paintEvent(event);
 }
@@ -468,6 +507,62 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
     {
         DialogCloudCmd dlg(this);
         dlg.exec();
+    }
+
+    if(event->type() == QEvent::Paint && (watched == ui->page00 || watched == ui->page01 || watched == ui->page02 || watched == ui->page03))
+    {
+        QImage bkImg = QImage(":/images/bk0.png");
+        QWidget *Page = static_cast<QWidget *>(watched);
+        QRect rc = Page->rect();
+        QPainter p(Page);
+        int mx = rc.center().x();
+        int my = rc.center().y();
+
+        if(watched == ui->page00)
+        {
+            p.drawImage(rc,bkImg);
+
+            int radius = ui->horizontalSlider0->value()/2;
+            QRect rcFlag=QRect(mx-radius,my-radius,radius*2,radius*2);
+
+            QColor color = QColor(m_curColor);
+            color.setAlpha(ui->horizontalSlider1->value()*255/100.0);
+            //qDebug() << QString::asprintf("0x%08X",color.value()) ;
+            p.setBrush(color);
+            p.setPen(Qt::NoPen);
+            p.drawEllipse(rcFlag);
+        }
+
+        if(watched == ui->page02)
+        {
+            p.drawImage(rc,bkImg);
+
+            QPoint m_curPos(mx,my);
+            int dist = ui->horizontalSlider4->value()/2;
+            QRect rcDest = QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist));
+
+            QColor color(Qt::black);
+            color.setAlpha(ui->horizontalSlider5->value()*255/100.0);
+            p.fillRect(rc,color);
+
+            QPainterPath path;
+            path.addEllipse(rcDest);
+            p.setClipPath(path);
+
+            p.drawImage(m_curPos-QPoint(dist,dist),bkImg,rcDest);
+        }
+
+        if(watched == ui->page03)
+        {
+            p.drawImage(rc,bkImg);
+
+            QColor color = QColor(m_curColor);
+            color.setAlpha(ui->horizontalSlider7->value()*255/100.0);
+            QPen LinePen(color);
+            LinePen.setWidth(ui->horizontalSlider6->value());
+            p.setPen(LinePen);
+            p.drawLine(QPoint(20,my+30),QPoint(rc.right()-20,my-30));
+        }
     }
 
     return QMainWindow::eventFilter(watched,event);
