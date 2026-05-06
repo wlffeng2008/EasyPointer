@@ -267,9 +267,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->horizontalSlider0->setValue(40);
     ui->horizontalSlider1->setValue(80);
-    ui->horizontalSlider4->setValue(20);
+    ui->horizontalSlider2->setValue(80);
+    ui->horizontalSlider4->setValue(200);
     ui->horizontalSlider5->setValue(80);
-    ui->horizontalSlider6->setValue(20);
+    ui->horizontalSlider6->setValue(10);
     ui->horizontalSlider7->setValue(80);
 
     ui->pushButton0->click();
@@ -408,6 +409,13 @@ MainWindow::MainWindow(QWidget *parent)
         this->showMinimized();
     });
 
+    connect(ui->pushButtonRound,&QPushButton::clicked,this,[=]{
+        update();
+    });
+    connect(ui->pushButtonRect,&QPushButton::clicked,this,[=]{
+        update();
+    });
+
     connect(ui->pushButtonDevice,&QPushButton::clicked,this,[=]{
         DialogDeviceSet dlg(this);
         dlg.exec();
@@ -511,32 +519,46 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 
     if(event->type() == QEvent::Paint && (watched == ui->page00 || watched == ui->page01 || watched == ui->page02 || watched == ui->page03))
     {
-        QImage bkImg = QImage(":/images/bk0.png");
+        static QImage bkImg = QImage(":/images/bk0.png");
         QWidget *Page = static_cast<QWidget *>(watched);
         QRect rc = Page->rect();
         QPainter p(Page);
         int mx = rc.center().x();
         int my = rc.center().y();
+        p.drawImage(rc,bkImg);
 
         if(watched == ui->page00)
         {
-            p.drawImage(rc,bkImg);
 
             int radius = ui->horizontalSlider0->value()/2;
             QRect rcFlag=QRect(mx-radius,my-radius,radius*2,radius*2);
 
             QColor color = QColor(m_curColor);
             color.setAlpha(ui->horizontalSlider1->value()*255/100.0);
-            //qDebug() << QString::asprintf("0x%08X",color.value()) ;
             p.setBrush(color);
             p.setPen(Qt::NoPen);
             p.drawEllipse(rcFlag);
         }
 
+        if(watched == ui->page01)
+        {
+            int dist = ui->horizontalSlider2->value()/2;
+            qreal factor = 1.5;
+
+            QPoint m_curPos(mx,my);
+            QImage tmp = bkImg.copy(QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
+            QRect tarRect(m_curPos-QPoint(dist*factor,dist*factor),m_curPos+QPoint(dist*factor,dist*factor));
+
+            QPainterPath path;
+            path.addEllipse(tarRect);
+            if(ui->pushButtonRound->isChecked())
+                p.setClipPath(path);
+
+            p.drawImage(tarRect,tmp);
+        }
+
         if(watched == ui->page02)
         {
-            p.drawImage(rc,bkImg);
-
             QPoint m_curPos(mx,my);
             int dist = ui->horizontalSlider4->value()/2;
             QRect rcDest = QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist));
@@ -554,14 +576,26 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 
         if(watched == ui->page03)
         {
-            p.drawImage(rc,bkImg);
-
+            p.fillRect(rc,Qt::gray);
             QColor color = QColor(m_curColor);
             color.setAlpha(ui->horizontalSlider7->value()*255/100.0);
             QPen LinePen(color);
             LinePen.setWidth(ui->horizontalSlider6->value());
+            LinePen.setCapStyle(Qt::RoundCap);
             p.setPen(LinePen);
-            p.drawLine(QPoint(20,my+30),QPoint(rc.right()-20,my-30));
+            QList<QPoint>array;
+            qreal fStep = rc.width()/20.0;
+
+            QPoint A (20,my);
+            for(int i=1; i<20; i++)
+            {
+                QPoint B(20 +i*fStep,my + rand()%50 * (rand()%2?-1:1));
+                //array.push_back(QPoint(20 +i*fStep,my + rand()%50 * (rand()%2?-1:1)));
+                p.drawLine(A,B);
+                A = B;
+            }
+            //p.drawLine(QPoint(20,my+30),QPoint(rc.right()-20,my-30));
+            //p.drawLine(array);
         }
     }
 
