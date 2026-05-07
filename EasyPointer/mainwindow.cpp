@@ -316,6 +316,7 @@ MainWindow::MainWindow(QWidget *parent)
             nFunc++;
             m_press = 0;
             pFuncPad->hide();
+            m_ModeTip->showMode(m_mode);
         }
             break;
 
@@ -359,7 +360,7 @@ MainWindow::MainWindow(QWidget *parent)
             break;
         case 0x9d: // s2 单击
             break;
-        case 0x9e:  // s2 双击
+        case 0x9e: // s2 双击
             break;
 
         case 0x9f: qDebug() << "声音外放....." ;
@@ -500,9 +501,6 @@ void MainWindow::paintEvent(QPaintEvent *event)
     p.drawImage(this->rect(), QImage(QApplication::applicationDirPath()+"/images/bground.png"));
     p.drawImage(QRect(0,2,132,44), QImage(QApplication::applicationDirPath()+"/images/nmylogo.png"));
 
-
-    // p.fillRect(ui->stackedWidget0->geometry().adjusted(20,20,-50,50),Qt::blue);
-
     QMainWindow::paintEvent(event);
 }
 
@@ -532,7 +530,6 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 
         if(watched == ui->page00)
         {
-
             int radius = ui->horizontalSlider0->value()/2;
             QRect rcFlag=QRect(mx-radius,my-radius,radius*2,radius*2);
 
@@ -589,16 +586,13 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             QList<QPoint>array;
             qreal fStep = rc.width()/20.0;
 
-            QPoint A (20,my);
+            QPoint A(20,my);
             for(int i=1; i<20; i++)
             {
-                QPoint B(20 +i*fStep,my + rand()%50 * (rand()%2?-1:1));
-                //array.push_back(QPoint(20 +i*fStep,my + rand()%50 * (rand()%2?-1:1)));
+                QPoint B(20 + i*fStep, my + rand()%50 * (rand() % 2 ? -1 : 1));
                 p.drawLine(A,B);
                 A = B;
             }
-            //p.drawLine(QPoint(20,my+30),QPoint(rc.right()-20,my-30));
-            //p.drawLine(array);
         }
     }
 

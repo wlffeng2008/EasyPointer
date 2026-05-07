@@ -38,6 +38,8 @@ void DialogTip::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
 
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+
     QPainterPath path;
     path.addRoundedRect(rect(),24,24);
     painter.setClipPath(path);
