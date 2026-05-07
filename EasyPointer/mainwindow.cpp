@@ -213,7 +213,7 @@ MainWindow::MainWindow(QWidget *parent)
             if(index == 3 || index == 0)
             ui->frameColor->setHidden(false);
             ui->stackedWidget1->setHidden(false);
-            m_ModeTip->showMode(index);
+            //m_ModeTip->showMode(index);
             break;
 
         case 4:
@@ -518,7 +518,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         dlg.exec();
     }
 
-    if(event->type() == QEvent::Paint && (watched == ui->page00 || watched == ui->page01 || watched == ui->page02 || watched == ui->page03))
+    if(event->type() == QEvent::Paint)
     {
         static QImage bkImg = QImage(":/images/bk0.png");
         QWidget *Page = static_cast<QWidget *>(watched);
@@ -527,6 +527,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         int mx = rc.center().x();
         int my = rc.center().y();
         p.drawImage(rc,bkImg);
+        QPoint  Center(mx,my);
 
         if(watched == ui->page00)
         {
@@ -545,9 +546,8 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             int dist = ui->horizontalSlider2->value()/2;
             qreal factor = 1.5;
 
-            QPoint m_curPos(mx,my);
-            QImage tmp = bkImg.copy(QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
-            QRect tarRect(m_curPos-QPoint(dist*factor,dist*factor),m_curPos+QPoint(dist*factor,dist*factor));
+            QImage tmp = bkImg.copy(QRect(Center-QPoint(dist,dist),Center+QPoint(dist,dist)));
+            QRect tarRect(Center-QPoint(dist*factor,dist*factor),Center+QPoint(dist*factor,dist*factor));
 
             QPainterPath path;
             path.addEllipse(tarRect);
@@ -559,9 +559,8 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 
         if(watched == ui->page02)
         {
-            QPoint m_curPos(mx,my);
             int dist = ui->horizontalSlider4->value()/2;
-            QRect rcDest = QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist));
+            QRect rcDest = QRect(Center-QPoint(dist,dist),Center+QPoint(dist,dist));
 
             QColor color(Qt::black);
             color.setAlpha(ui->horizontalSlider5->value()*255/100.0);
@@ -571,7 +570,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             path.addEllipse(rcDest);
             p.setClipPath(path);
 
-            p.drawImage(m_curPos-QPoint(dist,dist),bkImg,rcDest);
+            p.drawImage(Center-QPoint(dist,dist),bkImg,rcDest);
         }
 
         if(watched == ui->page03)
@@ -579,11 +578,12 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             p.fillRect(rc,Qt::gray);
             QColor color = QColor(m_curColor);
             color.setAlpha(ui->horizontalSlider7->value()*255/100.0);
+
             QPen LinePen(color);
             LinePen.setWidth(ui->horizontalSlider6->value());
             LinePen.setCapStyle(Qt::RoundCap);
             p.setPen(LinePen);
-            QList<QPoint>array;
+
             qreal fStep = rc.width()/20.0;
 
             QPoint A(20,my);
@@ -640,7 +640,6 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
     }
     QMainWindow::mouseReleaseEvent(event);
 }
-
 
 void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 {

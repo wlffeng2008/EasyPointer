@@ -643,7 +643,7 @@ QPushButton:checked  {
      <string notr="true"/>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="page10">
      <widget class="QFrame" name="frame0">
@@ -1032,7 +1032,7 @@ QPushButton:checked  {
        <item>
         <widget class="QSlider" name="horizontalSlider4">
          <property name="minimum">
-          <number>10</number>
+          <number>50</number>
          </property>
          <property name="maximum">
           <number>500</number>

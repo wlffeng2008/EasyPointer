@@ -28,7 +28,7 @@ DialogTip::~DialogTip()
 {
     this->mode = mode;
     show();
-    QTimer::singleShot(2000,this,[=]{hide();});
+    QTimer::singleShot(3000,this,[=]{hide();});
  }
 
 void DialogTip::paintEvent(QPaintEvent *event)
