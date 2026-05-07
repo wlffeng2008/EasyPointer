@@ -24,6 +24,21 @@ public:
     void clearLines();
     void setDrage(bool set=true);
 
+    quint16 m_radius0;
+    quint16 m_radius1;
+    quint16 m_radius2;
+    quint16 m_radius3;
+
+    bool m_bRound = true;
+
+    QColor m_color0;
+    QColor m_color1;
+    QColor m_color2;
+    QColor m_color3;
+    int m_iColor0=0;
+    int m_iColor3=0;
+    quint32 m_tmCount = 1800;
+
 protected:
     bool event(QEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
@@ -38,7 +53,6 @@ protected:
 private:
     Ui::DialogBoard *ui;
 
-    quint32 m_tmCount = 1800;
     QTimer *m_tmBlack = nullptr;
     QPoint m_curPos;
     int m_mode=0;

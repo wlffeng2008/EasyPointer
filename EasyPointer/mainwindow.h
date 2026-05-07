@@ -1,7 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "qpushbutton.h"
 #include <QMainWindow>
 #include <QTimer>
 #include <QTranslator>
@@ -15,6 +14,8 @@ namespace Ui {
 class MainWindow;
 }
 QT_END_NAMESPACE
+
+class DialogBoard;
 
 class MainWindow : public QMainWindow
 {
@@ -35,22 +36,37 @@ protected:
 
 private:
     Ui::MainWindow *ui;
+
     QPoint m_dragPosition;
     bool m_dragging = false;
-    QAbstractButton *m_pActive=nullptr;
-    CHidWorker *m_pHID = nullptr;
-    int m_mode = 0;
-    int m_press = 0;
 
-    DialogTip *m_ModeTip = nullptr;
+    int m_mode  = -1;
+    int m_press = 0;
+    CHidWorker *m_pHID = nullptr;
+    DialogBoard *pFuncPad = nullptr;
+
+    quint16 m_radius0;
+    quint16 m_radius1;
+    quint16 m_radius2;
+    quint16 m_radius3;
+
+    bool m_bRound = true;
+
+    QColor m_color0;
+    QColor m_color1;
+    QColor m_color2;
+    QColor m_color3;
+    int m_iColor0=0;
+    int m_iColor3=0;
 
     int m_index=0;
-    quint32 m_curColor;
+    int m_iColor=0;
     void updateValue();
+    DialogTip *m_ModeTip = nullptr;
 
-    QSystemTrayIcon *trayIcon = nullptr;
     QAction *m_act0 = nullptr;
     QAction *m_act1 = nullptr;
     QAction *m_act2 = nullptr;
+    QSystemTrayIcon *trayIcon = nullptr;
 };
 #endif // MAINWINDOW_H

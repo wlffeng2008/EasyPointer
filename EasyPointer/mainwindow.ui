@@ -2335,6 +2335,9 @@ background-image: url(:/images/jd.png);
       <height>16</height>
      </rect>
     </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
     <property name="text">
      <string>-</string>
     </property>
@@ -2446,9 +2449,9 @@ background-image: url(:/images/jd.png);
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupVoice"/>
-  <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupColor"/>
   <buttongroup name="buttonGroupShape"/>
+  <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupCount"/>
  </buttongroups>
 </ui>

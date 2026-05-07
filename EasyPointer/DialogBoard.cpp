@@ -64,50 +64,50 @@ void DialogBoard::paintEvent(QPaintEvent *event)
     {
     case 0:
     {
-        int dist = 15;
-        qreal factor = 1;
-        QRect tarRect(m_curPos-QPoint(dist*factor,dist*factor),m_curPos+QPoint(dist*factor,dist*factor));
-
-        QPainterPath path;
-        path.addEllipse(tarRect);
-        painter.setClipPath(path);
-
-        painter.fillRect(tarRect,QBrush(Qt::red));
+        int dist = m_radius0;
+        QRect tarRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist));
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(m_color0);
+        painter.drawEllipse(tarRect);
     }
     break;
 
     case 1:
     {
-        painter.fillRect(this->rect(),QBrush(Qt::black));
-
-        int dist = 120;
-
-        QPainterPath path;
-        path.addEllipse(QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
-        painter.setClipPath(path);
-        painter.drawPixmap(m_curPos-QPoint(dist,dist),m_screen,QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
-    }
-    break;
-
-    case 2:
-    {
-        int dist = 120;
-        qreal factor = 1.5;
-
+        int dist = m_radius1;
         QPixmap tmp = m_screen.copy(QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
+
+        qreal factor = 1.5;
         QRect tarRect(m_curPos-QPoint(dist*factor,dist*factor),m_curPos+QPoint(dist*factor,dist*factor));
 
         QPainterPath path;
         path.addEllipse(tarRect);
         painter.setClipPath(path);
+
         painter.drawPixmap(tarRect,tmp);
     }
-        break;
+    break;
+
+    case 2:
+    {
+        painter.fillRect(this->rect(),m_color2);
+
+        int dist = m_radius2;
+
+        QPainterPath path;
+        path.addEllipse(QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
+        if(m_bRound)
+            painter.setClipPath(path);
+
+        painter.drawPixmap(m_curPos-QPoint(dist,dist),m_screen,QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
+    }
+    break;
 
     case 3:
     {
         painter.setRenderHint(QPainter::Antialiasing);
-        painter.setPen(QPen(QBrush(Qt::red),15,Qt::SolidLine,Qt::RoundCap));
+        QPen LinePen(m_color3,m_radius3,Qt::SolidLine,Qt::RoundCap);
+        painter.setPen(LinePen);
         for(const linePoints &line:std::as_const(m_lines))
         {
             int count = line.count();
