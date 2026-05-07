@@ -129,6 +129,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->labelCloudCmd->installEventFilter(this);
     m_curColor = colors[0];
 
+    m_ModeTip = new DialogTip(this);
+
     setStyleSheet(R"(
 
     * { font-size: 14px; font-weight: 400;}
@@ -211,6 +213,7 @@ MainWindow::MainWindow(QWidget *parent)
             if(index == 3 || index == 0)
             ui->frameColor->setHidden(false);
             ui->stackedWidget1->setHidden(false);
+            m_ModeTip->showMode(index);
             break;
 
         case 4:

@@ -643,7 +643,7 @@ QPushButton:checked  {
      <string notr="true"/>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="page10">
      <widget class="QFrame" name="frame0">
@@ -709,6 +709,9 @@ QPushButton:checked  {
          </property>
          <property name="maximum">
           <number>200</number>
+         </property>
+         <property name="singleStep">
+          <number>10</number>
          </property>
          <property name="orientation">
           <enum>Qt::Orientation::Horizontal</enum>
@@ -823,6 +826,9 @@ QPushButton:checked  {
          </property>
          <property name="maximum">
           <number>500</number>
+         </property>
+         <property name="singleStep">
+          <number>10</number>
          </property>
          <property name="orientation">
           <enum>Qt::Orientation::Horizontal</enum>
@@ -1031,6 +1037,9 @@ QPushButton:checked  {
          <property name="maximum">
           <number>500</number>
          </property>
+         <property name="singleStep">
+          <number>10</number>
+         </property>
          <property name="orientation">
           <enum>Qt::Orientation::Horizontal</enum>
          </property>
@@ -1191,6 +1200,9 @@ QPushButton:checked  {
         <widget class="QSlider" name="horizontalSlider7">
          <property name="maximum">
           <number>100</number>
+         </property>
+         <property name="singleStep">
+          <number>10</number>
          </property>
          <property name="orientation">
           <enum>Qt::Orientation::Horizontal</enum>
@@ -2434,9 +2446,9 @@ background-image: url(:/images/jd.png);
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupVoice"/>
+  <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupColor"/>
   <buttongroup name="buttonGroupShape"/>
-  <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupCount"/>
  </buttongroups>
 </ui>

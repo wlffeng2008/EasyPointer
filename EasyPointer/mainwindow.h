@@ -8,6 +8,7 @@
 #include <QSystemTrayIcon>
 
 #include "hidworker.h"
+#include "DialogTip.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -41,10 +42,11 @@ private:
     int m_mode = 0;
     int m_press = 0;
 
+    DialogTip *m_ModeTip = nullptr;
+
     int m_index=0;
     quint32 m_curColor;
     void updateValue();
-
 
     QSystemTrayIcon *trayIcon = nullptr;
     QAction *m_act0 = nullptr;
