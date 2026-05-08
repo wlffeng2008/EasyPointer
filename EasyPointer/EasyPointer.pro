@@ -1,4 +1,4 @@
-QT       += core gui multimedia websockets
+QT       += core gui multimedia websockets network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -15,7 +15,7 @@ VERSION = 1.0.0.0
 TARGET = NmyStudio
 QMAKE_TARGET_COMPANY = "Nmy"
 QMAKE_TARGET_PRODUCT = "Nmy"
-QMAKE_TARGET_DESCRIPTION = "Nmy: Created by Qt6.10.0"
+QMAKE_TARGET_DESCRIPTION = "Nmy: Created by Qt6.11.0"
 QMAKE_TARGET_COPYRIGHT = "Nmy(2026.01)"
 RC_LANG = 0x0004
 
@@ -25,7 +25,7 @@ win32 {
 }
 
 LIBS += -L$$PWD -lhidapi
-LIBS += -luser32 -ladvapi32 -lole32 -lpropsys -luuid
+# LIBS += -luser32 -ladvapi32 -lole32 -lpropsys -luuid
 
 SOURCES += \
     DialogBoard.cpp \

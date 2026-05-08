@@ -34,5 +34,6 @@
         <file>images/tmall.png</file>
         <file>images/drop-down.png</file>
         <file>images/logo.png</file>
+        <file>images/btn-min.png</file>
     </qresource>
 </RCC>

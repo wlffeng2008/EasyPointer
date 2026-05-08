@@ -16,98 +16,6 @@
 #include "DialogDeviceSet.h"
 #include "DialogMKeySet.h"
 
-#include <windows.h>
-#include <mmdeviceapi.h>
-#include <endpointvolume.h>
-#include <devicetopology.h>
-#include <propkey.h>
-#include <Functiondiscoverykeys_devpkey.h>
-const PROPERTYKEY PKEY_AudioEndpoint_ControlPanel_ListenToThisDevice =
-    {
-        {0xa45c254e, 0xdf1c, 0x4efd, {0x80,0x20,0x67,0xd1,0x46,0xa8,0x50,0xe0}},
-        19
-};
-
-// 打开/关闭 麦克风侦听此设备
-// enable = true 开启侦听，false 关闭侦听
-bool setMicrophoneListen(bool enable)
-{
-    HRESULT hr;
-    IMMDeviceEnumerator* pEnumerator = nullptr;
-    IMMDevice* pDevice = nullptr;
-
-    // 1. 创建设备枚举器
-    hr = CoCreateInstance(__uuidof(MMDeviceEnumerator),
-                          nullptr,
-                          CLSCTX_ALL,
-                          __uuidof(IMMDeviceEnumerator),
-                          (void**)&pEnumerator);
-    if (FAILED(hr)) return false;
-
-    // 2. 获取默认录音设备（麦克风）
-    hr = pEnumerator->GetDefaultAudioEndpoint(eCapture, eConsole, &pDevice);
-    if (FAILED(hr)) {
-        pEnumerator->Release();
-        return false;
-    }
-
-    // 3. 打开设备属性
-    IPropertyStore* pProps = nullptr;
-    hr = pDevice->OpenPropertyStore(STGM_READWRITE, &pProps);
-    if (FAILED(hr)) {
-        pDevice->Release();
-        pEnumerator->Release();
-        return false;
-    }
-
-    // 4. 关键：侦听此设备 对应的 PROPERTYKEY
-    PROPERTYKEY key = PKEY_AudioEndpoint_ControlPanel_ListenToThisDevice;
-
-    // 5. 写入值 VT_BOOL
-    PROPVARIANT var;
-    PropVariantInit(&var);
-    var.vt = VT_BOOL;
-    var.boolVal = enable ? VARIANT_TRUE : VARIANT_FALSE;
-
-    hr = pProps->SetValue(key, var);
-    PropVariantClear(&var);
-
-    // 释放资源
-    pProps->Release();
-    pDevice->Release();
-    pEnumerator->Release();
-
-    return SUCCEEDED(hr);
-}
-
-// 获取当前侦听状态
-bool getMicrophoneListenStatus()
-{
-    // 逻辑类似上面，我直接给你完整可用版本
-    IMMDeviceEnumerator* pEnumerator = nullptr;
-    IMMDevice* pDevice = nullptr;
-    CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL,
-                     __uuidof(IMMDeviceEnumerator), (void**)&pEnumerator);
-
-    pEnumerator->GetDefaultAudioEndpoint(eCapture, eConsole, &pDevice);
-    IPropertyStore* pProps = nullptr;
-    pDevice->OpenPropertyStore(STGM_READ, &pProps);
-
-    PROPERTYKEY key = PKEY_AudioEndpoint_ControlPanel_ListenToThisDevice;
-    PROPVARIANT var;
-    PropVariantInit(&var);
-    pProps->GetValue(key, &var);
-
-    bool status = (var.boolVal == VARIANT_TRUE);
-    PropVariantClear(&var);
-
-    pProps->Release();
-    pDevice->Release();
-    pEnumerator->Release();
-
-    return status;
-}
-
 static QList<quint32> colors={0xFF0000,0x00FF00,0x0000FF,0xFFFFFF,0xFF8000,0x800080,0xFFFF00,0x00FFFF,0x000000};
 
 MainWindow::MainWindow(QWidget *parent)
@@ -119,8 +27,6 @@ MainWindow::MainWindow(QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowTitle("Nmy Pointer");
     //resize(828,466);
-
-    m_ModeTip = new DialogTip(this);
 
     setStyleSheet(R"(
 
@@ -172,11 +78,16 @@ MainWindow::MainWindow(QWidget *parent)
         border: none;
         image: url(:/images/radio-checked.png);}
 )");
-    CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
-    pFuncPad = new DialogBoard();
+    pFuncPad  = new DialogBoard();
+    m_ModeTip = new DialogTip(this);
+
+    QCoreApplication::setOrganizationName("NMY");
+    QCoreApplication::setApplicationName("NMYPointer");
+    m_set = new QSettings();
 
     connect(ui->pushButtonExit,&QPushButton::clicked,this,[=]{ qApp->exit(); });
+    connect(ui->pushButtonMin,&QPushButton::clicked,this,[=]{ this->showMinimized(); });
 
     connect(ui->buttonGroupMain,&QButtonGroup::idClicked,this,[=](int id){
         int index = abs(id);
@@ -194,7 +105,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->labelNotice->setHidden(true);
 
         m_index = index;
-
+        saveLoadParams();
         switch(index)
         {
         case 0:
@@ -263,25 +174,6 @@ MainWindow::MainWindow(QWidget *parent)
         updateValue();
         ui->labelValue31->setText(QString::asprintf("%1%%").arg(value));
     });
-
-    m_iColor0=0;
-    m_iColor3=3;
-    ui->horizontalSlider0->setValue(50);
-    ui->horizontalSlider1->setValue(80);
-    ui->horizontalSlider2->setValue(200);
-    ui->horizontalSlider4->setValue(200);
-    ui->horizontalSlider5->setValue(80);
-    ui->horizontalSlider6->setValue(10);
-    ui->horizontalSlider7->setValue(80);
-
-    ui->pushButton0->click();
-    ui->pushButton_C1->click();
-
-    QImage batt(":/images/batt.png");
-
-    QPainter p(&batt);
-    p.fillRect(QRect(3,3,23,10),QBrush(Qt::green));
-    ui->labelBattery->setPixmap(QPixmap::fromImage(batt));
 
     m_pHID = new CHidWorker();
 
@@ -417,9 +309,6 @@ MainWindow::MainWindow(QWidget *parent)
         DialogTypeWord dlg(this);
         dlg.exec();
     });
-    connect(ui->pushButtonMin,&QPushButton::clicked,this,[=]{
-        this->showMinimized();
-    });
 
     connect(ui->pushButtonRound,&QPushButton::clicked,this,[=]{
         updateValue();
@@ -482,7 +371,44 @@ MainWindow::MainWindow(QWidget *parent)
     ui->page02->installEventFilter(this);
     ui->page03->installEventFilter(this);
 
+    saveLoadParams(false);
+    ui->pushButton0->click();
     updateValue();
+}
+
+void MainWindow::saveLoadParams(bool save)
+{
+    m_set->beginGroup("settings");
+    if(save)
+    {
+        m_set->setValue("icolor0",m_iColor0);
+        m_set->setValue("icolor3",m_iColor3);
+        m_set->setValue("radius0",ui->horizontalSlider0->value());
+        m_set->setValue("opacity0",ui->horizontalSlider1->value());
+        m_set->setValue("radius1",ui->horizontalSlider2->value());
+        m_set->setValue("radius2",ui->horizontalSlider4->value());
+        m_set->setValue("opacity1",ui->horizontalSlider5->value());
+        m_set->setValue("radius3",ui->horizontalSlider6->value());
+        m_set->setValue("opacity3",ui->horizontalSlider7->value());
+        m_set->setValue("round1",ui->horizontalSlider7->value());
+        m_set->value("round1",ui->pushButtonRound->isChecked());
+    }
+    else
+    {
+        m_iColor0 = m_set->value("icolor0").toInt();
+        m_iColor3 = m_set->value("icolor3").toInt();
+        ui->horizontalSlider0->setValue(m_set->value("radius0",20).toInt());
+        ui->horizontalSlider1->setValue(m_set->value("opacity0",80).toInt());
+        ui->horizontalSlider2->setValue(m_set->value("radius1",200).toInt());
+        ui->horizontalSlider4->setValue(m_set->value("radius2",200).toInt());
+        ui->horizontalSlider5->setValue(m_set->value("opacity1",80).toInt());
+        ui->horizontalSlider6->setValue(m_set->value("radius3",10).toInt());
+        ui->horizontalSlider7->setValue(m_set->value("opacity3",80).toInt());
+        m_bRound = m_set->value("round1",true).toBool();
+        ui->buttonGroupColor->button(-m_iColor0-2)->click();
+        if(!m_bRound) ui->pushButtonRect->click();
+    }
+    m_set->endGroup();
 }
 
 MainWindow::~MainWindow()
