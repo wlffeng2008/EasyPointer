@@ -121,6 +121,8 @@ private:
     int m_iColor0=0;
     int m_iColor3=0;
 
+    int m_voice=0;
+    int m_show=0;
     int m_index=0;
     int m_iColor=0;
     void updateValue();

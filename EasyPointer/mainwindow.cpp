@@ -105,7 +105,6 @@ MainWindow::MainWindow(QWidget *parent)
         ui->labelNotice->setHidden(true);
 
         m_index = index;
-        saveLoadParams();
         switch(index)
         {
         case 0:
@@ -135,12 +134,26 @@ MainWindow::MainWindow(QWidget *parent)
         if(index == 3) ui->buttonGroupColor->button(-m_iColor3-2)->click();
 
         updateValue();
+        saveLoadParams();
     });
 
     connect(ui->buttonGroupColor,&QButtonGroup::idClicked,this,[=](int id){
         int index = abs(id)-2;
         m_iColor = index;
         updateValue();
+        saveLoadParams();
+    });
+    connect(ui->buttonGroupCount,&QButtonGroup::idClicked,this,[=](int id){
+        int index = abs(id)-2;
+        m_show = index;
+        updateValue();
+        saveLoadParams();
+    });
+    connect(ui->buttonGroupVoice,&QButtonGroup::idClicked,this,[=](int id){
+        int index = abs(id)-2;
+        m_voice = index;
+        updateValue();
+        saveLoadParams();
     });
 
     connect(ui->horizontalSlider0,&QSlider::valueChanged,this,[=](int value){
@@ -390,8 +403,11 @@ void MainWindow::saveLoadParams(bool save)
         m_set->setValue("opacity1",ui->horizontalSlider5->value());
         m_set->setValue("radius3",ui->horizontalSlider6->value());
         m_set->setValue("opacity3",ui->horizontalSlider7->value());
-        m_set->setValue("round1",ui->horizontalSlider7->value());
-        m_set->value("round1",ui->pushButtonRound->isChecked());
+        m_set->setValue("round1",ui->pushButtonRound->isChecked());
+        m_set->setValue("showBlack",ui->checkBoxBlack->isChecked());
+        m_set->setValue("showTime",ui->lineEditSetTime->text());
+        m_set->setValue("showIndex",m_show);
+        m_set->setValue("showVoice",m_voice);
     }
     else
     {
@@ -404,7 +420,14 @@ void MainWindow::saveLoadParams(bool save)
         ui->horizontalSlider5->setValue(m_set->value("opacity1",80).toInt());
         ui->horizontalSlider6->setValue(m_set->value("radius3",10).toInt());
         ui->horizontalSlider7->setValue(m_set->value("opacity3",80).toInt());
+        ui->lineEditSetTime->setText(m_set->value("showTime","90").toString());
+        ui->checkBoxBlack->setChecked(m_set->value("showBlack",false).toBool());
+        m_show = m_set->value("showIndex",2).toInt();
+        m_voice = m_set->value("showVoice",2).toInt();
         m_bRound = m_set->value("round1",true).toBool();
+
+        ui->buttonGroupCount->button(-m_show-2)->click();
+        ui->buttonGroupVoice->button(-m_voice-2)->click();
         ui->buttonGroupColor->button(-m_iColor0-2)->click();
         if(!m_bRound) ui->pushButtonRect->click();
     }
@@ -457,6 +480,12 @@ void MainWindow::updateValue()
     pFuncPad->m_radius3 = m_radius3;
 
     pFuncPad->m_bRound = m_bRound;
+    int showTime = 3600;
+    if(m_show == 1) showTime = 1800;
+    if(m_show == 2) showTime = 600;
+    if(m_show == 3) showTime = ui->lineEditSetTime->text().toInt() * 60;
+    pFuncPad->m_tmCount= showTime;
+    pFuncPad->m_onlyBlack= ui->checkBoxBlack->isChecked();
 
     pFuncPad->m_color0 = m_color0;
     pFuncPad->m_color1 = m_color1;
@@ -477,6 +506,13 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
     p.drawImage(this->rect(),      QImage(QApplication::applicationDirPath()+"/images/bground.png"));
     p.drawImage(QRect(0,2,132,44), QImage(QApplication::applicationDirPath()+"/images/nmylogo.png"));
+    {
+        QImage batt(":/images/batt.png");
+
+        QPainter p(&batt);
+        p.fillRect(QRect(3,3,50/100.0 * 23,10),QBrush(Qt::green));
+        ui->labelBattery->setPixmap(QPixmap::fromImage(batt));
+    }
 
     QMainWindow::paintEvent(event);
 }

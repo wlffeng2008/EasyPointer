@@ -38,6 +38,7 @@ public:
     int m_iColor0=0;
     int m_iColor3=0;
     quint32 m_tmCount = 1800;
+    quint32 m_onlyBlack = false;
 
 protected:
     bool event(QEvent *event) override;

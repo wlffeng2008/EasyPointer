@@ -772,7 +772,7 @@ QPushButton:checked  {
         <height>110</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayout_5" stretch="1,1,1,0">
        <property name="spacing">
         <number>2</number>
        </property>
@@ -786,7 +786,7 @@ QPushButton:checked  {
         <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>5</number>
+        <number>1</number>
        </property>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -1226,7 +1226,7 @@ QPushButton:checked  {
      <string notr="true">#page01{background-color: rgb(170, 255, 255);}</string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="page00">
      <property name="styleSheet">
@@ -1272,7 +1272,7 @@ background-color:rgba(255,0,0,0.8);</string>
      <widget class="QRadioButton" name="radioButton00">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>234</x>
         <y>84</y>
         <width>22</width>
         <height>22</height>
@@ -1291,7 +1291,7 @@ background-color:rgba(255,0,0,0.8);</string>
      <widget class="QRadioButton" name="radioButton01">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>234</x>
         <y>114</y>
         <width>22</width>
         <height>22</height>
@@ -1307,7 +1307,7 @@ background-color:rgba(255,0,0,0.8);</string>
      <widget class="QRadioButton" name="radioButton02">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>234</x>
         <y>144</y>
         <width>22</width>
         <height>22</height>
@@ -1323,7 +1323,7 @@ background-color:rgba(255,0,0,0.8);</string>
      <widget class="QRadioButton" name="radioButton12">
       <property name="geometry">
        <rect>
-        <x>462</x>
+        <x>468</x>
         <y>144</y>
         <width>22</width>
         <height>22</height>
@@ -1339,7 +1339,7 @@ background-color:rgba(255,0,0,0.8);</string>
      <widget class="QRadioButton" name="radioButton11">
       <property name="geometry">
        <rect>
-        <x>462</x>
+        <x>468</x>
         <y>114</y>
         <width>22</width>
         <height>22</height>
@@ -1355,7 +1355,7 @@ background-color:rgba(255,0,0,0.8);</string>
      <widget class="QRadioButton" name="radioButton10">
       <property name="geometry">
        <rect>
-        <x>462</x>
+        <x>468</x>
         <y>84</y>
         <width>22</width>
         <height>22</height>
@@ -1374,9 +1374,9 @@ background-color:rgba(255,0,0,0.8);</string>
      <widget class="QLabel" name="label_14">
       <property name="geometry">
        <rect>
-        <x>88</x>
-        <y>172</y>
-        <width>117</width>
+        <x>76</x>
+        <y>170</y>
+        <width>67</width>
         <height>30</height>
        </rect>
       </property>
@@ -1389,16 +1389,14 @@ background-color:rgba(255,0,0,0.8);</string>
       <property name="styleSheet">
        <string notr="true">QLabel {
 background: transparent;
-border: 2px solid white;
-border-radius:15px;
 color:#38ABB9;
 height:36px;
-font-size:14px;
+font-size:20px;
 font-weight:600;
 }</string>
       </property>
       <property name="text">
-       <string>自定义...</string>
+       <string>自定义</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -1407,7 +1405,7 @@ font-weight:600;
      <widget class="QPushButton" name="pushButtonTypeword">
       <property name="geometry">
        <rect>
-        <x>498</x>
+        <x>508</x>
         <y>144</y>
         <width>75</width>
         <height>23</height>
@@ -1415,6 +1413,57 @@ font-weight:600;
       </property>
       <property name="text">
        <string>进入设置...</string>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBoxBlack">
+      <property name="geometry">
+       <rect>
+        <x>86</x>
+        <y>206</y>
+        <width>119</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>仅显示黑屏</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButton03">
+      <property name="geometry">
+       <rect>
+        <x>234</x>
+        <y>174</y>
+        <width>22</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroupCount</string>
+      </attribute>
+     </widget>
+     <widget class="QLineEdit" name="lineEditSetTime">
+      <property name="geometry">
+       <rect>
+        <x>146</x>
+        <y>172</y>
+        <width>60</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>45</string>
       </property>
      </widget>
     </widget>
@@ -2485,10 +2534,10 @@ background-image: url(:/images/jd.png);
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupShape"/>
-  <buttongroup name="buttonGroupCount"/>
-  <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupVoice"/>
   <buttongroup name="buttonGroupColor"/>
+  <buttongroup name="buttonGroupShape"/>
+  <buttongroup name="buttonGroupMain"/>
+  <buttongroup name="buttonGroupCount"/>
  </buttongroups>
 </ui>

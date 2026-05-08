@@ -135,13 +135,16 @@ void DialogBoard::paintEvent(QPaintEvent *event)
         painter.setPen(pen);
         painter.setFont(font);
 
-        int remain = m_tmCount;
-        int hour = remain/3600;
-        int min = remain%3600/60;
-        int sec = remain%60;
-        QString strInfo = QString::asprintf("%02d:%02d:%02d",hour,min,sec);
+        if(!m_onlyBlack)
+        {
+            int remain = m_tmCount;
+            int hour = remain/3600;
+            int min = remain%3600/60;
+            int sec = remain%60;
+            QString strInfo = QString::asprintf("%02d:%02d:%02d",hour,min,sec);
 
-        painter.drawText(this->rect(), Qt::AlignCenter, strInfo);
+            painter.drawText(this->rect(), Qt::AlignCenter, strInfo);
+        }
     }
     break;
     }
