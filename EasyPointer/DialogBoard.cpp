@@ -14,8 +14,8 @@ DialogBoard::DialogBoard(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::DialogBoard)
 {
-    ui->setupUi(this);    
-    setWindowFlags(Qt::Dialog|Qt::FramelessWindowHint);
+    ui->setupUi(this);
+    setWindowFlags(Qt::Dialog|Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
     setFocusPolicy(Qt::StrongFocus);
 
     setMouseTracking(true);
@@ -44,7 +44,6 @@ void DialogBoard::capScreen()
 void DialogBoard::setMode(int mode)
 {
     m_mode = mode;
-    m_tmCount=1800;
     clearLines();
 }
 
@@ -144,6 +143,8 @@ void DialogBoard::paintEvent(QPaintEvent *event)
             QString strInfo = QString::asprintf("%02d:%02d:%02d",hour,min,sec);
 
             painter.drawText(this->rect(), Qt::AlignCenter, strInfo);
+            if(remain<=0)
+                hide();
         }
     }
     break;
@@ -170,6 +171,13 @@ void DialogBoard::setDrage(bool set)
         m_lines.push_back(m_record);
         update();
     }
+}
+
+
+void DialogBoard::hideEvent(QHideEvent *event)
+{
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
+    QDialog::hideEvent(event);
 }
 
 void DialogBoard::mousePressEvent(QMouseEvent *event)

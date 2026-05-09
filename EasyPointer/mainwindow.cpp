@@ -259,8 +259,10 @@ MainWindow::MainWindow(QWidget *parent)
 
         case 0x9b:
         {
+            updateValue();
             if(pFuncPad->isHidden())
             {
+                QApplication::setOverrideCursor(Qt::BlankCursor);
                 pFuncPad->setMode(4);
                 pFuncPad->showFullScreen();
                 pFuncPad->raise();
@@ -268,6 +270,7 @@ MainWindow::MainWindow(QWidget *parent)
             else
             {
                 pFuncPad->hide();
+                QApplication::setOverrideCursor(Qt::ArrowCursor);
             }
         }
             break;
@@ -411,8 +414,6 @@ void MainWindow::saveLoadParams(bool save)
     }
     else
     {
-        m_iColor0 = m_set->value("icolor0").toInt();
-        m_iColor3 = m_set->value("icolor3").toInt();
         ui->horizontalSlider0->setValue(m_set->value("radius0",20).toInt());
         ui->horizontalSlider1->setValue(m_set->value("opacity0",80).toInt());
         ui->horizontalSlider2->setValue(m_set->value("radius1",200).toInt());
@@ -422,6 +423,8 @@ void MainWindow::saveLoadParams(bool save)
         ui->horizontalSlider7->setValue(m_set->value("opacity3",80).toInt());
         ui->lineEditSetTime->setText(m_set->value("showTime","90").toString());
         ui->checkBoxBlack->setChecked(m_set->value("showBlack",false).toBool());
+        m_iColor0 = m_set->value("icolor0").toInt();
+        m_iColor3 = m_set->value("icolor3").toInt();
         m_show = m_set->value("showIndex",2).toInt();
         m_voice = m_set->value("showVoice",2).toInt();
         m_bRound = m_set->value("round1",true).toBool();
