@@ -13,7 +13,7 @@ DialogTip::DialogTip(QWidget *parent)
     , ui(new Ui::DialogTip)
 {
     ui->setupUi(this);
-    setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint);
+    setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint|Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_TranslucentBackground);
     setStyleSheet("QDialog { background-color: rgba(180, 180, 180, 0.8);  border: none; border-radius: 24px;}");
 

@@ -9,6 +9,16 @@ DialogRecord::DialogRecord(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint|Qt::WindowStaysOnTopHint);
+
+    m_XFV = new XFWSVoiceWrite();
+    connect(m_XFV,&XFWSVoiceWrite::send_voice_text,this,[=](const QString &strText,const QString &strpgs, int nTextSN, bool bTeminate){
+        qDebug() << strText;
+    });
+
+
+    QString m_strTypeLang="zh_cn" ;
+    QString m_strTypeAccent="mandarin" ;
+    m_XFV->setMontherLanguage(m_strTypeLang,m_strTypeAccent);
 }
 
 DialogRecord::~DialogRecord()
@@ -23,5 +33,13 @@ void DialogRecord::showEvent(QShowEvent *event)
     QRect rcTip(nPosX,nPosY,size().width(),size().height());
 
     setGeometry(rcTip);
+
+    m_XFV->ReqAuthAudio();
     QDialog::showEvent(event);
+}
+
+void DialogRecord::writePCM(char *data,int len)
+{
+    //qDebug() <<  "writePCM"  << len ;
+    m_XFV->WritePcmData(data,len);
 }

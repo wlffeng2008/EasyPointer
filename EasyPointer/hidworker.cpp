@@ -204,6 +204,8 @@ void CHidWorker::run()
         m_pDev = pDev;
         readSN();
         setMouse(false);
+        setLaser(false);
+        stopRecord();
 
         quint8 szBufs[20][64] = {{0}};
         int nUesed = 0;
@@ -220,9 +222,9 @@ void CHidWorker::run()
 
             QMutexLocker Lock(&m_mutex);
             QByteArray Log((const char *)(szBuf),nRet);
-            qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
             if(szBuf[0] != 0x1b)
             {
+                qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
             }
             else
             {
@@ -230,7 +232,7 @@ void CHidWorker::run()
                 encrypt(szBuf+1,eBuf,32);
 
                 static short aBuf[1024] = {0};
-                adpcm_to_pcm((short *)eBuf,aBuf,112);
+                adpcm_to_pcm((short *)eBuf,aBuf,56);
 
                 if(m_bOutPlay)
                 {

@@ -40,8 +40,10 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     typeword.cpp \
+    xfdatadecoder.cpp \
     xftexttospeech.cpp \
-    xftexttranslate.cpp
+    xftexttranslate.cpp \
+    xfwsvoicewrite.cpp
 
 HEADERS += \
     DialogBoard.h \
@@ -55,8 +57,10 @@ HEADERS += \
     hidworker.h \
     mainwindow.h \
     typeword.h \
+    xfdatadecoder.h \
     xftexttospeech.h \
-    xftexttranslate.h
+    xftexttranslate.h \
+    xfwsvoicewrite.h
 
 FORMS += \
     DialogBoard.ui \

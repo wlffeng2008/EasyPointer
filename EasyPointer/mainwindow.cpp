@@ -81,8 +81,8 @@ MainWindow::MainWindow(QWidget *parent)
     //setStyleSheet("#MainWindow ");
 
     pFuncPad  = new DialogBoard();
-    m_ModeTip = new DialogTip(this);
-    m_RecPad = new DialogRecord(this);
+    m_ModeTip = new DialogTip();
+    m_RecPad  = new DialogRecord();
 
     QCoreApplication::setOrganizationName("NMY");
     QCoreApplication::setApplicationName("NMYPointer");
@@ -215,6 +215,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_pHID = new CHidWorker();
     connect(m_pHID,&CHidWorker::onPCMData,this,[=](quint8 *data,int len){
         m_RecPad->show();
+        m_RecPad->writePCM((char *)data,len);
     });
 
     connect(m_pHID,&CHidWorker::onDataIn,this,[=](quint8 *data,int len){
