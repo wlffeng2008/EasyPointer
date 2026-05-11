@@ -48,7 +48,6 @@ MainWindow::MainWindow(QWidget *parent)
     QSlider::handle:pressed { background: #E0E0E0; border-color: #2D7FDD; }
 
     QSlider::handle:horizontal:disabled { border: 2px solid #B3B3B3; }
-
     QLabel{color:white;font-weight:600;}
     QLabel#labelLarge{color:white; font-size: 24px; font-weight:600;}
     QPushButton{color:white;font-weight:600;}
@@ -79,8 +78,11 @@ MainWindow::MainWindow(QWidget *parent)
         image: url(:/images/radio-checked.png);}
 )");
 
+    //setStyleSheet("#MainWindow ");
+
     pFuncPad  = new DialogBoard();
     m_ModeTip = new DialogTip(this);
+    m_RecPad = new DialogRecord(this);
 
     QCoreApplication::setOrganizationName("NMY");
     QCoreApplication::setApplicationName("NMYPointer");
@@ -103,6 +105,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->frameColor->setHidden(true);
         ui->stackedWidget1->setHidden(true);
         ui->labelNotice->setHidden(true);
+        ui->frameSetting->setHidden(false);
 
         m_index = index;
         switch(index)
@@ -114,7 +117,6 @@ MainWindow::MainWindow(QWidget *parent)
             if(index == 3 || index == 0)
             ui->frameColor->setHidden(false);
             ui->stackedWidget1->setHidden(false);
-            //m_ModeTip->showMode(index);
             break;
 
         case 4:
@@ -127,6 +129,7 @@ MainWindow::MainWindow(QWidget *parent)
 
         case 6:
             ui->labelContact->setHidden(false);
+            ui->frameSetting->setHidden(true);
             break;
         }
 
@@ -155,6 +158,11 @@ MainWindow::MainWindow(QWidget *parent)
         updateValue();
         saveLoadParams();
     });
+
+    for(int i=125; i<=500; i+=25)
+    {
+        ui->comboBoxEnlarge->addItem(QString::asprintf("%d%%",i));
+    }
 
     connect(ui->horizontalSlider0,&QSlider::valueChanged,this,[=](int value){
         updateValue();
@@ -188,7 +196,26 @@ MainWindow::MainWindow(QWidget *parent)
         ui->labelValue31->setText(QString::asprintf("%1%%").arg(value));
     });
 
+    connect(ui->comboBoxEnlarge,&QComboBox::activated,this,[=](int index){
+        m_enlarge = (ui->comboBoxEnlarge->currentIndex() * 25 + 100)/100.0;
+        updateValue();
+    });
+
+    static QSettings regSet("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",QSettings::NativeFormat);
+    ui->checkBoxStart->setChecked(!regSet.value("NMYPointer").toString().isEmpty());
+    connect(ui->checkBoxStart,&QCheckBox::clicked,this,[=](bool checked){
+        regSet.remove("NMYPointer");
+        if(checked)
+        {
+            QString strFile = QString("\"%1\"").arg(QApplication::applicationFilePath().replace("/","\\"));
+            regSet.setValue("NMYPointer",strFile);
+        }
+    });
+
     m_pHID = new CHidWorker();
+    connect(m_pHID,&CHidWorker::onPCMData,this,[=](quint8 *data,int len){
+        m_RecPad->show();
+    });
 
     connect(m_pHID,&CHidWorker::onDataIn,this,[=](quint8 *data,int len){
 
@@ -202,7 +229,6 @@ MainWindow::MainWindow(QWidget *parent)
         // 1字节电量值：0-0x64
         // 1字节软件版本号
         // 1字节设备型号高8位
-        static quint8 nFunc = 0;
         switch(cmd)
         {
         case 0x91: qDebug() << "单击" ;
@@ -215,13 +241,14 @@ MainWindow::MainWindow(QWidget *parent)
         {
             m_pHID->setLaser(false);
             qDebug() << "双击";   // 仅切换功能
-            m_mode = nFunc % 4;
+            m_mode ++;
+            if(m_mode > 3)
+                m_mode = 0;
             m_ModeTip->showMode(m_mode);
             if(m_mode == 0) ui->pushButton0->click();
             if(m_mode == 1) ui->pushButton1->click();
             if(m_mode == 2) ui->pushButton2->click();
             if(m_mode == 3) ui->pushButton3->click();
-            nFunc++;
             m_press = 0;
             pFuncPad->hide();
         }
@@ -249,7 +276,9 @@ MainWindow::MainWindow(QWidget *parent)
             QApplication::setOverrideCursor(Qt::ArrowCursor);
             if(m_mode != 3)
             {
-                show();
+                if(!this->isMinimized())
+                    show();
+
                 pFuncPad->hide();
                 //m_pHID->setMouse(false);
             }
@@ -274,15 +303,51 @@ MainWindow::MainWindow(QWidget *parent)
             }
         }
             break;
+
         case 0x9d: // s2 单击
-            break;
-        case 0x9e: // s2 双击
+            if(m_record)
+            {
+                m_pHID->stopRecord();
+                m_RecPad->hide();
+            }
+            else
+            {
+                m_pHID->startRecord();
+                m_RecPad->show();
+            }
+            m_record = !m_record;
+            //m_pHID->changeRecord();
+            m_pHID->setRecordPlay(false);
+            if(m_modeV ==  0)
+                m_pHID->setRecordPlay(true);
             break;
 
-        case 0x9f: qDebug() << "声音外放....." ;
-            m_pHID->startRecord();
+        case 0x9e: // s2 双击
+            m_record = false;
+            m_pHID->stopRecord();
+            m_pHID->setRecordPlay(false);
+            m_modeV++;
+            if(m_modeV>2)
+                m_modeV=0;
+            m_ModeTip->showMode(4+m_modeV);
             break;
-        case 0xa0: qDebug() << "结束" ; break;
+
+        case 0x9f: qDebug() << "语音搜索" ; //
+            m_pHID->setRecordPlay(false);
+            m_pHID->startRecord();
+            m_RecPad->show();
+            m_record = false;
+            break;
+
+        case 0xa0: qDebug() << "结束" ;
+            m_pHID->setRecordPlay(false);
+            m_pHID->stopRecord();
+            m_RecPad->hide();  // 自动粘贴
+            m_record = false;
+            break;
+
+        case 0x1b:
+            break;
 
         case 0x61:
         {
@@ -358,9 +423,9 @@ MainWindow::MainWindow(QWidget *parent)
             }
         });
 
-        QAction *showAction = new QAction("", this);
-        QAction *hideAction = new QAction("", this);
-        QAction *exitAction = new QAction("", this);
+        QAction *showAction = new QAction("显示主界面", this);
+        QAction *hideAction = new QAction("隐藏主界面", this);
+        QAction *exitAction = new QAction("退出程序", this);
 
         m_act0 = showAction;
         m_act1 = hideAction;
@@ -376,6 +441,7 @@ MainWindow::MainWindow(QWidget *parent)
         connect(showAction, &QAction::triggered, this, &QMainWindow::showNormal);
         connect(hideAction, &QAction::triggered, this, &QMainWindow::hide);
         trayIcon->setContextMenu(trayMenu);
+        trayMenu->setStyleSheet("color:rea;");
     }
 
     ui->labelColor->hide();
@@ -407,6 +473,7 @@ void MainWindow::saveLoadParams(bool save)
         m_set->setValue("radius3",ui->horizontalSlider6->value());
         m_set->setValue("opacity3",ui->horizontalSlider7->value());
         m_set->setValue("round1",ui->pushButtonRound->isChecked());
+        m_set->setValue("enlarge",ui->comboBoxEnlarge->currentIndex());
         m_set->setValue("showBlack",ui->checkBoxBlack->isChecked());
         m_set->setValue("showTime",ui->lineEditSetTime->text());
         m_set->setValue("showIndex",m_show);
@@ -423,11 +490,12 @@ void MainWindow::saveLoadParams(bool save)
         ui->horizontalSlider7->setValue(m_set->value("opacity3",80).toInt());
         ui->lineEditSetTime->setText(m_set->value("showTime","90").toString());
         ui->checkBoxBlack->setChecked(m_set->value("showBlack",false).toBool());
+        ui->comboBoxEnlarge->setCurrentIndex(m_set->value("enlarge",3).toInt());
         m_iColor0 = m_set->value("icolor0").toInt();
         m_iColor3 = m_set->value("icolor3").toInt();
-        m_show = m_set->value("showIndex",2).toInt();
-        m_voice = m_set->value("showVoice",2).toInt();
-        m_bRound = m_set->value("round1",true).toBool();
+        m_show    = m_set->value("showIndex",2).toInt();
+        m_voice   = m_set->value("showVoice",2).toInt();
+        m_bRound  = m_set->value("round1",true).toBool();
 
         ui->buttonGroupCount->button(-m_show-2)->click();
         ui->buttonGroupVoice->button(-m_voice-2)->click();
@@ -483,6 +551,7 @@ void MainWindow::updateValue()
     pFuncPad->m_radius3 = m_radius3;
 
     pFuncPad->m_bRound = m_bRound;
+    pFuncPad->m_enlarge = m_enlarge;
     int showTime = 3600;
     if(m_show == 1) showTime = 1800;
     if(m_show == 2) showTime = 600;
@@ -560,7 +629,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         if(watched == ui->page01)
         {
             int dist = m_radius1;
-            qreal factor = 1.5;
+            qreal factor = m_enlarge;
 
             QImage tmp = bkImg.copy(QRect(Center-QPoint(dist,dist),Center+QPoint(dist,dist)));
             QRect tarRect(Center-QPoint(dist*factor,dist*factor),Center+QPoint(dist*factor,dist*factor));

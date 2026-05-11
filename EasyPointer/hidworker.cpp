@@ -5,7 +5,6 @@
 
 #include "hidapi.h"
 #include "hidworker.h"
-#include "caudioplayer.h"
 
 unsigned char BKEY[100]={
     0x31, 0xec, 0x06, 0xa2, 0x0c, 0x90, 0x12, 0x9d, 0x20, 0xa3,
@@ -118,16 +117,18 @@ void adpcm_to_pcm (signed short *ps, signed short *pd, int len)
 CHidWorker::CHidWorker()
 {
     m_pDev = nullptr;
+    m_pAPlayer = new CAudioPlayer(this);
     QTimer::singleShot(200,this,[=]{ start(); });
     QTimer *tmReadSN = new QTimer();
     tmReadSN->start(5000);
     connect(tmReadSN,&QTimer::timeout,this,[=]{
-        //readSN();
+        readSN();
     });
 }
 
 CHidWorker::~CHidWorker()
 {
+    m_pAPlayer->forceExit();
     m_bEndWork = true;
     close();
 }
@@ -155,7 +156,14 @@ void CHidWorker::run()
             pEDev = hid_enumerate(m_VID,m_PID);
             if(pEDev)
             {
-                qDebug() << "hid_enumerate" << Qt::hex << m_VID <<m_PID;
+                qDebug() << "hid_enumerate 2.4G" << Qt::hex << m_VID <<m_PID;
+                break;
+            }
+
+            pEDev = hid_enumerate(m_VID,0x61AB);
+            if(pEDev)
+            {
+                qDebug() << "hid_enumerate BLE" << Qt::hex << m_VID <<m_PID;
                 break;
             }
 
@@ -212,9 +220,9 @@ void CHidWorker::run()
 
             QMutexLocker Lock(&m_mutex);
             QByteArray Log((const char *)(szBuf),nRet);
+            qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
             if(szBuf[0] != 0x1b)
             {
-                qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
             }
             else
             {
@@ -222,10 +230,16 @@ void CHidWorker::run()
                 encrypt(szBuf+1,eBuf,32);
 
                 static short aBuf[1024] = {0};
-                adpcm_to_pcm((short *)eBuf,aBuf,56);
+                adpcm_to_pcm((short *)eBuf,aBuf,112);
 
-                static CAudioPlayer A;
-                A.pushBuf(QByteArray((char *)aBuf,112));
+                if(m_bOutPlay)
+                {
+                    m_pAPlayer->pushBuf(QByteArray((char *)aBuf,112));
+                }
+                else
+                {
+                    emit onPCMData((quint8 *)aBuf,112);
+                }
             }
 
             emit onDataIn(szBuf,32);
@@ -312,8 +326,29 @@ void CHidWorker::askStatus()
 
 void CHidWorker::startRecord()
 {
+    m_bRecord=true;
     quint8 szCmd[33]={0x0C,0x4D,0x05,0xB2,00,0x4C};
     sendCmd(szCmd);
+}
+
+void CHidWorker::stopRecord()
+{
+    m_bRecord=false;
+    quint8 szCmd[33]={0x0C,0x4D,0x05,0xB3,00,0x4C};
+    sendCmd(szCmd);
+}
+
+void CHidWorker::changeRecord()
+{
+    if(m_bRecord)
+        stopRecord();
+    else
+        stopRecord();
+}
+
+void CHidWorker::setRecordPlay(bool set)
+{
+    m_bOutPlay = set ;
 }
 
 /*
@@ -338,11 +373,5 @@ void CHidWorker::startRecord()
 void CHidWorker::setMouseBtn(quint8 func)
 {
     quint8 szCmd[33]={0x0C,0x4D,0x04,func,00,0x4C};
-    sendCmd(szCmd);
-}
-
-void CHidWorker::stopRecord()
-{
-    quint8 szCmd[33]={0x0C,0x4D,0x05,0xB3,00,0x4C};
     sendCmd(szCmd);
 }

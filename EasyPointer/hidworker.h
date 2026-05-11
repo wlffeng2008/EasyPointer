@@ -1,6 +1,10 @@
 #ifndef HIDWORKER_H
 #define HIDWORKER_H
+
 #include "hidapi.h"
+
+#include "caudioplayer.h"
+
 #include <QString>
 #include <QRunnable>
 #include <Qthread>
@@ -27,6 +31,8 @@ public:
     void setURL(bool on=true);
     void startRecord();
     void stopRecord();
+    void changeRecord();
+    void setRecordPlay(bool set=true);
 
     void hearBeat();
     void setMouse(bool on=true);
@@ -47,6 +53,7 @@ protected:
 
 signals:
     void onDataIn(quint8 *,int);
+    void onPCMData(quint8 *,int);
     void onDisconnect();
 
 private:
@@ -55,8 +62,13 @@ private:
     QString m_strDevPath;
     hid_device *m_pDev=nullptr;
 
+    CAudioPlayer *m_pAPlayer=nullptr;
+
     quint16 m_VID = 0x248A;
     quint16 m_PID = 0x60AB;
+
+    bool m_bRecord=false;
+    bool m_bOutPlay=false;
 
     bool m_bEndWork = false;
     void sendCmd(quint8 *pCmd);

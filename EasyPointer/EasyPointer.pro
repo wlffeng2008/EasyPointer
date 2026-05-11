@@ -32,6 +32,7 @@ SOURCES += \
     DialogCloudCmd.cpp \
     DialogDeviceSet.cpp \
     DialogMKeySet.cpp \
+    DialogRecord.cpp \
     DialogTip.cpp \
     DialogTypeWord.cpp \
     caudioplayer.cpp \
@@ -47,6 +48,7 @@ HEADERS += \
     DialogCloudCmd.h \
     DialogDeviceSet.h \
     DialogMKeySet.h \
+    DialogRecord.h \
     DialogTip.h \
     DialogTypeWord.h \
     caudioplayer.h \
@@ -61,6 +63,7 @@ FORMS += \
     DialogCloudCmd.ui \
     DialogDeviceSet.ui \
     DialogMKeySet.ui \
+    DialogRecord.ui \
     DialogTip.ui \
     DialogTypeWord.ui \
     mainwindow.ui \

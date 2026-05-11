@@ -76,12 +76,13 @@ void DialogBoard::paintEvent(QPaintEvent *event)
         int dist = m_radius1;
         QPixmap tmp = m_screen.copy(QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
 
-        qreal factor = 1.5;
+        qreal factor = m_enlarge;
         QRect tarRect(m_curPos-QPoint(dist*factor,dist*factor),m_curPos+QPoint(dist*factor,dist*factor));
 
         QPainterPath path;
         path.addEllipse(tarRect);
-        painter.setClipPath(path);
+        if(m_bRound)
+            painter.setClipPath(path);
 
         painter.drawPixmap(tarRect,tmp);
     }
@@ -95,8 +96,7 @@ void DialogBoard::paintEvent(QPaintEvent *event)
 
         QPainterPath path;
         path.addEllipse(QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
-        if(m_bRound)
-            painter.setClipPath(path);
+        painter.setClipPath(path);
 
         painter.drawPixmap(m_curPos-QPoint(dist,dist),m_screen,QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
     }
@@ -130,7 +130,7 @@ void DialogBoard::paintEvent(QPaintEvent *event)
         QPen pen = painter.pen();
         pen.setColor(Qt::white);
         QFont font = painter.font();
-        font.setPixelSize(100);
+        font.setPixelSize(200);
         painter.setPen(pen);
         painter.setFont(font);
 

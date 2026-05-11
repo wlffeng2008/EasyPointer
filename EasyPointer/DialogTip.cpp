@@ -6,6 +6,7 @@
 #include <QPainterPath>
 #include <QTimer>
 #include <QPainter>
+#include <QScreen>
 
 DialogTip::DialogTip(QWidget *parent)
     : QDialog(parent)
@@ -28,7 +29,13 @@ DialogTip::~DialogTip()
 {
     this->mode = mode;
     show();
-    QTimer::singleShot(3000,this,[=]{hide();});
+    QTimer::singleShot(2000,this,[=]{hide();});
+
+    int nPosX = QApplication::screens().at(0)->geometry().width()/2 -60;
+    int nPosY = QApplication::screens().at(0)->geometry().height() - 220;
+    QRect rcTip(nPosX,nPosY,120,120);
+
+    setGeometry(rcTip);
  }
 
 void DialogTip::paintEvent(QPaintEvent *event)
@@ -44,9 +51,9 @@ void DialogTip::paintEvent(QPaintEvent *event)
     path.addRoundedRect(rect(),24,24);
     painter.setClipPath(path);
 
-    QStringList images={"数码光.jpg","放大镜.jpg","聚光灯.jpg","标注.jpg"};
+    static QStringList images = {"数码光.jpg","放大镜.jpg","聚光灯.jpg","标注.jpg","扩音模式.jpg","打字模式.jpg","翻译模式.jpg"};
 
-    QString strImage=QApplication::applicationDirPath() + QString("/images/") + images[mode];
+    QString strImage = QApplication::applicationDirPath() + QString("/images/") + images[mode];
     painter.drawImage(rect(),QImage(strImage));
 
     QDialog::paintEvent(event);

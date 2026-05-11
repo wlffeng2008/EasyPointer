@@ -29,7 +29,8 @@ public:
     quint16 m_radius2;
     quint16 m_radius3;
 
-    bool m_bRound = true;
+    bool m_bRound  = true;
+    qreal m_enlarge= 1.5;
 
     QColor m_color0;
     QColor m_color1;

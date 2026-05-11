@@ -3,6 +3,7 @@
 
 #include "hidworker.h"
 #include "DialogTip.h"
+#include "DialogRecord.h"
 
 #include <QMainWindow>
 #include <QTimer>
@@ -103,9 +104,11 @@ private:
     bool m_dragging = false;
 
     int m_mode  = -1;
+    int m_modeV  = -1;
     int m_press = 0;
     CHidWorker *m_pHID = nullptr;
     DialogBoard *pFuncPad = nullptr;
+    DialogRecord *m_RecPad = nullptr;
 
     quint16 m_radius0;
     quint16 m_radius1;
@@ -113,6 +116,7 @@ private:
     quint16 m_radius3;
 
     bool m_bRound = true;
+    qreal m_enlarge= 1.5;
 
     QColor m_color0;
     QColor m_color1;
@@ -121,6 +125,7 @@ private:
     int m_iColor0=0;
     int m_iColor3=0;
 
+    bool m_record=false;
     int m_voice=0;
     int m_show=0;
     int m_index=0;
