@@ -215,10 +215,7 @@ void CHidWorker::run()
             int nRet = hid_read_timeout(pDev,szBuf,65,0xFFFF);
 
             if(nRet <= 0)
-            {
-                QThread::msleep(2);
-                continue;
-            }
+                break;
 
             QMutexLocker Lock(&m_mutex);
             QByteArray Log((const char *)(szBuf),nRet);
