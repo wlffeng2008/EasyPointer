@@ -41,7 +41,7 @@ color:white;
       <x>112</x>
       <y>340</y>
       <width>329</width>
-      <height>71</height>
+      <height>62</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -544,7 +544,7 @@ QPushButton:checked  {
         <height>110</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1,0,1">
        <property name="spacing">
         <number>2</number>
        </property>
@@ -661,7 +661,7 @@ QPushButton:checked  {
         <height>110</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_5" stretch="1,1,0,0">
+      <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,1,0,1">
        <property name="spacing">
         <number>2</number>
        </property>
@@ -902,7 +902,7 @@ QPushButton:checked  {
         <height>110</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1,0,1">
        <property name="spacing">
         <number>2</number>
        </property>
@@ -1025,7 +1025,7 @@ QPushButton:checked  {
         <height>110</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
+      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,1,0,1">
        <property name="spacing">
         <number>2</number>
        </property>
@@ -2560,10 +2560,10 @@ background-image: url(:/images/jd.png);
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupVoice"/>
   <buttongroup name="buttonGroupShape"/>
   <buttongroup name="buttonGroupCount"/>
-  <buttongroup name="buttonGroupMain"/>
-  <buttongroup name="buttonGroupVoice"/>
   <buttongroup name="buttonGroupColor"/>
+  <buttongroup name="buttonGroupMain"/>
  </buttongroups>
 </ui>

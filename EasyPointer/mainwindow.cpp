@@ -310,6 +310,7 @@ MainWindow::MainWindow(QWidget *parent)
             {
                 m_pHID->stopRecord();
                 m_RecPad->hide();
+                m_RecPad->writePCM(nullptr,0);
             }
             else
             {

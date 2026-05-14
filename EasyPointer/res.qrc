@@ -35,5 +35,9 @@
         <file>images/drop-down.png</file>
         <file>images/logo.png</file>
         <file>images/btn-min.png</file>
+        <file>images/audio.png</file>
+        <file>images/blue.png</file>
+        <file>images/usb.png</file>
+        <file>images/2.4g.png</file>
     </qresource>
 </RCC>

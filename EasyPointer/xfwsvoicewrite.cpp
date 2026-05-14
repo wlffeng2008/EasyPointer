@@ -9,9 +9,9 @@
 #include <QJsonArray>
 #include <time.h>
 
-//#define FLYAPP_ID     "50c5ba81"
-//#define FLYAPP_SECRET "ZTU1ZTBhZjY4YzRiYWM0NjE3NTQ0Nzcz"
-//#define FLYAPP_KEY    "ddf83f52d16d5e3544613cb6be547d0d"
+#define FLYAPP_ID     "50c5ba81"
+#define FLYAPP_SECRET "ZTU1ZTBhZjY4YzRiYWM0NjE3NTQ0Nzcz"
+#define FLYAPP_KEY    "ddf83f52d16d5e3544613cb6be547d0d"
 
 //#define FLYAPP_ID     "4f9c1298"
 //#define FLYAPP_SECRET "YjcyOGVhMDk2MmZkZWRhZDljNzAzZmMw"
@@ -21,9 +21,13 @@
 //#define FLYAPP_KEY     "9994f6ce9dc54ca97cb9d02082ca3137"
 //#define FLYAPP_SECRET  "NzljY2E3NzUxNTlhZmY1MTM5ZGY5MzM4"
 
-#define FLYAPP_ID     "5e86ff8b"
-#define FLYAPP_KEY    "d995a81f16617796fa82c5761ecea228"
-#define FLYAPP_SECRET "NGM3OGYxMTcwN2E4ZGEyYTRlNzJhYWFj"
+//#define FLYAPP_ID     "5e86ff8b"
+//#define FLYAPP_KEY    "d995a81f16617796fa82c5761ecea228"
+//#define FLYAPP_SECRET "NGM3OGYxMTcwN2E4ZGEyYTRlNzJhYWFj"
+
+// #define FLYAPP_ID     "4c870f68"
+// #define FLYAPP_KEY    "M2U4NzYyYTRmN2YyZjJkYTUxZDZmN2Q1"
+// #define FLYAPP_SECRET "e318a91cca742b824649d15a4989d3c4"
 
 
 #define FLYAPP_MAINLANG_URL  "ws://iat-api.xfyun.cn/v2/iat"
@@ -90,7 +94,7 @@ static QString GetAuthUrl(QString hostUrl, QString apiKey, QString apiSecret)
 }
 
 
-static XFText text ;
+static XFText text;
 
 void XFWSVoiceWrite::ReqAuthAudio()
 {
