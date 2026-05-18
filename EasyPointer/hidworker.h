@@ -7,7 +7,7 @@
 
 #include <QString>
 #include <QRunnable>
-#include <Qthread>
+#include <QThread>
 #include <QList>
 #include <QStringList>
 #include <QMutex>

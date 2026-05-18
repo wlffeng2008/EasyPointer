@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>911</width>
-    <height>668</height>
+    <width>640</width>
+    <height>320</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,273 +53,203 @@ QComboBox QAbstractItemView::item:selected{
 }
 QLabel{color:black;}</string>
   </property>
-  <widget class="QPlainTextEdit" name="plainTextEdit">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>374</y>
-     <width>841</width>
-     <height>28</height>
-    </rect>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>15</number>
    </property>
-  </widget>
-  <widget class="QCheckBox" name="checkBoxEnter">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>314</y>
-     <width>840</width>
-     <height>50</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>10</pointsize>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>自动按下回车键</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>164</y>
-     <width>560</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>560</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>560</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>16</pointsize>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>翻译打字</string>
-   </property>
-  </widget>
-  <widget class="QWidget" name="widget_1" native="true">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>104</y>
-     <width>840</width>
-     <height>45</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true"/>
-   </property>
-   <widget class="QComboBox" name="comboBoxLang1">
-    <property name="geometry">
-     <rect>
-      <x>639</x>
-      <y>10</y>
-      <width>181</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="maxVisibleItems">
-     <number>40</number>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_18">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>10</y>
-      <width>561</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>我的母语</string>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QWidget" name="widget_3" native="true">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>264</y>
-     <width>840</width>
-     <height>45</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true"/>
-   </property>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>470</x>
-      <y>10</y>
-      <width>160</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>翻译为</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_10">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>10</y>
-      <width>241</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>我的母语</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="comboBoxLang2">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>10</y>
-      <width>191</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="maxVisibleItems">
-     <number>40</number>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="comboBoxLang3">
-    <property name="geometry">
-     <rect>
-      <x>639</x>
-      <y>10</y>
-      <width>181</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="maxVisibleItems">
-     <number>40</number>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>24</y>
-     <width>560</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>560</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>560</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>16</pointsize>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>打字设置</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_4">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>54</y>
-     <width>831</width>
-     <height>40</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">color: rgb(150, 150, 150);</string>
-   </property>
-   <property name="text">
-    <string>按住语音键开始说话(注：不同设备可能提示不一样)</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
-   </property>
-   <property name="wordWrap">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_9">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>218</y>
-     <width>831</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>13</pointsize>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true"/>
-   </property>
-   <property name="text">
-    <string>按住M键说话，母语会被翻译成设置好的目标语言文字，实现文字录入</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
-   </property>
-   <property name="wordWrap">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QPlainTextEdit" name="typingLog">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>414</y>
-     <width>841</width>
-     <height>201</height>
-    </rect>
-   </property>
-  </widget>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="minimumSize">
+      <size>
+       <width>560</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>560</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>16</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>打字设置</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_4">
+     <property name="styleSheet">
+      <string notr="true">color: rgb(150, 150, 150);</string>
+     </property>
+     <property name="text">
+      <string>按住语音键开始说话(注：不同设备可能提示不一样)</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget_1" native="true">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="spacing">
+       <number>20</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label_18">
+        <property name="text">
+         <string>我的母语</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBoxLang1">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="maxVisibleItems">
+         <number>40</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2">
+     <property name="minimumSize">
+      <size>
+       <width>560</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>560</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>16</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>翻译打字</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_9">
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string>启用语音翻译功能后，母语会被翻译成设置好的目标语言文字，实现文字翻译录入</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget_3" native="true">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>20</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>我的母语</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBoxLang2">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="maxVisibleItems">
+         <number>40</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>翻译为</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBoxLang3">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="maxVisibleItems">
+         <number>40</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

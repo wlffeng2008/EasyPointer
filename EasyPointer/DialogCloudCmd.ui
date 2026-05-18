@@ -6,36 +6,97 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>803</width>
-    <height>588</height>
+    <width>800</width>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>云指令设置</string>
   </property>
-  <widget class="QPushButton" name="pushButton">
-   <property name="geometry">
-    <rect>
-     <x>556</x>
-     <y>68</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>PushButton</string>
-   </property>
-  </widget>
-  <widget class="QTableView" name="tableView">
-   <property name="geometry">
-    <rect>
-     <x>88</x>
-     <y>134</y>
-     <width>623</width>
-     <height>309</height>
-    </rect>
-   </property>
-  </widget>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTableView" name="tableView">
+     <property name="focusPolicy">
+      <enum>Qt::FocusPolicy::NoFocus</enum>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,2,0,0">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>功能：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBoxFunc">
+       <item>
+        <property name="text">
+         <string>文件</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>文件夹</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>网站</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>固定文本</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>指令词：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEditWord"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>执行路径：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEditData"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonSet">
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonAdd">
+       <property name="text">
+        <string>添加</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

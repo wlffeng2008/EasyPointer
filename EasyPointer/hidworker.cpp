@@ -340,14 +340,14 @@ void CHidWorker::stopRecord()
 void CHidWorker::changeRecord()
 {
     if(m_bRecord)
-        stopRecord();
+        startRecord();
     else
         stopRecord();
 }
 
 void CHidWorker::setRecordPlay(bool set)
 {
-    m_bOutPlay = set ;
+    m_bOutPlay = set;
 }
 
 /*

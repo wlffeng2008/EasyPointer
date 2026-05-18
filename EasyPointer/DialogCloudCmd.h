@@ -2,6 +2,7 @@
 #define DIALOGCLOUDCMD_H
 
 #include <QDialog>
+#include <QStandardItemModel>
 
 namespace Ui {
 class DialogCloudCmd;
@@ -17,6 +18,8 @@ public:
 
 private:
     Ui::DialogCloudCmd *ui;
+    QStandardItemModel *m_pModel = nullptr;
+    void saveLoadCommand(bool save=true);
 };
 
 #endif // DIALOGCLOUDCMD_H

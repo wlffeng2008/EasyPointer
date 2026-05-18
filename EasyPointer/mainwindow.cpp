@@ -28,61 +28,15 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("Nmy Pointer");
     //resize(828,466);
 
-    setStyleSheet(R"(
-
-    * { font-size: 14px; font-weight: 400;}
-
-    QSlider { border-radius: 4px; }
-    QSlider::groove:horizontal { height: 8px; background: transparent; border-radius: 4px; border: 1px solid #DCDCDC;}
-    QSlider::sub-page:horizontal { background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 #FDDFBA, stop:1 #FFA73C);  border-radius: 4px; }
-    QSlider::sub-page:horizontal:disabled { background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 white, stop:1 #B3B3B3);  border-radius: 4px; }
-    QSlider::handle:horizontal {
-        width: 8px;
-        height: 12px;
-        margin: -4px 0px;
-        border-radius: 8px;
-        background: black;
-        border: 4px solid white; }
-
-    QSlider::handle:hover   { background: black; border-color: yellow; }
-    QSlider::handle:pressed { background: #E0E0E0; border-color: #2D7FDD; }
-
-    QSlider::handle:horizontal:disabled { border: 2px solid #B3B3B3; }
-    QLabel{color:white;font-weight:600;}
-    QLabel#labelLarge{color:white; font-size: 24px; font-weight:600;}
-    QPushButton{color:white;font-weight:600;}
-
-    QCheckBox::indicator:unchecked {
-            width: 18px;
-            height: 18px;
-            background: transparent;
-            image: url(:/images/BoxUncheck.png); }
-    QCheckBox::indicator:checked {
-            width: 18px;
-            height: 18px;
-            background: transparent;
-            image: url(:/images/BoxChecked.png); }
-
-    QRadioButton::indicator {
-        width: 22px;
-        height: 22px;
-        border: none;
-        background: transparent;
-        image: url(:/images/radio-unchecked.png); }
-
-    QRadioButton::indicator:checked {
-        width: 22px;
-        height: 22px;
-        background: transparent;
-        border: none;
-        image: url(:/images/radio-checked.png);}
-)");
-
-    //setStyleSheet("#MainWindow ");
+    setStyleSheet("#MainWindow QLabel{color:white;font-weight:600;}");
 
     pFuncPad  = new DialogBoard();
     m_ModeTip = new DialogTip();
     m_RecPad  = new DialogRecord();
+
+    m_pSet = new DialogTypeWord(this);
+    m_pCmd = new DialogCloudCmd(this);
+    m_RecPad->setRelate(m_pCmd,m_pSet);
 
     QCoreApplication::setOrganizationName("NMY");
     QCoreApplication::setApplicationName("NMYPointer");
@@ -167,7 +121,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->horizontalSlider0,&QSlider::valueChanged,this,[=](int value){
         updateValue();
         ui->labelValue00->setText(QString("%1").arg(value));
-    });    
+    });
     connect(ui->horizontalSlider1,&QSlider::valueChanged,this,[=](int value){
         updateValue();
         ui->labelValue01->setText(QString::asprintf("%1%%").arg(value));
@@ -214,8 +168,16 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_pHID = new CHidWorker();
     connect(m_pHID,&CHidWorker::onPCMData,this,[=](quint8 *data,int len){
-        m_RecPad->show();
-        m_RecPad->writePCM((char *)data,len);
+        if(m_modeV == 1 || m_modeV == 2)
+        {
+            m_RecPad->show();
+            m_RecPad->writePCM((char *)data,len);
+        }
+        else
+        {
+            m_RecPad->hide();
+            //m_pHID->stopRecord();
+        }
     });
 
     connect(m_pHID,&CHidWorker::onDataIn,this,[=](quint8 *data,int len){
@@ -232,7 +194,7 @@ MainWindow::MainWindow(QWidget *parent)
         // 1字节设备型号高8位
         switch(cmd)
         {
-        case 0x91: qDebug() << "单击" ;
+        case 0x91: qDebug() << "单击";
             m_pHID->setMouse(false);
             pFuncPad->hide();
             m_press = 0;
@@ -256,7 +218,7 @@ MainWindow::MainWindow(QWidget *parent)
             break;
 
         case 0x93: qDebug() << "长按" ;
-            if(m_mode == -1) break;
+            if(m_mode == 0xFF) break;
             m_pHID->setMouse(true);
             m_press ++;
             if(m_mode != 3 || m_press >= 1)
@@ -306,22 +268,43 @@ MainWindow::MainWindow(QWidget *parent)
             break;
 
         case 0x9d: // s2 单击
+            qDebug() << "m_modeV:" << m_modeV;
+            if(m_modeV == 0xFF)
+            {
+                qDebug() << "cancel:" << m_modeV;
+                break;
+            }
+
+            m_pHID->setRecordPlay(false);
+            m_record = !m_record;
+            if(m_modeV == 0)
+            {
+                if(m_record)
+                {
+                    m_pHID->setRecordPlay(true);
+                    m_pHID->startRecord();
+                }
+                else
+                {
+                    m_pHID->stopRecord();
+                }
+                m_RecPad->hide();
+                break;
+            }
+
+            m_pHID->setRecordPlay(false);
+            m_RecPad->setFunc(m_modeV);
             if(m_record)
+            {
+                m_pHID->startRecord();
+                m_RecPad->show();
+            }
+            else
             {
                 m_pHID->stopRecord();
                 m_RecPad->hide();
                 m_RecPad->writePCM(nullptr,0);
             }
-            else
-            {
-                m_pHID->startRecord();
-                m_RecPad->show();
-            }
-            m_record = !m_record;
-            //m_pHID->changeRecord();
-            m_pHID->setRecordPlay(false);
-            if(m_modeV ==  0)
-                m_pHID->setRecordPlay(true);
             break;
 
         case 0x9e: // s2 双击
@@ -334,11 +317,12 @@ MainWindow::MainWindow(QWidget *parent)
             m_ModeTip->showMode(4+m_modeV);
             break;
 
-        case 0x9f: qDebug() << "语音搜索" ; //
+        case 0x9f: qDebug() << "语音搜索" ; //云指令
             m_pHID->setRecordPlay(false);
             m_pHID->startRecord();
             m_RecPad->show();
             m_record = false;
+            m_modeV = -1;
             break;
 
         case 0xa0: qDebug() << "结束" ;
@@ -381,7 +365,7 @@ MainWindow::MainWindow(QWidget *parent)
                 quint8 batt = stBuf[offset+4];
                 quint8 ver = stBuf[offset+5];
 
-                qDebug() << status << type << dpi << model << batt << ver;
+                //qDebug() << status << type << dpi << model << batt << ver;
             }
         }
             break;
@@ -389,8 +373,9 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(ui->pushButtonTypeword,&QPushButton::clicked,this,[=]{
-        DialogTypeWord dlg(this);
-        dlg.exec();
+        //DialogTypeWord dlg(this);
+        //dlg.exec();
+        m_pSet->show();
     });
 
     connect(ui->pushButtonRound,&QPushButton::clicked,this,[=]{
@@ -407,6 +392,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButtonMKey,&QPushButton::clicked,this,[=]{
         DialogMKeySet dlg(this);
         dlg.exec();
+        //m_pSet->show();
     });
 
     {
@@ -601,8 +587,9 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 
     if(watched == ui->labelCloudCmd && event->type() == QEvent::MouseButtonRelease)
     {
-        DialogCloudCmd dlg(this);
-        dlg.exec();
+        m_pCmd->show();
+        //DialogCloudCmd dlg(this);
+        //dlg.exec();
     }
 
     if(event->type() == QEvent::Paint)

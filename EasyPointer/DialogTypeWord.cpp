@@ -1536,6 +1536,8 @@ DialogTypeWord::DialogTypeWord(QWidget *parent)
 {
     ui->setupUi(this);
 
+    setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
+
     m_langs = QJsonDocument::fromJson(strLangMother.toUtf8().data()).object()["Language"].toArray();
 
     QString strTmp ;
@@ -1581,7 +1583,7 @@ DialogTypeWord::DialogTypeWord(QWidget *parent)
     connect(ui->comboBoxLang2,&QComboBox::activated,this,[](int index){Set.setValue("Lang2",index) ;}) ;
     connect(ui->comboBoxLang3,&QComboBox::activated,this,[](int index){Set.setValue("Lang3",index) ;}) ;
 
-    ui->typingLog->setMaximumBlockCount(10) ;
+    //ui->typingLog->setMaximumBlockCount(10) ;
 }
 
 DialogTypeWord::~DialogTypeWord()
@@ -1730,13 +1732,14 @@ QString DialogTypeWord::getTransLang2()
 
 QString DialogTypeWord::getLastText()
 {
-    return ui->plainTextEdit->toPlainText().trimmed() ;
+    //return ui->plainTextEdit->toPlainText().trimmed() ;
+    return QString();
 }
 
 void DialogTypeWord::ShowVoiceText(const QString&strText,bool bAppend)
 {
-    ui->plainTextEdit->clear();
-    ui->plainTextEdit->appendPlainText(strText);
+    //ui->plainTextEdit->clear();
+    //ui->plainTextEdit->appendPlainText(strText);
 
     //QClipboard *pClip = QApplication::clipboard() ;
     //pClip->setText(strText);
@@ -1750,10 +1753,11 @@ void DialogTypeWord::showLog(const QString&strLog,bool bEnd)
 {
     QDateTime currentDateTime = QDateTime::currentDateTime();
     QString strLine=QString("[%1] %2: %3").arg(currentDateTime.toString("MM-dd hh:mm:ss.zzz")).arg(bEnd).arg(strLog);
-    ui->typingLog->appendPlainText(strLine);
+    //ui->typingLog->appendPlainText(strLine);
 }
 
 bool DialogTypeWord::autoPressReturn()
 {
-    return ui->checkBoxEnter->isChecked() ;
+    return false;
+   // return ui->checkBoxEnter->isChecked() ;
 }

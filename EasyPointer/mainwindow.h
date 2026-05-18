@@ -4,6 +4,8 @@
 #include "hidworker.h"
 #include "DialogTip.h"
 #include "DialogRecord.h"
+#include "DialogCloudCmd.h"
+#include "DialogTypeWord.h"
 
 #include <QMainWindow>
 #include <QTimer>
@@ -103,12 +105,15 @@ private:
     QPoint m_dragPosition;
     bool m_dragging = false;
 
-    int m_mode  = -1;
-    int m_modeV  = -1;
-    int m_press = 0;
+    quint8 m_mode   = -1;
+    quint8 m_modeV  = -1;
+    quint8 m_press  =  0;
     CHidWorker *m_pHID = nullptr;
     DialogBoard *pFuncPad = nullptr;
     DialogRecord *m_RecPad = nullptr;
+
+    DialogTypeWord *m_pSet = nullptr;
+    DialogCloudCmd *m_pCmd = nullptr;
 
     quint16 m_radius0;
     quint16 m_radius1;
