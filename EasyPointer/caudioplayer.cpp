@@ -12,8 +12,6 @@
 CAudioPlayer::CAudioPlayer(QObject *parent)
     : QThread{parent}
 {
-    QTimer::singleShot(500,this,[=]{
-    });
     start();
 }
 
@@ -26,8 +24,8 @@ void CAudioPlayer::pushBuf(const QByteArray&buf)
 void CAudioPlayer::run()
 {
     QAudioFormat format;
-    format.setSampleRate(m_sampleRate);   // G.711通常使用8kHz采样率
-    format.setChannelCount(m_channels);   // 单声道
+    format.setSampleRate(16000);   // G.711通常使用8kHz采样率
+    format.setChannelCount(1);   // 单声道
     format.setSampleFormat(QAudioFormat::Int16); // 16位PCM
 
     QAudioDevice audioDevice = QMediaDevices::defaultAudioOutput();

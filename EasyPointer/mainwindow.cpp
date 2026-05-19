@@ -28,8 +28,6 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("Nmy Pointer");
     //resize(828,466);
 
-    setStyleSheet("#MainWindow QLabel{color:white;font-weight:600;}");
-
     pFuncPad  = new DialogBoard();
     m_ModeTip = new DialogTip();
     m_RecPad  = new DialogRecord();
@@ -37,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_pSet = new DialogTypeWord(this);
     m_pCmd = new DialogCloudCmd(this);
     m_RecPad->setRelate(m_pCmd,m_pSet);
+
+    setStyleSheet("#MainWindow QLabel{color:white;font-weight:600;}");
 
     QCoreApplication::setOrganizationName("NMY");
     QCoreApplication::setApplicationName("NMYPointer");

@@ -9,12 +9,12 @@
 #include <QFileDialog>
 
 DialogCloudCmd::DialogCloudCmd(QWidget *parent)
-    : QDialog(nullptr)
+    : QDialog(parent)
     , ui(new Ui::DialogCloudCmd)
 {
     ui->setupUi(this);
 
-    setWindowFlags(windowFlags() | Qt::Dialog |Qt::Tool);
+    //setWindowFlags(windowFlags() | Qt::Dialog |Qt::Tool);
 
     m_pModel = new QStandardItemModel(this);
     m_pModel->setHorizontalHeaderLabels(QString("类型,指令词,执行路径,删除").split(','));
@@ -70,6 +70,7 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
         QStandardItem *item1 = new QStandardItem(strWord);
         QStandardItem *item2 = new QStandardItem(strData);
         QStandardItem *item3 = new QStandardItem("删除");
+        item3->setTextAlignment(Qt::AlignCenter);
 
         m_pModel->appendRow({item0,item1,item2,item3});
 
@@ -142,6 +143,8 @@ void DialogCloudCmd::saveLoadCommand(bool save)
                     QStandardItem *item1 = new QStandardItem(jData["word"].toString());
                     QStandardItem *item2 = new QStandardItem(jData["data"].toString());
                     QStandardItem *item3 = new QStandardItem("删除");
+                    item3->setTextAlignment(Qt::AlignCenter);
+
                     m_pModel->appendRow({item0,item1,item2,item3});
                 }
             }

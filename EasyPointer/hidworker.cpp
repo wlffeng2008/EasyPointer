@@ -117,8 +117,10 @@ void adpcm_to_pcm (signed short *ps, signed short *pd, int len)
 CHidWorker::CHidWorker()
 {
     m_pDev = nullptr;
-    m_pAPlayer = new CAudioPlayer(this);
-    QTimer::singleShot(200,this,[=]{ start(); });
+    QTimer::singleShot(200,this,[=]{
+        m_pAPlayer = new CAudioPlayer(this);
+        start();
+    });
     QTimer *tmReadSN = new QTimer();
     tmReadSN->start(5000);
     connect(tmReadSN,&QTimer::timeout,this,[=]{
@@ -225,10 +227,10 @@ void CHidWorker::run()
             }
             else
             {
-                static quint8 eBuf[1024] = {0};
+                quint8 eBuf[1024] = {0};
                 encrypt(szBuf+1,eBuf,32);
 
-                static short aBuf[1024] = {0};
+                short aBuf[1024] = {0};
                 adpcm_to_pcm((short *)eBuf,aBuf,56);
 
                 if(m_bOutPlay)
