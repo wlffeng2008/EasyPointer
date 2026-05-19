@@ -214,7 +214,7 @@ void CHidWorker::run()
         while(true)
         {
             quint8 *szBuf = szBufs[nUesed++ % 20];
-            int nRet = hid_read_timeout(pDev,szBuf,65,0xFFFF);
+            int nRet = hid_read_timeout(pDev,szBuf,33,0xFFFF);
 
             if(nRet <= 0)
                 break;
@@ -229,17 +229,18 @@ void CHidWorker::run()
             {
                 quint8 eBuf[1024] = {0};
                 encrypt(szBuf+1,eBuf,32);
+                int count = 56 ;
 
                 short aBuf[1024] = {0};
-                adpcm_to_pcm((short *)eBuf,aBuf,56);
+                adpcm_to_pcm((short *)eBuf,aBuf,count);
 
                 if(m_bOutPlay)
                 {
-                    m_pAPlayer->pushBuf(QByteArray((char *)aBuf,112));
+                    m_pAPlayer->pushBuf(QByteArray((char *)aBuf,count*2));
                 }
                 else
                 {
-                    emit onPCMData((quint8 *)aBuf,112);
+                    emit onPCMData((quint8 *)aBuf,count*2);
                 }
             }
 
