@@ -25,7 +25,7 @@ void CAudioPlayer::run()
 {
     QAudioFormat format;
     format.setSampleRate(16000);   // G.711通常使用8kHz采样率
-    format.setChannelCount(1);   // 单声道
+    format.setChannelCount(1);     // 单声道
     format.setSampleFormat(QAudioFormat::Int16); // 16位PCM
 
     QAudioDevice audioDevice = QMediaDevices::defaultAudioOutput();

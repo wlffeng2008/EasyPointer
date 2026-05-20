@@ -73,22 +73,25 @@ QLabel{color:black;}</string>
      </property>
      <property name="font">
       <font>
-       <pointsize>16</pointsize>
-       <bold>true</bold>
+       <pointsize>-1</pointsize>
+       <fontweight>DemiBold</fontweight>
       </font>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel{font-size:30px; font-weight:600; color: black;}</string>
+     </property>
      <property name="text">
-      <string>打字设置</string>
+      <string>语音打字</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QLabel" name="label_4">
      <property name="styleSheet">
-      <string notr="true">color: rgb(150, 150, 150);</string>
+      <string notr="true">QLabel{font-size:16px; font-weight:600; color: black;}</string>
      </property>
      <property name="text">
-      <string>按住语音键开始说话(注：不同设备可能提示不一样)</string>
+      <string>启用语音打字功能后开始说话，实现文字翻译录入</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
@@ -116,6 +119,18 @@ QLabel{color:black;}</string>
       </item>
       <item>
        <widget class="QComboBox" name="comboBoxLang1">
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="styleSheet">
          <string notr="true"/>
         </property>
@@ -156,9 +171,12 @@ QLabel{color:black;}</string>
      </property>
      <property name="font">
       <font>
-       <pointsize>16</pointsize>
-       <bold>true</bold>
+       <pointsize>-1</pointsize>
+       <fontweight>DemiBold</fontweight>
       </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel{font-size:30px; font-weight:600; color: black;}</string>
      </property>
      <property name="text">
       <string>翻译打字</string>
@@ -169,12 +187,12 @@ QLabel{color:black;}</string>
     <widget class="QLabel" name="label_9">
      <property name="font">
       <font>
-       <pointsize>13</pointsize>
-       <bold>true</bold>
+       <pointsize>-1</pointsize>
+       <fontweight>DemiBold</fontweight>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true"/>
+      <string notr="true">QLabel{font-size:16px; font-weight:600; color: black;}</string>
      </property>
      <property name="text">
       <string>启用语音翻译功能后，母语会被翻译成设置好的目标语言文字，实现文字翻译录入</string>
@@ -205,6 +223,18 @@ QLabel{color:black;}</string>
       </item>
       <item>
        <widget class="QComboBox" name="comboBoxLang2">
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="styleSheet">
          <string notr="true"/>
         </property>
@@ -225,6 +255,18 @@ QLabel{color:black;}</string>
       </item>
       <item>
        <widget class="QComboBox" name="comboBoxLang3">
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="styleSheet">
          <string notr="true"/>
         </property>

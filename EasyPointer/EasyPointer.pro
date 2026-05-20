@@ -36,6 +36,7 @@ SOURCES += \
     DialogTip.cpp \
     DialogTypeWord.cpp \
     caudioplayer.cpp \
+    frameapptemplate.cpp \
     hidworker.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -54,6 +55,7 @@ HEADERS += \
     DialogTip.h \
     DialogTypeWord.h \
     caudioplayer.h \
+    frameapptemplate.h \
     hidworker.h \
     mainwindow.h \
     typeword.h \
@@ -70,6 +72,7 @@ FORMS += \
     DialogRecord.ui \
     DialogTip.ui \
     DialogTypeWord.ui \
+    frameapptemplate.ui \
     mainwindow.ui \
     typeword.ui
 

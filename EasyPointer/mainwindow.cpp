@@ -195,7 +195,7 @@ MainWindow::MainWindow(QWidget *parent)
         switch(cmd)
         {
         case 0x91: qDebug() << "单击";
-            m_pHID->setMouse(false);
+            m_pHID->setMouse(true);
             pFuncPad->hide();
             m_press = 0;
             break;
@@ -218,6 +218,7 @@ MainWindow::MainWindow(QWidget *parent)
             break;
 
         case 0x93: qDebug() << "长按" ;
+            m_ModeTip->hide();
             if(m_mode == 0xFF) break;
             m_pHID->setMouse(true);
             m_press ++;

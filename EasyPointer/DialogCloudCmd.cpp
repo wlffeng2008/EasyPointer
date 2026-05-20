@@ -1,5 +1,6 @@
 #include "DialogCloudCmd.h"
 #include "ui_DialogCloudCmd.h"
+#include "FrameAppTemplate.h"
 
 #include <QJsonArray>
 #include <QJsonObject>
@@ -7,6 +8,72 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QFileDialog>
+
+
+#include <QSettings>
+#include <QListView>
+#include <QStandardPaths>
+
+#include <QCoreApplication>
+#include <QDir>
+#include <QDebug>
+#include <QIcon>
+#include <QPixmap>
+#include <QFileInfo>
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QGridLayout>
+#include <QTimer>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+
+#include <windows.h>
+#include <shlobj.h>
+#include <shlguid.h>
+#include <objbase.h>
+#include <atlbase.h>
+#include <atlconv.h>
+
+// 获取快捷方式目标路径
+QString getShortcutTargetPath(const QString& shortcutPath)
+{
+    CComPtr<IShellLinkW> pShellLink;
+    if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLinkW, (LPVOID*)&pShellLink))) {
+        CComPtr<IPersistFile> pPersistFile;
+        if (SUCCEEDED(pShellLink->QueryInterface(IID_IPersistFile, (LPVOID*)&pPersistFile))) {
+            if (SUCCEEDED(pPersistFile->Load(shortcutPath.toStdWString().c_str(), STGM_READ))) {
+                wchar_t targetPath[MAX_PATH];
+                if (SUCCEEDED(pShellLink->GetPath(targetPath, MAX_PATH, NULL, SLGP_UNCPRIORITY))) {
+                    return QString::fromWCharArray(targetPath);
+                }
+            }
+        }
+    }
+    return "";
+}
+
+// 获取快捷方式图标
+QPixmap getShortcutPixmap(const QString& targetPath, int iconIndex)
+{
+    HICON hIcon;
+    SHFILEINFO shfi;
+    ZeroMemory(&shfi, sizeof(SHFILEINFO));
+    DWORD_PTR result = SHGetFileInfo(targetPath.toStdWString().c_str(), 0, &shfi, sizeof(SHFILEINFO), SHGFI_ICON | SHGFI_LARGEICON | SHGFI_USEFILEATTRIBUTES | SHGFI_ICONLOCATION);
+    if (result)
+    {
+        hIcon = shfi.hIcon;
+        return QPixmap::fromImage(QImage::fromHICON(hIcon));
+    }
+    return QPixmap();
+}
+
+static QSettings Set(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)+"/NMYPointSetting.ini",QSettings::IniFormat) ;
+
+static QList<FrameAppTemplate *>g_APPs;
+static QStringList g_Checks;
+static QJsonArray g_Commands;
+
 
 DialogCloudCmd::DialogCloudCmd(QWidget *parent)
     : QDialog(parent)
@@ -94,6 +161,112 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
 
         ui->lineEditData->setText(strFile);
     });
+
+    setStyleSheet("QLabel{color:black;font-weight:600;}");
+
+    {
+        ui->comboBoxEngine->addItem(tr("百度"));
+        ui->comboBoxEngine->addItem(tr("谷歌"));
+        ui->comboBoxEngine->addItem(tr("雅虎"));
+
+        connect(ui->comboBoxEngine,&QComboBox::activated,this,[](int index){ Set.setValue("Engine",index) ; });
+
+        int nIndex = Set.value("Engine").toInt();
+        ui->comboBoxEngine->setCurrentIndex(nIndex);
+
+        ui->comboBoxEngine->setView(new QListView());
+        g_Checks = Set.value("checkedApps").toStringList();
+
+        QVBoxLayout *pVLayout = (QVBoxLayout *)ui->scrollAreaWidgetContents->layout() ;
+        pVLayout->setContentsMargins(5, 0, 5, 0);
+        pVLayout->setAlignment(Qt::AlignLeft|Qt::AlignTop);
+
+        CoInitialize(NULL);
+
+        int nCount = 0;
+
+        QStringList Dirs =  QStandardPaths::standardLocations(QStandardPaths::DesktopLocation);
+        Dirs.append("C:\\Users\\Public\\Desktop") ;
+        Dirs.append(QDir::homePath() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs") ;
+        for(const QString&strPath:Dirs)
+        {
+            if (strPath.isEmpty())
+                continue;
+
+            QDir desktopDir(strPath);
+            QStringList filters;
+            filters << "*.lnk";
+            QFileInfoList fileList = desktopDir.entryInfoList(filters, QDir::AllEntries,QDir::SortFlag::Name);
+            for (const QFileInfo& fileInfo : fileList)
+            {
+                QString shortcutPath = fileInfo.filePath();
+                QString targetPath = getShortcutTargetPath(shortcutPath);
+                if (targetPath.isEmpty())
+                    continue;
+
+                nCount ++ ;
+                //qDebug().noquote() << "快捷方式名称: " << fileInfo.fileName();
+                //qDebug().noquote() << "对应EXE路径: " << targetPath  << nCount;
+
+                CComPtr<IShellLinkW> pShellLink;
+                if (!SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLinkW, (LPVOID*)&pShellLink)))
+                    continue;
+                wchar_t iconPath[MAX_PATH]={0};
+                int iconIndex=-1;
+                if (SUCCEEDED(pShellLink->GetIconLocation(iconPath, MAX_PATH, &iconIndex)))
+                {
+                    QString strName = fileInfo.fileName();
+                    strName.replace(".lnk","");
+                    QString strShort = fileInfo.filePath();
+
+                    FrameAppTemplate *pAppItem = new FrameAppTemplate(this) ;
+
+                    QString strUuid = QString("%1").arg(qHash(targetPath));
+                    QString strCmd = Set.value(strUuid).toString();
+                    pAppItem->setInfo(getShortcutPixmap(targetPath, iconIndex),strName,targetPath,strShort,strCmd);
+                    pVLayout->addWidget(pAppItem,nCount);
+
+                    if(g_Checks.contains(strShort))
+                        pAppItem->setCheck();
+
+                    g_APPs.push_back(pAppItem);
+
+                    connect(pAppItem,&FrameAppTemplate::checkChanged,this,[=]{
+                        g_Checks.clear();
+                        for(FrameAppTemplate*app:g_APPs){
+                            if(app->isChecked())
+                                g_Checks.append(app->m_strShortCut) ;
+                        }
+                        Set.setValue("checkedApps",g_Checks);
+                    }) ;
+
+                    connect(pAppItem,&FrameAppTemplate::commandChanged,this,[=](const QString&command, const QString&strExePath){
+                        QString strUuid = QString("%1").arg(qHash(strExePath));
+                        Set.setValue(strUuid,command);
+                    }) ;
+                }
+            }
+        }
+
+        CoUninitialize();
+
+        connect(ui->pushButtonAllOn,&QPushButton::clicked,this,[=]{
+
+            static bool bCheckAll = true ;
+            for(FrameAppTemplate *app: g_APPs){
+                app->setCheck(bCheckAll) ;
+            }
+            bCheckAll = !bCheckAll ;
+
+            g_Checks.clear();
+            for(FrameAppTemplate*app:g_APPs){
+                if(app->isChecked())
+                    g_Checks.append(app->m_strShortCut) ;
+            }
+            Set.setValue("checkedApps",g_Checks);
+        });
+    }
+
 }
 
 void DialogCloudCmd::saveLoadCommand(bool save)
@@ -156,4 +329,36 @@ void DialogCloudCmd::saveLoadCommand(bool save)
 DialogCloudCmd::~DialogCloudCmd()
 {
     delete ui;
+}
+
+
+int DialogCloudCmd::getEngine()
+{
+    return ui->comboBoxEngine->currentIndex() ;
+}
+
+void DialogCloudCmd::changeEvent(QEvent *pEvt)
+{
+    if(pEvt->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+
+        ui->comboBoxEngine->setItemText(0,tr("百度"));
+        ui->comboBoxEngine->setItemText(1,tr("谷歌"));
+        ui->comboBoxEngine->setItemText(2,tr("雅虎"));
+    }
+
+    QWidget::changeEvent(pEvt) ;
+}
+
+bool DialogCloudCmd::startupApp(const QString&shortcut)
+{
+    for(FrameAppTemplate*app:g_APPs){
+        if(app->isChecked() && app->m_strAppName == shortcut)
+        {
+            app->startup();
+            return true ;
+        }
+    }
+    return false;
 }

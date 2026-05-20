@@ -39,5 +39,7 @@
         <file>images/blue.png</file>
         <file>images/usb.png</file>
         <file>images/2.4g.png</file>
+        <file>images/close.png</file>
+        <file>images/open.png</file>
     </qresource>
 </RCC>

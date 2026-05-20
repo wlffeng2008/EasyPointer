@@ -16,6 +16,10 @@ public:
     explicit DialogCloudCmd(QWidget *parent = nullptr);
     ~DialogCloudCmd();
 
+    int getEngine();
+    void changeEvent(QEvent *pEvt) override;
+    bool startupApp(const QString&shortcut);
+
 private:
     Ui::DialogCloudCmd *ui;
     QStandardItemModel *m_pModel = nullptr;

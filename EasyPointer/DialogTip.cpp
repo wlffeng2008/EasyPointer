@@ -9,11 +9,11 @@
 #include <QScreen>
 
 DialogTip::DialogTip(QWidget *parent)
-    : QDialog(parent)
+    : QDialog(nullptr)
     , ui(new Ui::DialogTip)
 {
     ui->setupUi(this);
-    setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint|Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::Dialog | Qt::Tool | Qt::FramelessWindowHint |Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_TranslucentBackground);
     setStyleSheet("QDialog { background-color: rgba(180, 180, 180, 0.8);  border: none; border-radius: 24px;}");
 

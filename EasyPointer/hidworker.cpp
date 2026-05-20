@@ -37,7 +37,9 @@ static const unsigned short steptbl[] = {
     5894, 6484, 7132, 7845, 8630, 9493, 10442, 11487, 12635, 13899,
     15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767   };
 
+
 #define	 NUM_OF_ORIG_SAMPLE				2
+
 
 void adpcm_to_pcm (signed short *ps, signed short *pd, int len)
 {
@@ -204,33 +206,33 @@ void CHidWorker::run()
         qDebug() << "Open HID:"<< m_strDevPath;
 
         m_pDev = pDev;
+
         readSN();
         setMouse(false);
         setLaser(false);
         stopRecord();
 
-        quint8 szBufs[20][64] = {{0}};
+        quint8 szBufs[200][128] = {{0}};
         int nUesed = 0;
         while(true)
         {
-            quint8 *szBuf = szBufs[nUesed++ % 20];
-            int nRet = hid_read_timeout(pDev,szBuf,33,0xFFFF);
+            quint8 *szBuf = szBufs[nUesed++ % 200];
+            int nRet = hid_read_timeout(pDev,szBuf,65,100);
 
-            if(nRet <= 0)
-                break;
+            if(nRet <  0) break;
+            if(nRet == 0) continue;
 
-            QMutexLocker Lock(&m_mutex);
-            QByteArray Log((const char *)(szBuf),nRet);
-            if(szBuf[0] != 0x1b)
-            {
-                qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
-            }
-            else
+            //QByteArray Log((const char *)(szBuf),nRet);
+            //qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
+            emit onDataIn(szBuf,32);
+
+            //QMutexLocker Lock(&m_mutex);
+            if(szBuf[0] == 0x1b)
             {
                 quint8 eBuf[1024] = {0};
                 encrypt(szBuf+1,eBuf,32);
-                int count = 56 ;
 
+                int count = 56;
                 short aBuf[1024] = {0};
                 adpcm_to_pcm((short *)eBuf,aBuf,count);
 
@@ -243,8 +245,6 @@ void CHidWorker::run()
                     emit onPCMData((quint8 *)aBuf,count*2);
                 }
             }
-
-            emit onDataIn(szBuf,32);
         }
 
         hid_close(pDev);
@@ -257,7 +257,7 @@ void CHidWorker::sendCmd(quint8 *pCmd)
     if(!m_pDev)
         return;
 
-    QByteArray Log((char *)pCmd,32);
+    //QByteArray Log((char *)pCmd,32);
     //qDebug().noquote()<<"USB =>: "<< Log.toHex(' ');
     hid_write(m_pDev,pCmd,32);
 }
