@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_pCmd = new DialogCloudCmd(this);
     m_RecPad->setRelate(m_pCmd,m_pSet);
 
-    setStyleSheet("#MainWindow QLabel{color:white;font-weight:600;}");
+    //setStyleSheet("#MainWindow QLabel{color:white;font-weight:600;}");
 
     QCoreApplication::setOrganizationName("NMY");
     QCoreApplication::setApplicationName("NMYPointer");
