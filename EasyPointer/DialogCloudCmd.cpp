@@ -165,16 +165,7 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
     setStyleSheet("QLabel{color:black;font-weight:600;}");
 
     {
-        ui->comboBoxEngine->addItem(tr("百度"));
-        ui->comboBoxEngine->addItem(tr("谷歌"));
-        ui->comboBoxEngine->addItem(tr("雅虎"));
 
-        connect(ui->comboBoxEngine,&QComboBox::activated,this,[](int index){ Set.setValue("Engine",index) ; });
-
-        int nIndex = Set.value("Engine").toInt();
-        ui->comboBoxEngine->setCurrentIndex(nIndex);
-
-        ui->comboBoxEngine->setView(new QListView());
         g_Checks = Set.value("checkedApps").toStringList();
 
         QVBoxLayout *pVLayout = (QVBoxLayout *)ui->scrollAreaWidgetContents->layout() ;
@@ -332,24 +323,6 @@ DialogCloudCmd::~DialogCloudCmd()
 }
 
 
-int DialogCloudCmd::getEngine()
-{
-    return ui->comboBoxEngine->currentIndex() ;
-}
-
-void DialogCloudCmd::changeEvent(QEvent *pEvt)
-{
-    if(pEvt->type() == QEvent::LanguageChange)
-    {
-        ui->retranslateUi(this);
-
-        ui->comboBoxEngine->setItemText(0,tr("百度"));
-        ui->comboBoxEngine->setItemText(1,tr("谷歌"));
-        ui->comboBoxEngine->setItemText(2,tr("雅虎"));
-    }
-
-    QWidget::changeEvent(pEvt) ;
-}
 
 bool DialogCloudCmd::startupApp(const QString&shortcut)
 {

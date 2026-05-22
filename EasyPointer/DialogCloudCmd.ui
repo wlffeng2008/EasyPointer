@@ -129,40 +129,6 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,10,0">
-         <property name="spacing">
-          <number>15</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="label_5">
-           <property name="styleSheet">
-            <string notr="true">font: 700 16pt &quot;Microsoft YaHei UI&quot;;</string>
-           </property>
-           <property name="text">
-            <string>语音搜索</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_6">
-           <property name="text">
-            <string>默认搜索引擎:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="comboBoxEngine">
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>24</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,10,0">
          <property name="spacing">
           <number>15</number>
@@ -216,7 +182,7 @@ border-radius:8px;</string>
             <x>0</x>
             <y>0</y>
             <width>814</width>
-            <height>478</height>
+            <height>512</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2"/>

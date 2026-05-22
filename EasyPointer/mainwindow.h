@@ -2,10 +2,6 @@
 #define MAINWINDOW_H
 
 #include "hidworker.h"
-#include "DialogTip.h"
-#include "DialogRecord.h"
-#include "DialogCloudCmd.h"
-#include "DialogTypeWord.h"
 
 #include <QMainWindow>
 #include <QTimer>
@@ -80,7 +76,13 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
+class DialogTip;
 class DialogBoard;
+class DialogRecord;
+class DialogCloudCmd;
+class DialogTypeWord;
+class DialogDeviceSet;
+class DialogMKeySet;
 
 class MainWindow : public QMainWindow
 {
@@ -112,8 +114,12 @@ private:
     DialogBoard *pFuncPad = nullptr;
     DialogRecord *m_RecPad = nullptr;
 
-    DialogTypeWord *m_pSet = nullptr;
+    DialogTypeWord *m_pTSet = nullptr;
     DialogCloudCmd *m_pCmd = nullptr;
+
+    DialogDeviceSet *m_pDSet;
+    DialogMKeySet *m_pMSet;
+
 
     quint16 m_radius0;
     quint16 m_radius1;

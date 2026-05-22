@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>320</height>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -121,13 +121,13 @@ QLabel{color:black;}</string>
        <widget class="QComboBox" name="comboBoxLang1">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>150</width>
           <height>0</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>120</width>
+          <width>150</width>
           <height>16777215</height>
          </size>
         </property>
@@ -225,13 +225,13 @@ QLabel{color:black;}</string>
        <widget class="QComboBox" name="comboBoxLang2">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>150</width>
           <height>0</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>120</width>
+          <width>150</width>
           <height>16777215</height>
          </size>
         </property>
@@ -257,13 +257,13 @@ QLabel{color:black;}</string>
        <widget class="QComboBox" name="comboBoxLang3">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>150</width>
           <height>0</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>120</width>
+          <width>150</width>
           <height>16777215</height>
          </size>
         </property>

@@ -16,6 +16,14 @@
 #include "DialogDeviceSet.h"
 #include "DialogMKeySet.h"
 
+
+#include "DialogTip.h"
+#include "DialogRecord.h"
+#include "DialogCloudCmd.h"
+#include "DialogTypeWord.h"
+#include "DialogDeviceSet.h"
+#include "DialogMKeySet.h"
+
 static QList<quint32> colors={0xFF0000,0x00FF00,0x0000FF,0xFFFFFF,0xFF8000,0x800080,0xFFFF00,0x00FFFF,0x000000};
 
 MainWindow::MainWindow(QWidget *parent)
@@ -32,11 +40,14 @@ MainWindow::MainWindow(QWidget *parent)
     m_ModeTip = new DialogTip();
     m_RecPad  = new DialogRecord();
 
-    m_pSet = new DialogTypeWord(this);
+    m_pTSet = new DialogTypeWord(this);
     m_pCmd = new DialogCloudCmd(this);
-    m_RecPad->setRelate(m_pCmd,m_pSet);
+    m_RecPad->setRelate(m_pCmd,m_pTSet);
 
-    //setStyleSheet("#MainWindow QLabel{color:white;font-weight:600;}");
+    m_pDSet = new DialogDeviceSet();
+    m_pMSet = new DialogMKeySet();
+
+    setStyleSheet("QLabel{color:white;font-weight:600;}");
 
     QCoreApplication::setOrganizationName("NMY");
     QCoreApplication::setApplicationName("NMYPointer");
@@ -83,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent)
 
         case 6:
             ui->labelContact->setHidden(false);
-            ui->frameSetting->setHidden(true);
+            //ui->frameSetting->setHidden(true);
             break;
         }
 
@@ -374,9 +385,7 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(ui->pushButtonTypeword,&QPushButton::clicked,this,[=]{
-        //DialogTypeWord dlg(this);
-        //dlg.exec();
-        m_pSet->show();
+        m_pTSet->show();
     });
 
     connect(ui->pushButtonRound,&QPushButton::clicked,this,[=]{
@@ -387,13 +396,10 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(ui->pushButtonDevice,&QPushButton::clicked,this,[=]{
-        DialogDeviceSet dlg(this);
-        dlg.exec();
+        m_pDSet->show();
     });
     connect(ui->pushButtonMKey,&QPushButton::clicked,this,[=]{
-        DialogMKeySet dlg(this);
-        dlg.exec();
-        //m_pSet->show();
+        m_pMSet->show();
     });
 
     {
@@ -558,6 +564,7 @@ void MainWindow::updateValue()
 
 void MainWindow::paintEvent(QPaintEvent *event)
 {
+    QMainWindow::paintEvent(event);
     QStyleOption opt;
     opt.initFrom(this);
     QPainter p(this);
@@ -575,7 +582,6 @@ void MainWindow::paintEvent(QPaintEvent *event)
         ui->labelBattery->setPixmap(QPixmap::fromImage(batt));
     }
 
-    QMainWindow::paintEvent(event);
 }
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)

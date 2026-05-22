@@ -15,6 +15,11 @@ public:
     explicit DialogMKeySet(QWidget *parent = nullptr);
     ~DialogMKeySet();
 
+    int getEngine();
+
+protected:
+    void changeEvent(QEvent *pEvt) override;
+
 private:
     Ui::DialogMKeySet *ui;
 };

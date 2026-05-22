@@ -41,5 +41,6 @@
         <file>images/2.4g.png</file>
         <file>images/close.png</file>
         <file>images/open.png</file>
+        <file>images/devicebook.jpg</file>
     </qresource>
 </RCC>
