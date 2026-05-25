@@ -18,7 +18,10 @@
 #include <QAudioSink>
 #include <QBuffer>
 #include <QCoreApplication>
+#include <QFile>
 #include <QIODevice>
+
+bool PCMFile2WAVFile(const QString&strPCMFile,const QString&strWAVFile);
 
 class CHidWorker : public QThread
 {
@@ -48,16 +51,18 @@ public:
     void setHidVIDPID(quint16 VID, quint16 PID);
     QString getHidPath(){return m_strDevPath;}
 
+    void StarRecorFile(const QString&strFile);
+    void StopRecorFile();
+
 protected:
     void run() override;
 
 signals:
     void onDataIn(quint8 *,int);
-    void onPCMData(quint8 *,int);
+    void onPCMData(const QByteArray&data);
     void onDisconnect();
 
 private:
-
     QMutex m_mutex;
     QString m_strDevPath;
     hid_device *m_pDev=nullptr;
@@ -72,6 +77,12 @@ private:
 
     bool m_bEndWork = false;
     void sendCmd(quint8 *pCmd);
+
+    QFile m_RecFile;
+    bool m_bRecorFile=false;
+    QString m_strFile;
+    QString m_strTemp;
+    bool WritePCMData(const QByteArray&data);
 };
 
 #endif // HIDWORKER_H

@@ -1,10 +1,76 @@
 
 #include <QDebug>
 #include <QTimer>
+#include <QApplication>
 #include <QMutexLocker>
+#include <QDir>
 
 #include "hidapi.h"
 #include "hidworker.h"
+
+bool PCMFile2WAVFile(const QString&strPCMFile,const QString&strWAVFile)
+{
+    struct WAVFILEHEADER
+    {
+        // RIFF 头
+        char RiffName[4];
+        unsigned long nRiffLength;
+
+        // 数据类型标识符
+        char WavName[4];
+
+        // 格式块中的块头
+        char FmtName[4];
+        unsigned long nFmtLength;
+
+        // 格式块中的块数据
+        unsigned short nAudioFormat;
+        unsigned short nChannleNumber;
+        unsigned long nSampleRate;
+        unsigned long nBytesPerSecond;
+        unsigned short nBytesPerSample;
+        unsigned short nBitsPerSample;
+
+        // 数据块中的块头
+        char    DATANAME[4];
+        unsigned long   nDataLength;
+    };
+    // 开始设置WAV的文件头
+    WAVFILEHEADER WavFileHeader;
+    qstrcpy(WavFileHeader.RiffName,"RIFF");
+    qstrcpy(WavFileHeader.WavName, "WAVE");
+    qstrcpy(WavFileHeader.FmtName, "fmt ");
+    qstrcpy(WavFileHeader.DATANAME,"data");
+
+    WavFileHeader.nFmtLength = 16;
+    WavFileHeader.nAudioFormat = 1;
+    WavFileHeader.nChannleNumber = 1;
+    WavFileHeader.nSampleRate = 16000;
+    WavFileHeader.nBytesPerSample = 2;
+    WavFileHeader.nBytesPerSecond = 32000;
+    WavFileHeader.nBitsPerSample = 16;
+
+    QFile pcmFile(strPCMFile);
+    QFile wavFile(strWAVFile);
+    if (!pcmFile.open(QIODevice::ReadOnly))
+        return false;
+    if (!wavFile.open(QIODevice::WriteOnly))
+        return false;
+
+    int nSize = sizeof(WavFileHeader);
+    qint64 nFileLen = pcmFile.bytesAvailable();
+    WavFileHeader.nRiffLength = static_cast<unsigned long>(nFileLen - 8 + nSize);
+    WavFileHeader.nDataLength = static_cast<unsigned long>(nFileLen);
+
+    // 先将wav文件头信息写入，再将音频数据写入;
+    wavFile.write((const char *)&WavFileHeader,nSize);
+    wavFile.write(pcmFile.readAll());
+
+    pcmFile.close();
+    wavFile.close();
+    return true;
+}
+
 
 unsigned char BKEY[100]={
     0x31, 0xec, 0x06, 0xa2, 0x0c, 0x90, 0x12, 0x9d, 0x20, 0xa3,
@@ -106,15 +172,11 @@ void adpcm_to_pcm (signed short *ps, signed short *pd, int len)
             }
         }
 
-        if (0 && i < NUM_OF_ORIG_SAMPLE) {
-            *pd++ = ps[i];
-        }
-        else {
-            *pd++ = predict;
-        }
+        *pd++ = predict;
     }
 }
 
+QString g_strWork;
 
 CHidWorker::CHidWorker()
 {
@@ -126,8 +188,13 @@ CHidWorker::CHidWorker()
     QTimer *tmReadSN = new QTimer();
     tmReadSN->start(5000);
     connect(tmReadSN,&QTimer::timeout,this,[=]{
+        if(!m_bRecord)
         readSN();
     });
+
+    g_strWork = QApplication::applicationDirPath() + "/recordfile";
+    QDir D(g_strWork);
+    if(!D.exists()) D.mkdir(g_strWork);
 }
 
 CHidWorker::~CHidWorker()
@@ -154,20 +221,23 @@ void CHidWorker::run()
 {
     while (!m_bEndWork)
     {
+        int mode = 1;
         hid_device_info *pEDev = nullptr;
         while (!m_bEndWork)
         {
             pEDev = hid_enumerate(m_VID,m_PID);
             if(pEDev)
             {
-                qDebug() << "hid_enumerate 2.4G" << Qt::hex << m_VID <<m_PID;
+                mode = 1;
+                qDebug() << "hid_enumerate 2.4G" << Qt::hex << m_VID << m_PID;
                 break;
             }
 
             pEDev = hid_enumerate(m_VID,0x61AB);
             if(pEDev)
             {
-                qDebug() << "hid_enumerate BLE" << Qt::hex << m_VID <<m_PID;
+                mode = 2;
+                qDebug() << "hid_enumerate BLE" << Qt::hex << m_VID << 0x61AB;
                 break;
             }
 
@@ -177,9 +247,11 @@ void CHidWorker::run()
         hid_device_info *pTDev = pEDev; // trace
         while(pTDev)
         {
-            qDebug() << pTDev->path << Qt::hex << pTDev->usage_page << pTDev->usage;
+            //qDebug() << pTDev->path << Qt::hex << pTDev->usage_page << pTDev->usage;
             pTDev = pTDev->next;
         }
+
+        m_pAPlayer->setAudioInfo(16000/mode);
 
         hid_device *pDev = nullptr; // to open
         pTDev = pEDev;
@@ -190,7 +262,9 @@ void CHidWorker::run()
                 pDev = hid_open_path(pTDev->path);
                 if(pDev)
                 {
+                    m_pDev = pDev;
                     m_strDevPath = pTDev->path;
+                    qDebug() << "Open HID:"<< pTDev->path;
                     break;
                 }
             }
@@ -199,13 +273,10 @@ void CHidWorker::run()
         }
         hid_free_enumeration(pEDev);
 
-        if(!pDev) continue;
+        if(!m_pDev) continue;
 
         QThread::msleep(200);
 
-        qDebug() << "Open HID:"<< m_strDevPath;
-
-        m_pDev = pDev;
 
         readSN();
         setMouse(false);
@@ -213,37 +284,49 @@ void CHidWorker::run()
         stopRecord();
 
         quint8 szBufs[200][128] = {{0}};
+
         int nUesed = 0;
         while(true)
         {
             quint8 *szBuf = szBufs[nUesed++ % 200];
-            int nRet = hid_read_timeout(pDev,szBuf,65,100);
+            int nRet = hid_read_timeout(pDev,szBuf,33,10);
 
-            if(nRet <  0) break;
-            if(nRet == 0) continue;
+            if(nRet <  0)
+            {
+                qDebug() << "OVER!";
+                break;
+            }
+            if(nRet == 0)
+            {
+                //qDebug() << "GOT NOTHING!";
+                continue;
+            }
 
-            //QByteArray Log((const char *)(szBuf),nRet);
-            //qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
-            emit onDataIn(szBuf,32);
-
-            //QMutexLocker Lock(&m_mutex);
             if(szBuf[0] == 0x1b)
             {
                 quint8 eBuf[1024] = {0};
-                encrypt(szBuf+1,eBuf,32);
+                encrypt(szBuf + 1, eBuf, 32);
 
                 int count = 56;
                 short aBuf[1024] = {0};
-                adpcm_to_pcm((short *)eBuf,aBuf,count);
+                adpcm_to_pcm((short *)(eBuf), aBuf, count*2);
+                QByteArray data((char *)aBuf, count*2);
+                WritePCMData(data);
 
                 if(m_bOutPlay)
                 {
-                    m_pAPlayer->pushBuf(QByteArray((char *)aBuf,count*2));
+                    m_pAPlayer->pushBuf(data);
                 }
                 else
                 {
-                    emit onPCMData((quint8 *)aBuf,count*2);
+                    emit onPCMData(data);
                 }
+            }
+            else
+            {
+                QByteArray Log((const char *)(szBuf),nRet);
+                qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
+                emit onDataIn(szBuf,32);
             }
         }
 
@@ -376,4 +459,44 @@ void CHidWorker::setMouseBtn(quint8 func)
 {
     quint8 szCmd[33]={0x0C,0x4D,0x04,func,00,0x4C};
     sendCmd(szCmd);
+}
+
+void CHidWorker::StarRecorFile(const QString&strFile)
+{
+    if(!m_pDev) return;
+
+    m_strTemp = g_strWork + "/temp.pcm";
+    m_RecFile.setFileName(m_strTemp);
+
+    m_strFile = strFile;
+    if(!strFile.contains(":"))
+        m_strFile = g_strWork + QString("/") + strFile;
+    if(m_RecFile.open(QIODevice::WriteOnly))
+    {
+        m_bRecorFile = true;
+        startRecord();
+    }
+}
+
+bool CHidWorker::WritePCMData(const QByteArray&data)
+{
+    if(m_bRecorFile)
+    {
+        m_RecFile.write(data);
+        return true;
+    }
+
+    return false;
+}
+
+void CHidWorker::StopRecorFile()
+{
+    if(m_bRecorFile)
+    {
+        stopRecord();
+        m_bRecorFile = false;
+        m_RecFile.close();
+
+        PCMFile2WAVFile(m_strTemp,m_strFile);
+    }
 }

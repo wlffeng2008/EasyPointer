@@ -178,11 +178,11 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     m_pHID = new CHidWorker();
-    connect(m_pHID,&CHidWorker::onPCMData,this,[=](quint8 *data,int len){
+    connect(m_pHID,&CHidWorker::onPCMData,this,[=](const QByteArray&data){
         if(m_modeV == 1 || m_modeV == 2)
         {
             m_RecPad->show();
-            m_RecPad->writePCM((char *)data,len);
+            m_RecPad->writePCM((char *)data.data(),data.size());
         }
         else
         {
@@ -402,6 +402,16 @@ MainWindow::MainWindow(QWidget *parent)
         m_pMSet->show();
     });
 
+    connect(ui->checkBoxRecord,&QCheckBox::clicked,this,[=](bool checked){
+        if(checked)
+        {
+            m_pHID->StarRecorFile(QString::asprintf("%d.wav",time(nullptr)));
+        }
+        else
+        {
+            m_pHID->StopRecorFile();
+        }
+    });
     {
         trayIcon = new QSystemTrayIcon(this);
         trayIcon->setIcon(QIcon(":/images/logo.png"));

@@ -14,9 +14,12 @@ public:
     explicit CAudioPlayer(QObject *parent = nullptr);
     virtual ~CAudioPlayer(){ m_bExit = true; };
 
-    void setAudioInfo(quint32 sampleRate,quint8 channels){m_sampleRate=sampleRate; m_channels=channels;};
-    void forceExit(){ m_bExit = true; };
+    void setAudioInfo(quint32 sampleRate,quint8 channels=1);
+    void forceExit(){ m_bExit = true; m_bset = true; };
     void pushBuf(const QByteArray&buf);
+
+signals:
+    void onGetBuf(const QByteArray&buf);
 
 protected:
     void run() override;
@@ -25,7 +28,8 @@ protected:
     quint8  m_channels=1;
     QByteArrayList m_ABufs;
     QMutex m_Mutex;
-    bool m_bExit = false;
+    bool m_bExit=false;
+    bool m_bset=false;
 };
 
 #endif // CAUDIOPLAYER_H

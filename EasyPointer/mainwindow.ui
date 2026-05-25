@@ -2093,6 +2093,13 @@ background-image: url(:/images/jd.png);
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="checkBoxRecord">
+       <property name="text">
+        <string>录音</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Orientation::Horizontal</enum>
@@ -2584,10 +2591,10 @@ background-image: url(:/images/jd.png);
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupColor"/>
-  <buttongroup name="buttonGroupShape"/>
-  <buttongroup name="buttonGroupMain"/>
-  <buttongroup name="buttonGroupCount"/>
   <buttongroup name="buttonGroupVoice"/>
+  <buttongroup name="buttonGroupMain"/>
+  <buttongroup name="buttonGroupShape"/>
+  <buttongroup name="buttonGroupColor"/>
+  <buttongroup name="buttonGroupCount"/>
  </buttongroups>
 </ui>

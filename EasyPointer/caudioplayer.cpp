@@ -13,42 +13,64 @@ CAudioPlayer::CAudioPlayer(QObject *parent)
     : QThread{parent}
 {
     start();
+
+    connect(this,&CAudioPlayer::onGetBuf,this,[=](const QByteArray&buf){
+        QMutexLocker lock(&m_Mutex);
+        m_ABufs.push_back(buf);
+    });
 }
 
 void CAudioPlayer::pushBuf(const QByteArray&buf)
 {
-    QMutexLocker lock(&m_Mutex);
-    m_ABufs.push_back(buf);
+    emit onGetBuf(buf);
+}
+
+void CAudioPlayer::setAudioInfo(quint32 sampleRate,quint8 channels)
+{
+    m_sampleRate=sampleRate;
+    m_channels=channels;
+    m_bset = true;
 }
 
 void CAudioPlayer::run()
 {
-    QAudioFormat format;
-    format.setSampleRate(16000);   // G.711通常使用8kHz采样率
-    format.setChannelCount(1);     // 单声道
-    format.setSampleFormat(QAudioFormat::Int16); // 16位PCM
-
-    QAudioDevice audioDevice = QMediaDevices::defaultAudioOutput();
-
-    QAudioSink audioSink(audioDevice, format);
-
-    QIODevice *pDevice = audioSink.start();
-    audioSink.setVolume(0.99);
-    audioSink.setBufferSize(32000);
-
+    m_bExit = false;
     while(!m_bExit)
     {
-        QMutexLocker lock(&m_Mutex);
-        if(m_ABufs.isEmpty())
+        if(m_bExit) break;
+
+        QAudioFormat format;
+        format.setSampleRate(m_sampleRate);
+        format.setChannelCount(m_channels);
+        format.setSampleFormat(QAudioFormat::Int16); // 16位PCM
+
+        QAudioDevice audioDevice = QMediaDevices::defaultAudioOutput();
+
+        QAudioSink audioSink(audioDevice, format);
+
+        QIODevice *pDevice = audioSink.start();
+        audioSink.setVolume(0.99);
+        audioSink.setBufferSize(32000);
+        m_bset = false;
+        while(true)
         {
-            QCoreApplication::processEvents();
-            continue;
+            if(m_bset)
+            {
+                qDebug() << "Set QAudioFormat";
+                break;
+            }
+
+            if(m_ABufs.isEmpty())
+            {
+                QCoreApplication::processEvents();
+                QThread::usleep(10);
+                continue;
+            }
+
+            QMutexLocker lock(&m_Mutex);
+            QByteArray data = m_ABufs.takeFirst();
+            pDevice->write(data);
+            pDevice->waitForBytesWritten(100);
         }
-
-        QByteArray tmp = m_ABufs[0];
-        m_ABufs.pop_front();
-
-        pDevice->write(tmp);
-        QThread::usleep(10);
     }
 }
