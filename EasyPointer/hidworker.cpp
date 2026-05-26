@@ -277,7 +277,6 @@ void CHidWorker::run()
 
         QThread::msleep(200);
 
-
         readSN();
         setMouse(false);
         setLaser(false);
