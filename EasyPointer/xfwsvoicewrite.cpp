@@ -47,6 +47,57 @@ XFWSVoiceWrite::XFWSVoiceWrite()
     m_strFlyAppid = FLYAPP_ID;
 
     decoder = new XFDataDecoder();
+
+    start();
+}
+
+void XFWSVoiceWrite::run()
+{
+    while(true)
+    {
+        if(m_flyState != -1 && m_PCMBuf.size() >= 1280)
+        {
+            QMutexLocker lock(&m_Mutex);
+            QByteArray tmp = m_PCMBuf.remove(0,1280);
+
+            QJsonObject frame;
+            if(m_flyState == 0)
+            {
+                QJsonObject common;
+                common["app_id"] = m_strFlyAppid;
+
+                QJsonObject business;
+                business["domain"] = "iat";
+                business["language"] = m_strMLang;
+                business["accent"] = m_strAccent;
+                if(m_strMLang=="zh_cn" || m_strMLang=="zh-cn")
+                    business["dwa"] = "wpgs";
+
+                frame["common"] = common;
+                frame["business"] = business;
+            }
+
+            QJsonObject data;
+            data["status"] = 2;
+
+            data["status"] = m_flyState;
+            data["format"] = "audio/L16;rate=16000";
+            data["encoding"] = "raw";
+            QByteArray byteArray(tmp.data(), 1280);
+            QByteArray base64Data = byteArray.toBase64();
+            data["audio"] = QString(base64Data);
+
+            m_flyState = 1;
+            frame["data"] = data;
+
+            QJsonDocument jsonDoc(frame);
+            QString strMsg = jsonDoc.toJson();
+            //qDebug() << strMsg;
+            if(webSocket)
+                webSocket->sendTextMessage(strMsg);
+        }
+        QThread::msleep(38);
+    }
 }
 
 //接口鉴权
@@ -98,6 +149,10 @@ static XFText text;
 
 void XFWSVoiceWrite::ReqAuthAudio()
 {
+    if(m_bConnecting)
+        return;
+    m_bConnecting = true;
+    m_PCMBuf.clear();
     QString hostUrl = FLYAPP_MAINLANG_URL;
     if(!( m_strMLang.compare("zh_cn") == 0 ||
           m_strMLang.compare("en_us") == 0))
@@ -117,7 +172,7 @@ void XFWSVoiceWrite::ReqAuthAudio()
 
 void XFWSVoiceWrite::OnWebsocketConnect()
 {
-    qDebug() << "OnWebsocketConnect" ;
+    qDebug() << "OnWebsocket Connect";
 
     m_flyState = 0;
     text.text.clear();
@@ -127,9 +182,11 @@ void XFWSVoiceWrite::OnWebsocketConnect()
 
 void XFWSVoiceWrite::OnWebSocketDisconnect()
 {
-    qDebug() << "OnWebSocketDisconnect" ;
+    qDebug() << "OnWebSocket Disconnect";
 
-    SetXFTextData(true) ;
+    m_bConnecting = false;
+    m_flyState = -1 ;
+    SetXFTextData(true);
 }
 
 void XFWSVoiceWrite::OnWebSocketStrMessage(const QString &message)
@@ -181,48 +238,11 @@ void XFWSVoiceWrite::WritePcmData(char* pPcmData, int dataSize)
 {
     if(m_flyState == -1)
     {
-        return;
+        ReqAuthAudio();
     }
 
-    QJsonObject frame;
-
-    if(m_flyState == 0)
-    {
-        QJsonObject common;
-        common["app_id"] = m_strFlyAppid;
-
-        QJsonObject business;
-        business["domain"] = "iat";
-        business["language"] = m_strMLang;
-        business["accent"] = m_strAccent;
-        if(m_strMLang=="zh_cn" || m_strMLang=="zh-cn")
-            business["dwa"] = "wpgs";
-
-        frame["common"] = common;
-        frame["business"] = business;
-    }
-
-    QJsonObject data;
-    data["status"] = 2;
-
-    if(pPcmData && dataSize>0)
-    {
-        data["status"] = m_flyState;
-        data["format"] = "audio/L16;rate=16000";
-        data["encoding"] = "raw";
-        QByteArray byteArray(pPcmData, dataSize);
-        QByteArray base64Data = byteArray.toBase64();
-        data["audio"] = QString(base64Data);
-    }
-
-    m_flyState = 1;
-    frame["data"] = data;
-
-    QJsonDocument jsonDoc(frame);
-    QString strMsg = jsonDoc.toJson();
-
-    if(webSocket)
-        webSocket->sendTextMessage(strMsg);
+    QMutexLocker lock(&m_Mutex);
+    m_PCMBuf.append(pPcmData,dataSize);
 }
 
 void XFWSVoiceWrite::WritePcmEnd()

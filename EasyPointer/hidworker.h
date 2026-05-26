@@ -22,6 +22,7 @@
 #include <QIODevice>
 
 bool PCMFile2WAVFile(const QString&strPCMFile,const QString&strWAVFile);
+bool WAVFile2MP3File(const QString&strWAVFile,const QString&strMP3File);
 
 class CHidWorker : public QThread
 {
