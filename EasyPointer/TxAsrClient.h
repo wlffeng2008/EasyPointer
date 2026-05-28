@@ -22,7 +22,7 @@ signals:
     void onASRText(const QString&text,int state);
 
 private:
-    bool m_useMic=true;
+    bool m_useMic = true;
     bool m_working = false;
     QUrl  m_url;
     QWebSocket   *m_ws = nullptr;

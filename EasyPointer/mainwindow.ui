@@ -532,7 +532,7 @@ QPushButton:checked  {
      <string notr="true"/>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="page10">
      <widget class="QFrame" name="frame0">
@@ -593,6 +593,9 @@ QPushButton:checked  {
        </item>
        <item>
         <widget class="QSlider" name="horizontalSlider0">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="minimum">
           <number>20</number>
          </property>
@@ -640,6 +643,9 @@ QPushButton:checked  {
        </item>
        <item>
         <widget class="QSlider" name="horizontalSlider1">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="maximum">
           <number>100</number>
          </property>
@@ -710,6 +716,9 @@ QPushButton:checked  {
        </item>
        <item>
         <widget class="QSlider" name="horizontalSlider2">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="minimum">
           <number>100</number>
          </property>
@@ -774,6 +783,12 @@ QPushButton:checked  {
              <height>24</height>
             </size>
            </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="toolTip">
+            <string>圆形</string>
+           </property>
            <property name="styleSheet">
             <string notr="true">    QPushButton {
             border: none;
@@ -831,6 +846,12 @@ QPushButton:checked  {
              <width>24</width>
              <height>24</height>
             </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="toolTip">
+            <string>正方形</string>
            </property>
            <property name="styleSheet">
             <string notr="true">    QPushButton {
@@ -951,6 +972,9 @@ QPushButton:checked  {
        </item>
        <item>
         <widget class="QSlider" name="horizontalSlider4">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="minimum">
           <number>50</number>
          </property>
@@ -998,6 +1022,9 @@ QPushButton:checked  {
        </item>
        <item>
         <widget class="QSlider" name="horizontalSlider5">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="maximum">
           <number>100</number>
          </property>
@@ -1074,6 +1101,9 @@ QPushButton:checked  {
        </item>
        <item>
         <widget class="QSlider" name="horizontalSlider6">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="minimum">
           <number>5</number>
          </property>
@@ -1118,6 +1148,9 @@ QPushButton:checked  {
        </item>
        <item>
         <widget class="QSlider" name="horizontalSlider7">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="maximum">
           <number>100</number>
          </property>
@@ -1146,7 +1179,7 @@ QPushButton:checked  {
      <string notr="true">#page01{background-color: rgb(170, 255, 255);}</string>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>5</number>
     </property>
     <widget class="QWidget" name="page00">
      <property name="styleSheet">
@@ -1198,6 +1231,9 @@ background-color:rgba(255,0,0,0.8);</string>
         <height>22</height>
        </rect>
       </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
       <property name="text">
        <string/>
       </property>
@@ -1217,6 +1253,9 @@ background-color:rgba(255,0,0,0.8);</string>
         <height>22</height>
        </rect>
       </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
       <property name="text">
        <string/>
       </property>
@@ -1232,6 +1271,9 @@ background-color:rgba(255,0,0,0.8);</string>
         <width>22</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
       </property>
       <property name="text">
        <string/>
@@ -1249,6 +1291,9 @@ background-color:rgba(255,0,0,0.8);</string>
         <height>22</height>
        </rect>
       </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
       <property name="text">
        <string/>
       </property>
@@ -1265,6 +1310,9 @@ background-color:rgba(255,0,0,0.8);</string>
         <height>22</height>
        </rect>
       </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
       <property name="text">
        <string/>
       </property>
@@ -1280,6 +1328,9 @@ background-color:rgba(255,0,0,0.8);</string>
         <width>22</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
       </property>
       <property name="text">
        <string/>
@@ -1305,9 +1356,6 @@ background-color:rgba(255,0,0,0.8);</string>
         <pointsize>-1</pointsize>
         <fontweight>DemiBold</fontweight>
        </font>
-      </property>
-      <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
       </property>
       <property name="focusPolicy">
        <enum>Qt::FocusPolicy::ClickFocus</enum>
@@ -1337,6 +1385,12 @@ font-weight:600;
         <height>23</height>
        </rect>
       </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border: 1px solid white; border-radius:8px; background-color:none;</string>
+      </property>
       <property name="text">
        <string>进入设置...</string>
       </property>
@@ -1353,6 +1407,9 @@ font-weight:600;
         <height>19</height>
        </rect>
       </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
       <property name="text">
        <string/>
       </property>
@@ -1365,6 +1422,9 @@ font-weight:600;
         <width>22</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
       </property>
       <property name="text">
        <string/>
@@ -2094,6 +2154,9 @@ background-image: url(:/images/jd.png);
      </item>
      <item>
       <widget class="QCheckBox" name="checkBoxRecord">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="text">
         <string>录音</string>
        </property>
@@ -2101,6 +2164,9 @@ background-image: url(:/images/jd.png);
      </item>
      <item>
       <widget class="QCheckBox" name="checkBoxTXASR">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="text">
         <string>ASR</string>
        </property>
@@ -2465,6 +2531,9 @@ background-image: url(:/images/jd.png);
      </item>
      <item>
       <widget class="QCheckBox" name="checkBoxStart">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="styleSheet">
         <string notr="true">    QCheckBox::indicator:unchecked {
             background: transparent;

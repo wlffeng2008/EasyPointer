@@ -1,25 +1,21 @@
 #include "TxAsrClient.h"
 
-
 #include <QAudioFormat>
 #include <QAudioDevice>
 #include <QMediaDevices>
+#include <QAudioInput>
+#include <QAudioSource>
 #include <QAudioSink>
-#include <QBuffer>
-#include <QCoreApplication>
 #include <QIODevice>
-
 
 #include <QJsonDocument>
 #include <QJsonObject>
 
-
+#include <QDateTime>
 #include <QWebSocket>
-#include <QAudioInput>
-#include <QAudioSource>
+
 #include <QCryptographicHash>
 #include <QMessageAuthenticationCode>
-#include <QDateTime>
 #include <QUuid>
 #include <QRandomGenerator>
 
@@ -57,7 +53,7 @@ TxAsrClient::TxAsrClient(const QUrl& url, bool bUseMic, QObject* parent)
         }
     });
 
-    connect(m_ws, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),this,[=](QAbstractSocket::SocketError e){
+    connect(m_ws, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::errorOccurred),this,[=](QAbstractSocket::SocketError e){
         qDebug() << "WS Error:" << e;
         stop();
     });

@@ -80,6 +80,42 @@ int main(int argc, char *argv[])
         border: none;
         image: url(:/images/radio-checked.png);}
 
+
+    QComboBox{
+    border:1px solid rgb(128, 128, 128);
+    background-color: rgb(255, 255, 255);
+    border-radius:4px;
+    padding-left:10px;
+    }
+
+    QComboBox::drop-down{
+    width:16px;
+    height:16px;
+    margin-right:2px;
+    subcontrol-origin:padding;
+    subcontrol-position: right;
+    border-left-width: 0px;/* 下拉框的左边界线宽度 */
+        border-left-color: darkgray;/* 下拉框的左边界线颜色 */
+        border-left-style: solid; /* 下拉框的左边界线为实线 */
+        border-top-right-radius: 3px;/* 下拉框的右上边界线的圆角半径（应和整个QComboBox右上边界线的圆角半径一致） */
+        border-bottom-right-radius: 3px; /* 同上 */
+        background: white;
+        image:url(:/images/down-arrow.png);
+    }
+    QComboBox QAbstractItemView{
+    border:1px solid rgb(0, 0, 0);
+    background-color: rgb(255, 255, 255);
+    }
+
+    QComboBox QAbstractItemView::item:hover{
+      background-color:#409CE1;
+      color:#ffffff;
+    }
+    QComboBox QAbstractItemView::item:selected{
+      background-color:#409CE1;
+      color:#ffffff;
+    }
+
 )");
 
     QTranslator translatorA;
