@@ -2100,6 +2100,13 @@ background-image: url(:/images/jd.png);
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="checkBoxTXASR">
+       <property name="text">
+        <string>ASR</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Orientation::Horizontal</enum>
@@ -2592,9 +2599,9 @@ background-image: url(:/images/jd.png);
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupVoice"/>
-  <buttongroup name="buttonGroupMain"/>
-  <buttongroup name="buttonGroupShape"/>
-  <buttongroup name="buttonGroupColor"/>
   <buttongroup name="buttonGroupCount"/>
+  <buttongroup name="buttonGroupMain"/>
+  <buttongroup name="buttonGroupColor"/>
+  <buttongroup name="buttonGroupShape"/>
  </buttongroups>
 </ui>

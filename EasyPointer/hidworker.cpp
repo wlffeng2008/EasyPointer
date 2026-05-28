@@ -4,11 +4,6 @@
 #include <QApplication>
 #include <QMutexLocker>
 #include <QDir>
-#include <QJsonDocument>
-
-#include <QWebSocket>
-#include <QAudioInput>
-#include <QAudioSource>
 
 #include "hidapi.h"
 #include "hidworker.h"
@@ -16,61 +11,7 @@
 #include "qjsonobject.h"
 #pragma comment(lib,"libmp3lame.lib")
 
-#include <QCryptographicHash>
-#include <QMessageAuthenticationCode>
-#include <QUrl>
-#include <QDateTime>
-#include <QUuid>
-#include <QRandomGenerator>
 
-// 生成腾讯云 ASR WebSocket 签名 URL
-QUrl buildAsrWsUrl(const QString& appId,
-                   const QString& secretId,
-                   const QString& secretKey)
-{
-    qint64 now = QDateTime::currentSecsSinceEpoch();
-    qint64 expired = now + 86400;
-    QString nonce = QString::number(QRandomGenerator::global()->generate() % 900000 + 100000);
-    QString voiceId = QUuid::createUuid().toString(QUuid::WithoutBraces);
-
-    // 1. 参数表（不含 signature）
-    QMap<QString, QString> params;
-    params["appid"]            = appId;
-    params["secretid"]         = secretId;
-    params["timestamp"]        = QString::number(now);
-    params["expired"]          = QString::number(expired);
-    params["nonce"]            = nonce;
-    params["engine_model_type"]= "16k_zh_large";   // 腾讯混元大模型ASR用此或 16k_zh
-    params["voice_format"]     = "1";              // 1=PCM
-    params["needvad"]          = "1";
-    params["voice_id"]         = voiceId;
-
-    // 2. 拼签名原文（不含 wss://）
-    QString signSrc = "asr.cloud.tencent.com/asr/v2/" + appId + "?";
-    bool first = true;
-    for (auto it = params.constBegin(); it != params.constEnd(); ++it) {
-        if (!first) signSrc += "&";
-        signSrc += it.key() + "=" + it.value();
-        first = false;
-    }
-
-    // 3. HMAC-SHA1 + Base64
-    QMessageAuthenticationCode hmac(QCryptographicHash::Sha1, secretKey.toUtf8());
-    hmac.addData(signSrc.toUtf8());
-    QByteArray sig = hmac.result().toBase64();
-
-    // 4. URL Encode 签名
-    QString sigEncoded = QUrl::toPercentEncoding(sig);
-
-    // 5. 拼最终 wss URL
-    QString urlStr = "wss://asr.cloud.tencent.com/asr/v2/" + appId + "?";
-    for (auto it = params.constBegin(); it != params.constEnd(); ++it) {
-        urlStr += it.key() + "=" + QUrl::toPercentEncoding(it.value()) + "&";
-    }
-    urlStr += "signature=" + sigEncoded;
-
-    return QUrl(urlStr);
-}
 
 class WavToMp3Converter {
 public:
@@ -130,27 +71,28 @@ public:
 
         const int BUFFER_SIZE = 8192;
         char readBuffer[BUFFER_SIZE];
-        qint64 readLen;
+        qint64 readLen=0;
 
         QDateTime startTime = QDateTime::currentDateTime();
 
-        while ((readLen = wavFile.read(readBuffer, BUFFER_SIZE)) > 0) {
+        while ((readLen = wavFile.read(readBuffer, BUFFER_SIZE)) > 0)
+        {
             // 16bit WAV 数据转成 LAME 需要的格式
             short* pcmData = (short*)readBuffer;
             int pcmSamples = readLen / 2;
 
-            // MP3 输出缓冲区
             unsigned char mp3Buffer[BUFFER_SIZE * 5 / 4 + 7200];
             int encodedLen;
 
-            // 编码
-            if (channels == 1) {
+            if (channels == 1)
+            {
                 encodedLen = lame_encode_buffer(lame, pcmData, nullptr, pcmSamples, mp3Buffer, sizeof(mp3Buffer));
-            } else {
+            }
+            else
+            {
                 encodedLen = lame_encode_buffer_interleaved(lame, pcmData, pcmSamples / 2, mp3Buffer, sizeof(mp3Buffer));
             }
 
-            // 写入 MP3
             if (encodedLen > 0) {
                 mp3File.write((char*)mp3Buffer, encodedLen);
             }
@@ -176,83 +118,72 @@ bool WAVFile2MP3File(const QString&strWAVFile,const QString&strMP3File)
     return WavToMp3Converter::convert(strWAVFile,strMP3File);
 }
 
-class AsrClient : public QObject
+
+QString appId     = "1253870935";
+QString secretId = "AKIDebTCl5Y6VlquvpcDezCGAsPmz1viOtDP";
+QString secretKey= "4zjLjxypUyGOSYZSAzmRs76vZ3OXb5e4";
+
+// 生成腾讯云 ASR WebSocket 签名 URL
+QUrl buildAsrWsUrl(const QString& appId,
+                   const QString& secretId,
+                   const QString& secretKey)
 {
-    Q_OBJECT
-public:
-    AsrClient(const QUrl& url, QObject* parent = nullptr)
-        : QObject(parent)
-    {
-        m_ws = new QWebSocket();
-        connect(m_ws, &QWebSocket::connected, this, &AsrClient::onConnected);
-        connect(m_ws, &QWebSocket::textMessageReceived, this, &AsrClient::onTextMsg);
-        connect(m_ws, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
-                [](QAbstractSocket::SocketError e){ qDebug()<<"WS Error:"<<e; });
-        m_ws->open(url);
+    qint64 now = time(nullptr);;QDateTime::currentSecsSinceEpoch();
+    qint64 expired = now + 86400;
+    QString nonce = QString::number(QRandomGenerator::global()->generate() % 900000 + 100000);
+    QString voiceId = QUuid::createUuid().toString(QUuid::WithoutBraces);
+
+    // 1. 参数表（不含 signature）
+    QMap<QString, QString> params;
+    //params["appid"]            = appId;
+    params["secretid"]         = secretId;
+    params["timestamp"]        = QString::number(now);
+    params["expired"]          = QString::number(expired);
+    params["nonce"]            = nonce;
+    params["engine_model_type"]= "16k_zh";   // 腾讯混元大模型ASR用此或 16k_zh
+    params["voice_format"]     = "1";              // 1=PCM
+    params["needvad"]          = "1";
+    params["voice_id"]         = voiceId;
+
+    // 2. 拼签名原文（不含 wss://）
+    QString signSrc = "asr.cloud.tencent.com/asr/v2/" + appId + "?";
+    bool first = true;
+    for (auto it = params.constBegin(); it != params.constEnd(); ++it) {
+        if (!first) signSrc += "&";
+        signSrc += it.key() + "=" + it.value();
+        first = false;
     }
 
-    void stop()
-    {
-        if (m_ws->state() == QAbstractSocket::ConnectedState)
-            m_ws->sendTextMessage("{\"type\":\"end\"}");
-        m_audioDevice->close();
-        m_audioSource->stop();
-        m_ws->close();
+    // 3. HMAC-SHA1 + Base64
+    QMessageAuthenticationCode hmac(QCryptographicHash::Sha1, secretKey.toUtf8());
+    hmac.addData(signSrc.toUtf8());
+    QByteArray sig = hmac.result().toBase64();
+
+    // 4. URL Encode 签名
+    QString sigEncoded = QUrl::toPercentEncoding(sig);
+
+    // 5. 拼最终 wss URL
+    QString urlStr = "wss://asr.cloud.tencent.com/asr/v2/" + appId + "?";
+    for (auto it = params.constBegin(); it != params.constEnd(); ++it) {
+        urlStr += it.key() + "=" + QUrl::toPercentEncoding(it.value()) + "&";
     }
-
-private slots:
-    void onConnected()
-    {
-        qDebug() << "ASR WebSocket Connected!";
-        startCapture();
-    }
-
-    void onTextMsg(const QString& msg)
-    {
-        // {"code":0,"result":{"slice_type":2,"voice_text_str":"你好"},...}
-        QJsonDocument jDoc = QJsonDocument::fromJson(msg.toUtf8());
-        QJsonObject jObj = jDoc.object();
-        if (jObj["code"].toInt() == 0)
-        {
-            QJsonObject r = jObj["result"].toObject();
-            if (r["slice_type"].toInt() == 2)  // 句子结束
-                qDebug() << "识别结果:" << r["voice_text_str"].toString();
-        }
-        else
-        {
-            qWarning() << "ASR Error:" << msg;
-        }
-    }
-
-    void startCapture()
-    {
-        QAudioDevice inputDevice = QMediaDevices::defaultAudioInput();
-        QAudioFormat fmt = inputDevice.preferredFormat();
-        fmt.setSampleRate(16000);
-        fmt.setChannelCount(1);
-        fmt.setSampleFormat(QAudioFormat::Int16);
-
-        m_audioSource = new QAudioSource(inputDevice,fmt);
-        // 建议每 40ms 读一次 → 16000 * 2 * 0.04 = 1280 bytes
-        m_audioDevice = m_audioSource->start();
-        m_audioSource->setBufferSize(1280);
-        connect(m_audioDevice, &QIODevice::readyRead, this, [this]() {
-            while (m_audioDevice->bytesAvailable() >= 1280)
-            {
-                QByteArray pcm = m_audioDevice->read(1280);
-                if (!pcm.isEmpty() && m_ws->state() == QAbstractSocket::ConnectedState)
-                    m_ws->sendBinaryMessage(pcm);
-            }
-        });
-    }
-
-private:
-    QWebSocket   *m_ws = nullptr;
-    QIODevice    *m_audioDevice = nullptr;
-    QAudioSource *m_audioSource = nullptr;
-};
+    urlStr += "signature=" + sigEncoded;
+    return QUrl(urlStr);
+}
 
 
+
+
+void DoASRWork(bool toStart)
+{
+    QUrl url = buildAsrWsUrl(appId.trimmed(), secretId.trimmed(), secretKey.trimmed());
+    auto* client = new AsrClient(url, nullptr);
+
+    if(toStart)
+        client->start();
+    else
+        client->stop();
+}
 
 bool PCMFile2WAVFile(const QString&strPCMFile,const QString&strWAVFile)
 {

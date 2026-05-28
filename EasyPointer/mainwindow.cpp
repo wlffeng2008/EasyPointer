@@ -412,6 +412,9 @@ MainWindow::MainWindow(QWidget *parent)
             m_pHID->StopRecorFile();
         }
     });
+    connect(ui->checkBoxTXASR,&QCheckBox::clicked,this,[=](bool checked){
+        DoASRWork(checked);
+    });
     {
         trayIcon = new QSystemTrayIcon(this);
         trayIcon->setIcon(QIcon(":/images/logo.png"));
