@@ -24,6 +24,8 @@
 #include "DialogDeviceSet.h"
 #include "DialogMKeySet.h"
 
+#include "TxASRClient.h"
+
 static QList<quint32> colors={0xFF0000,0x00FF00,0x0000FF,0xFFFFFF,0xFF8000,0x800080,0xFFFF00,0x00FFFF,0x000000};
 
 MainWindow::MainWindow(QWidget *parent)

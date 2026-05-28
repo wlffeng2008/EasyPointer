@@ -35,6 +35,7 @@ SOURCES += \
     DialogRecord.cpp \
     DialogTip.cpp \
     DialogTypeWord.cpp \
+    TxAsrClient.cpp \
     caudioplayer.cpp \
     frameapptemplate.cpp \
     hidworker.cpp \
@@ -54,6 +55,7 @@ HEADERS += \
     DialogRecord.h \
     DialogTip.h \
     DialogTypeWord.h \
+    TxAsrClient.h \
     caudioplayer.h \
     frameapptemplate.h \
     hidworker.h \

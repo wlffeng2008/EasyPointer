@@ -11,11 +11,10 @@
 #include "qjsonobject.h"
 #pragma comment(lib,"libmp3lame.lib")
 
-
-
-class WavToMp3Converter {
+class WaveUntils
+{
 public:
-    static bool convert(const QString& wavPath, const QString& mp3Path)
+    static bool WavToMp3(const QString& wavPath, const QString& mp3Path)
     {
         QFile wavFile(wavPath);
         if (!wavFile.open(QIODevice::ReadOnly))
@@ -111,142 +110,73 @@ public:
         qDebug() << "转换完成！耗时：" << startTime.msecsTo(QDateTime::currentDateTime()) << "ms";
         return true;
     }
+
+    static bool Pcm2Wav(const QString&strPCMFile,const QString&strWAVFile)
+    {
+        struct WAVFILEHEADER
+        {
+            char RiffName[4];
+            unsigned long nRiffLength;
+            char WavName[4];
+            char FmtName[4];
+            unsigned long nFmtLength;
+            unsigned short nAudioFormat;
+            unsigned short nChannleNumber;
+            unsigned long nSampleRate;
+            unsigned long nBytesPerSecond;
+            unsigned short nBytesPerSample;
+            unsigned short nBitsPerSample;
+            char    DATANAME[4];
+            unsigned long   nDataLength;
+        };
+
+        WAVFILEHEADER WavFileHeader;
+        qstrcpy(WavFileHeader.RiffName,"RIFF");
+        qstrcpy(WavFileHeader.WavName, "WAVE");
+        qstrcpy(WavFileHeader.FmtName, "fmt ");
+        qstrcpy(WavFileHeader.DATANAME,"data");
+
+        WavFileHeader.nFmtLength = 16;
+        WavFileHeader.nAudioFormat = 1;
+        WavFileHeader.nChannleNumber = 1;
+        WavFileHeader.nSampleRate = 16000;
+        WavFileHeader.nBytesPerSample = 2;
+        WavFileHeader.nBytesPerSecond = 32000;
+        WavFileHeader.nBitsPerSample = 16;
+
+        QFile pcmFile(strPCMFile);
+        QFile wavFile(strWAVFile);
+        if (!pcmFile.open(QIODevice::ReadOnly))
+            return false;
+        if (!wavFile.open(QIODevice::WriteOnly))
+            return false;
+
+        int nSize = sizeof(WavFileHeader);
+        qint64 nFileLen = pcmFile.bytesAvailable();
+        WavFileHeader.nRiffLength = static_cast<unsigned long>(nFileLen - 8 + nSize);
+        WavFileHeader.nDataLength = static_cast<unsigned long>(nFileLen);
+
+        wavFile.write((const char *)&WavFileHeader,nSize);
+        wavFile.write(pcmFile.readAll());
+
+        pcmFile.close();
+        wavFile.close();
+        return true;
+    }
 };
 
 bool WAVFile2MP3File(const QString&strWAVFile,const QString&strMP3File)
 {
-    return WavToMp3Converter::convert(strWAVFile,strMP3File);
+    return WaveUntils::WavToMp3(strWAVFile,strMP3File);
 }
-
-// 生成腾讯云 ASR WebSocket 签名 URL
-QUrl buildAsrWsUrl(const QString& appId,
-                   const QString& secretId,
-                   const QString& secretKey)
-{
-    qint64 now = time(nullptr);;QDateTime::currentSecsSinceEpoch();
-    qint64 expired = now + 86400;
-    QString nonce = QString::number(QRandomGenerator::global()->generate() % 900000 + 100000);
-    QString voiceId = QUuid::createUuid().toString(QUuid::WithoutBraces);
-
-    // 1. 参数表（不含 signature）
-    QMap<QString, QString> params;
-    //params["appid"]            = appId;
-    params["secretid"]         = secretId;
-    params["timestamp"]        = QString::number(now);
-    params["expired"]          = QString::number(expired);
-    params["nonce"]            = nonce;
-    params["engine_model_type"]= "16k_zh";   // 腾讯混元大模型ASR用此或 16k_zh
-    params["voice_format"]     = "1";              // 1=PCM
-    params["needvad"]          = "1";
-    params["voice_id"]         = voiceId;
-
-    // 2. 拼签名原文（不含 wss://）
-    QString signSrc = "asr.cloud.tencent.com/asr/v2/" + appId + "?";
-    bool first = true;
-    for (auto it = params.constBegin(); it != params.constEnd(); ++it) {
-        if (!first) signSrc += "&";
-        signSrc += it.key() + "=" + it.value();
-        first = false;
-    }
-
-    // 3. HMAC-SHA1 + Base64
-    QMessageAuthenticationCode hmac(QCryptographicHash::Sha1, secretKey.toUtf8());
-    hmac.addData(signSrc.toUtf8());
-    QByteArray sig = hmac.result().toBase64();
-
-    // 4. URL Encode 签名
-    QString sigEncoded = QUrl::toPercentEncoding(sig);
-
-    // 5. 拼最终 wss URL
-    QString urlStr = "wss://asr.cloud.tencent.com/asr/v2/" + appId + "?";
-    for (auto it = params.constBegin(); it != params.constEnd(); ++it) {
-        urlStr += it.key() + "=" + QUrl::toPercentEncoding(it.value()) + "&";
-    }
-    urlStr += "signature=" + sigEncoded;
-    return QUrl(urlStr);
-}
-
-
-QString NMYAId = "1253870935";
-QString NMYBId = QString("ebTCl") + QString("5Y6Vl") + QString("quvpc") + QString("DezCGA") + QString("sPmz1vi");
-QString NMYCId = "4zjLjxypUyGOSYZSAzmRs76vZ3OXb5e4";
-
-void DoASRWork(bool toStart)
-{
-    QString strKD = NMYBId.insert(0,"AKID") + QString("OtDP");
-    QUrl url = buildAsrWsUrl(NMYAId.trimmed(), NMYBId.trimmed(), NMYCId.trimmed());
-    auto* client = new AsrClient(url, nullptr);
-
-    if(toStart)
-        client->start();
-    else
-        client->stop();
-}
-
 
 bool PCMFile2WAVFile(const QString&strPCMFile,const QString&strWAVFile)
 {
-    struct WAVFILEHEADER
-    {
-        // RIFF 头
-        char RiffName[4];
-        unsigned long nRiffLength;
-
-        // 数据类型标识符
-        char WavName[4];
-
-        // 格式块中的块头
-        char FmtName[4];
-        unsigned long nFmtLength;
-
-        // 格式块中的块数据
-        unsigned short nAudioFormat;
-        unsigned short nChannleNumber;
-        unsigned long nSampleRate;
-        unsigned long nBytesPerSecond;
-        unsigned short nBytesPerSample;
-        unsigned short nBitsPerSample;
-
-        // 数据块中的块头
-        char    DATANAME[4];
-        unsigned long   nDataLength;
-    };
-    // 开始设置WAV的文件头
-    WAVFILEHEADER WavFileHeader;
-    qstrcpy(WavFileHeader.RiffName,"RIFF");
-    qstrcpy(WavFileHeader.WavName, "WAVE");
-    qstrcpy(WavFileHeader.FmtName, "fmt ");
-    qstrcpy(WavFileHeader.DATANAME,"data");
-
-    WavFileHeader.nFmtLength = 16;
-    WavFileHeader.nAudioFormat = 1;
-    WavFileHeader.nChannleNumber = 1;
-    WavFileHeader.nSampleRate = 16000;
-    WavFileHeader.nBytesPerSample = 2;
-    WavFileHeader.nBytesPerSecond = 32000;
-    WavFileHeader.nBitsPerSample = 16;
-
-    QFile pcmFile(strPCMFile);
-    QFile wavFile(strWAVFile);
-    if (!pcmFile.open(QIODevice::ReadOnly))
-        return false;
-    if (!wavFile.open(QIODevice::WriteOnly))
-        return false;
-
-    int nSize = sizeof(WavFileHeader);
-    qint64 nFileLen = pcmFile.bytesAvailable();
-    WavFileHeader.nRiffLength = static_cast<unsigned long>(nFileLen - 8 + nSize);
-    WavFileHeader.nDataLength = static_cast<unsigned long>(nFileLen);
-
-    // 先将wav文件头信息写入，再将音频数据写入;
-    wavFile.write((const char *)&WavFileHeader,nSize);
-    wavFile.write(pcmFile.readAll());
-
-    pcmFile.close();
-    wavFile.close();
-    return true;
+    return WaveUntils::Pcm2Wav(strPCMFile,strWAVFile);
 }
 
+
+namespace MicLink {
 
 unsigned char BKEY[100]={
     0x31, 0xec, 0x06, 0xa2, 0x0c, 0x90, 0x12, 0x9d, 0x20, 0xa3,
@@ -280,8 +210,7 @@ static const unsigned short steptbl[] = {
     15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767   };
 
 
-#define	 NUM_OF_ORIG_SAMPLE				2
-
+#define	 NUM_OF_ORIG_SAMPLE	2
 
 void adpcm_to_pcm (signed short *ps, signed short *pd, int len)
 {
@@ -298,61 +227,61 @@ void adpcm_to_pcm (signed short *ps, signed short *pd, int len)
     code = *pcode ++;
 
     //byte5- byte128: 124 byte(62 sample) adpcm data
-    for (i=0; i<len; i++) {
+    for (i=0; i<len; i++)
+    {
+        int step = steptbl[predict_idx];
 
-        if (1) {
-            int step = steptbl[predict_idx];
+        int diffq = step >> 3;
 
-            int diffq = step >> 3;
+        if (code & 4) {
+            diffq = diffq + step;
+        }
+        step = step >> 1;
+        if (code & 2) {
+            diffq = diffq + step;
+        }
+        step = step >> 1;
+        if (code & 1) {
+            diffq = diffq + step;
+        }
 
-            if (code & 4) {
-                diffq = diffq + step;
-            }
-            step = step >> 1;
-            if (code & 2) {
-                diffq = diffq + step;
-            }
-            step = step >> 1;
-            if (code & 1) {
-                diffq = diffq + step;
-            }
+        if (code & 8) {
+            predict = predict - diffq;
+        }
+        else {
+            predict = predict + diffq;
+        }
 
-            if (code & 8) {
-                predict = predict - diffq;
-            }
-            else {
-                predict = predict + diffq;
-            }
+        if (predict > 32767) {
+            predict = 32767;
+        }
+        else if (predict < -32768) {
+            predict = -32768;
+        }
 
-            if (predict > 32767) {
-                predict = 32767;
-            }
-            else if (predict < -32768) {
-                predict = -32768;
-            }
+        predict_idx = predict_idx + idxtbl[code & 15];
 
-            predict_idx = predict_idx + idxtbl[code & 15];
+        if(predict_idx < 0) {
+            predict_idx = 0;
+        }
+        else if(predict_idx > 88) {
+            predict_idx = 88;
+        }
 
-            if(predict_idx < 0) {
-                predict_idx = 0;
-            }
-            else if(predict_idx > 88) {
-                predict_idx = 88;
-            }
-
-            if (i&1) {
-                code = *pcode ++;
-            }
-            else {
-                code = code >> 4;
-            }
+        if (i&1) {
+            code = *pcode ++;
+        }
+        else {
+            code = code >> 4;
         }
 
         *pd++ = predict;
     }
 }
 
-QString g_strWork;
+}
+
+static QString g_strWork;
 
 CHidWorker::CHidWorker()
 {
@@ -426,11 +355,9 @@ void CHidWorker::run()
             //qDebug() << pTDev->path << Qt::hex << pTDev->usage_page << pTDev->usage;
             pTDev = pTDev->next;
         }
-
-        m_pAPlayer->setAudioInfo(16000/mode);
+        pTDev = pEDev;
 
         hid_device *pDev = nullptr; // to open
-        pTDev = pEDev;
         while(pTDev)
         {
             if(pTDev->usage_page == 0xFF91)
@@ -452,6 +379,7 @@ void CHidWorker::run()
         if(!m_pDev) continue;
 
         QThread::msleep(200);
+        m_pAPlayer->setAudioInfo(16000/mode);
 
         readSN();
         setMouse(false);
@@ -464,27 +392,20 @@ void CHidWorker::run()
         while(true)
         {
             quint8 *szBuf = szBufs[nUesed++ % 200];
-            int nRet = hid_read_timeout(pDev,szBuf,33,10);
+            int nRet = hid_read_timeout(pDev,szBuf,33,0xFFFF);
 
-            if(nRet <  0)
-            {
-                qDebug() << "OVER!";
-                break;
-            }
-            if(nRet == 0)
-            {
-                //qDebug() << "GOT NOTHING!";
-                continue;
-            }
+            if(nRet <  0) break;
+            if(nRet == 0) continue;
 
             if(szBuf[0] == 0x1b)
             {
                 quint8 eBuf[1024] = {0};
-                encrypt(szBuf + 1, eBuf, 32);
+                MicLink::encrypt(szBuf + 1, eBuf, 32);
 
                 int count = 56;
                 short aBuf[1024] = {0};
-                adpcm_to_pcm((short *)(eBuf), aBuf, count*2);
+                MicLink::adpcm_to_pcm((short *)(eBuf), aBuf, count*2);
+
                 QByteArray data((char *)aBuf, count*2);
                 WritePCMData(data);
 
@@ -499,8 +420,8 @@ void CHidWorker::run()
             }
             else
             {
-                QByteArray Log((const char *)(szBuf),nRet);
-                qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
+                //QByteArray Log((const char *)(szBuf),nRet);
+                //qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
                 emit onDataIn(szBuf,32);
             }
         }
@@ -571,10 +492,24 @@ void CHidWorker::sendKey(quint8 key1,quint8 key0)
     sendCmd(szCmd);
 }
 
+void CHidWorker::sendKey(quint16 key)
+{
+    quint8 key1 = (key&0xFF);
+    quint8 key0 = (key&0xFF00)>>8;
+    quint8 szCmd[33]={0x0C,0x4D,0x06,0x20,key0,key1,0x4C};
+    sendCmd(szCmd);
+}
+
 void CHidWorker::setOnline(bool on)
 {
     quint8 nSet = on ? 0x66 : 0x67;
     quint8 szCmd[33]={0x0C,0x4D,0x05,nSet,0,0x4C};
+    sendCmd(szCmd);
+}
+
+void CHidWorker::checkState()
+{
+    quint8 szCmd[33]={0x0C,0x4D,0x05,0x69,00,0x4C};
     sendCmd(szCmd);
 }
 
@@ -606,11 +541,6 @@ void CHidWorker::changeRecord()
         stopRecord();
 }
 
-void CHidWorker::setRecordPlay(bool set)
-{
-    m_bOutPlay = set;
-}
-
 /*
 16. 空鼠键
 ①　单击:  0xC0 //消除
@@ -629,11 +559,54 @@ void CHidWorker::setRecordPlay(bool set)
            0xCD //聚光灯抬起
            0xCE //放大镜抬起
            0xCF //划线抬起
+   //上翻页
+    UP_KEY_SINGLE_CLICK = 0xD0,
+    UP_KEY_DOUBLE_CLICK = 0xD1,
+    UP_KEY_LONG_DOWN = 0xD2,
+    UP_KEY_LONG_UP = 0xD3,
+
+    //下翻页
+    DOWN_KEY_SINGLE_CLICK = 0xD4,
+    DOWN_KEY_DOUBLE_CLICK = 0xD5,
+    DOWN_KEY_LONG_DOWN = 0xD6,
+    DOWN_KEY_LONG_UP = 0xD7,
+
+    //语音按键
+    AUDIO_PLAY_SINGLE_CLICK = 0xD8,
+    AUDIO_WRITE_SINGLE_CLICK = 0xD9,
+    AUDIO_SEARCH_SINGLE_CLICK = 0xDA,
+    AUDIO_TRANSLATE_SINGLE_CLICK = 0xDB,
+
+    AUDIO_PLAY_DOUBLE_CLICK = 0xDC,
+    AUDIO_WRITE_DOUBLE_CLICK = 0xDD,
+    AUDIO_SEARCH_DOUBLE_CLICK = 0xDE,
+    AUDIO_TRANSLATE_DOUBLE_CLICK = 0xDF,
+
+    AUDIO_PLAY_LONG_DOWN = 0xE0,
+    AUDIO_WRITE_LONG_DOWN = 0xE1,
+    AUDIO_SEARCH_LONG_DOWN = 0xE2,
+    AUDIO_TRANSLATE_LONG_DOWN = 0xE3,
+
+    AUDIO_PLAY_LONG_UP = 0xE4,
+    AUDIO_WRITE_LONG_UP = 0xE5,
+    AUDIO_SEARCH_LONG_UP = 0xE6,
+    AUDIO_TRANSLATE_LONG_UP = 0xE7,
+
+    AUDIO_AI_SINGLE_CLICK = 0xE8,
+    AUDIO_AI_DOUBLE_CLICK = 0xE9,
+    AUDIO_AI_LONG_DOWN = 0xEA,
+    AUDIO_AI_LONG_UP = 0xEB,
+
 */
 void CHidWorker::setMouseBtn(quint8 func)
 {
     quint8 szCmd[33]={0x0C,0x4D,0x04,func,00,0x4C};
     sendCmd(szCmd);
+}
+
+void CHidWorker::setRecordPlay(bool set)
+{
+    m_bOutPlay = set;
 }
 
 void CHidWorker::StarRecorFile(const QString&strFile)
@@ -648,15 +621,17 @@ void CHidWorker::StarRecorFile(const QString&strFile)
         m_strFile = g_strWork + QString("/") + strFile;
     if(m_RecFile.open(QIODevice::WriteOnly))
     {
-        m_bRecorFile = true;
+        m_recordTime = time(nullptr);
         startRecord();
     }
 }
 
 bool CHidWorker::WritePCMData(const QByteArray&data)
 {
-    if(m_bRecorFile)
+    if(m_RecFile.isOpen())
     {
+        quint32 now = time(nullptr);
+        onRecordFile(now - m_recordTime);
         m_RecFile.write(data);
         return true;
     }
@@ -666,10 +641,10 @@ bool CHidWorker::WritePCMData(const QByteArray&data)
 
 void CHidWorker::StopRecorFile()
 {
-    if(m_bRecorFile)
+    if(m_RecFile.isOpen())
     {
+        onRecordFile(-1);
         stopRecord();
-        m_bRecorFile = false;
         m_RecFile.close();
 
         PCMFile2WAVFile(m_strTemp,m_strFile);
