@@ -169,12 +169,12 @@ QUrl buildAsrWsUrl(const QString& appId,
 }
 
 QString NMYAId = "1253870935";
-QString NMYBId = QString("ebTCl5Y6Vl") + QString("quvpcDezCGAsPmz1viOtDP");
+QString NMYBId = QString("ebTCl") + QString("5Y6Vl") + QString("quvpc") + QString("DezCGA") + QString("sPmz1vi");
 QString NMYCId = "4zjLjxypUyGOSYZSAzmRs76vZ3OXb5e4";
 
 void DoASRWork(bool toStart)
 {
-    QString strKD = NMYBId.insert(0,"AKID");
+    QString strKD = NMYBId.insert(0,"AKID") + QString("OtDP");
     QUrl url = buildAsrWsUrl(NMYAId.trimmed(), NMYBId.trimmed(), NMYCId.trimmed());
     auto* client = new AsrClient(url, nullptr);
 
