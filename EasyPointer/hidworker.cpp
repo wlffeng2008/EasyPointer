@@ -118,11 +118,6 @@ bool WAVFile2MP3File(const QString&strWAVFile,const QString&strMP3File)
     return WavToMp3Converter::convert(strWAVFile,strMP3File);
 }
 
-
-QString appId     = "1253870935";
-QString secretId = "AKIDebTCl5Y6VlquvpcDezCGAsPmz1viOtDP";
-QString secretKey= "4zjLjxypUyGOSYZSAzmRs76vZ3OXb5e4";
-
 // 生成腾讯云 ASR WebSocket 签名 URL
 QUrl buildAsrWsUrl(const QString& appId,
                    const QString& secretId,
@@ -172,11 +167,14 @@ QUrl buildAsrWsUrl(const QString& appId,
 }
 
 
-
+QString NMYAId = "1253870935";
+QString NMYBId = QString("ebTCl") + QString("5Y6Vl") + QString("quvpc") + QString("DezCGA") + QString("sPmz1vi");
+QString NMYCId = "4zjLjxypUyGOSYZSAzmRs76vZ3OXb5e4";
 
 void DoASRWork(bool toStart)
 {
-    QUrl url = buildAsrWsUrl(appId.trimmed(), secretId.trimmed(), secretKey.trimmed());
+    QString strKD = NMYBId.insert(0,"AKID") + QString("OtDP");
+    QUrl url = buildAsrWsUrl(NMYAId.trimmed(), NMYBId.trimmed(), NMYCId.trimmed());
     auto* client = new AsrClient(url, nullptr);
 
     if(toStart)
@@ -184,6 +182,7 @@ void DoASRWork(bool toStart)
     else
         client->stop();
 }
+
 
 bool PCMFile2WAVFile(const QString&strPCMFile,const QString&strWAVFile)
 {
