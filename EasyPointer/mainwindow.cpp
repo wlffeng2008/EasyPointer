@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint);
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowTitle("Nmy Pointer");
-    //resize(828,466);
+
 
     pFuncPad  = new DialogBoard();
     m_ModeTip = new DialogTip();
@@ -589,6 +589,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
     p.drawImage(this->rect(),      QImage(QApplication::applicationDirPath()+"/images/bground.png"));
     p.drawImage(QRect(0,2,132,44), QImage(QApplication::applicationDirPath()+"/images/nmylogo.png"));
+
     {
         QImage batt(":/images/batt.png");
 
@@ -610,8 +611,6 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
     if(watched == ui->labelCloudCmd && event->type() == QEvent::MouseButtonRelease)
     {
         m_pCmd->show();
-        //DialogCloudCmd dlg(this);
-        //dlg.exec();
     }
 
     if(event->type() == QEvent::Paint)
@@ -695,6 +694,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     qDebug() << event->key();
+
     QMainWindow::keyPressEvent(event);
 }
 
@@ -710,6 +710,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
             return;
         }
     }
+
     QMainWindow::mousePressEvent(event);
 }
 
@@ -725,22 +726,22 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 {
-    //qDebug() << event->button();
     if (event->button() == Qt::LeftButton)
     {
         m_dragging = false;
         event->accept();
     }
+
     QMainWindow::mouseReleaseEvent(event);
 }
 
 void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    qDebug() << "mouseDoubleClickEvent";
     if (event->button() == Qt::LeftButton)
     {
         m_dragging = false;
         event->accept();
     }
+
     QMainWindow::mouseDoubleClickEvent(event);
 }

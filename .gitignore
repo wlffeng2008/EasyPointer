@@ -3,3 +3,4 @@ build
 /EasyPointer/bin/*.ilk
 /EasyPointer/bin/*.pdb
 /EasyPointer/bin
+/EasyPointer/*.autosave
