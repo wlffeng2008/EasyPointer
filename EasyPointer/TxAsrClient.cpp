@@ -27,6 +27,7 @@ TxAsrClient::TxAsrClient(const QUrl& url, bool bUseMic, QObject* parent)
 
     connect(m_ws, &QWebSocket::connected, this, [=]{
         qDebug() << "ASR WebSocket Connected!";
+        m_connect = true;
         if(m_useMic)
             startCapture();
     });
@@ -49,7 +50,6 @@ TxAsrClient::TxAsrClient(const QUrl& url, bool bUseMic, QObject* parent)
         else
         {
             qWarning().noquote() << "ASR Error:" << msg;
-
         }
     });
 
@@ -73,6 +73,7 @@ void TxAsrClient::stop()
         m_ws->sendTextMessage("{\"type\":\"end\"}");
     m_ws->close();
     m_working = false;
+    m_connect = false;
 
     if(m_audioDevice) m_audioDevice->close();
     if(m_audioSource) m_audioSource->stop();
@@ -80,6 +81,8 @@ void TxAsrClient::stop()
 
 void TxAsrClient::start()
 {
+    m_buf.clear();
+    m_working = true;
     m_ws->open(m_url);
 }
 
@@ -90,8 +93,15 @@ void TxAsrClient::userMic(bool use)
 
 void TxAsrClient::writePCM(const QByteArray&data)
 {
-    if (!data.isEmpty() && m_working)
-        m_ws->sendBinaryMessage(data);
+    if (!data.isEmpty())
+    {
+        m_buf.append(data);
+        if(m_buf.size() < 1280 || !m_connect)
+            return;
+        QByteArray tmp = m_buf.left(1280);
+        m_buf.remove(0,1280);
+        m_ws->sendBinaryMessage(tmp);
+    }
 };
 
 void TxAsrClient::startCapture()

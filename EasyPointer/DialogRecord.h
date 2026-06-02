@@ -22,6 +22,7 @@ public:
     void writePCM(char *data,int len);
     void setFunc(int nFunc=1);
     void setRelate(DialogCloudCmd *pCmdDlg,DialogTypeWord *pSetDlg);
+    void setOutsizeText(const QString&text,int state=0);
 protected:
     void showEvent(QShowEvent *event) override;
 

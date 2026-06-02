@@ -21,9 +21,10 @@ public:
 signals:
     void onASRText(const QString&text,int state);
 
-private:
+private:QByteArray m_buf;
     bool m_useMic = true;
     bool m_working = false;
+    bool m_connect=false;
     QUrl  m_url;
     QWebSocket   *m_ws = nullptr;
     QIODevice    *m_audioDevice = nullptr;

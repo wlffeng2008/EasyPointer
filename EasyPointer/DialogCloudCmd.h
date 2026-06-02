@@ -16,7 +16,7 @@ public:
     explicit DialogCloudCmd(QWidget *parent = nullptr);
     ~DialogCloudCmd();
 
-    bool startupApp(const QString&shortcut);
+    bool startupApp(const QString&command);
 
 private:
     Ui::DialogCloudCmd *ui;

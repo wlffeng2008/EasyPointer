@@ -120,7 +120,6 @@ private:
     DialogDeviceSet *m_pDSet;
     DialogMKeySet *m_pMSet;
 
-
     quint16 m_radius0;
     quint16 m_radius1;
     quint16 m_radius2;

@@ -24,6 +24,8 @@ public:
     QString m_strShortCut;
     QString m_strCommand;
 
+    quint32 m_startTime=0;
+
 private slots:
     void on_checkBox_clicked();
 

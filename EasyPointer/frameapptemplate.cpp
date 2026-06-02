@@ -1,7 +1,8 @@
 #include "frameapptemplate.h"
 #include "ui_frameapptemplate.h"
 
-#include<Windows.h>
+#include <Windows.h>
+#include <QProcess>
 
 FrameAppTemplate::FrameAppTemplate(QWidget *parent)
     : QFrame(parent)
@@ -11,7 +12,6 @@ FrameAppTemplate::FrameAppTemplate(QWidget *parent)
     connect(ui->lineEditCmd,&QLineEdit::editingFinished,this,[=]{
         m_strCommand = ui->lineEditCmd->text().trimmed();
         emit commandChanged(m_strCommand,m_strExePath);
-        qDebug() << QString("%1").arg(qHash(m_strExePath+m_strCommand));
     });
 }
 
@@ -27,7 +27,7 @@ void FrameAppTemplate::setInfo(const QPixmap&appIcon,const QString&appName,const
     ui->labelName->setText(appName);
     ui->labelIndex->setText(QString::number(++nIndex));
     ui->lineEditCmd->setText(command);
-    //ui->checkBox->setChecked(true);
+    ui->checkBox->setChecked(true);
 
     m_strAppName = appName;
     m_strExePath = strExePath;
@@ -52,8 +52,14 @@ void FrameAppTemplate::on_checkBox_clicked()
 
 bool FrameAppTemplate::startup()
 {
-    LPCWSTR lnkPath = (const wchar_t*)m_strShortCut.utf16();
-    HINSTANCE result = ShellExecute(NULL, L"open", lnkPath, NULL, NULL, SW_SHOWNORMAL);
-    return true ;
+    if(time(nullptr) - m_startTime < 10)
+        return false;
+    m_startTime = time(nullptr);
+    //qDebug() << m_strExePath;
+    QProcess::startDetached(m_strExePath,{});
+
+    //LPCWSTR lnkPath = (const wchar_t*)m_strShortCut.utf16();
+    //HINSTANCE result = ShellExecute(NULL, L"open", lnkPath, NULL, NULL, SW_SHOWNORMAL);
+    return true;
 }
 

@@ -37,7 +37,6 @@ MainWindow::MainWindow(QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowTitle("Nmy Pointer");
 
-
     pFuncPad  = new DialogBoard();
     m_ModeTip = new DialogTip();
     m_RecPad  = new DialogRecord();
@@ -179,8 +178,24 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
+    static auto *pAsrClient = DoASRWork(false);
+    connect(pAsrClient,&TxAsrClient::onASRText,this,[=](const QString&text,int state){
+        if(m_modeV == 10)  m_pCmd->startupApp(text);
+        if(m_modeV == 1 || m_modeV == 2)m_RecPad->setOutsizeText(text,state);
+   });
+    connect(ui->checkBoxTXASR,&QCheckBox::clicked,this,[=](bool checked){
+        DoASRWork(checked);
+    });
+
     m_pHID = new CHidWorker();
     connect(m_pHID,&CHidWorker::onPCMData,this,[=](const QByteArray&data){
+        pAsrClient->userMic(false);
+        pAsrClient->writePCM(data);
+
+        if(m_modeV == 10)
+        {
+        }
+
         if(m_modeV == 1 || m_modeV == 2)
         {
             m_RecPad->show();
@@ -194,7 +209,6 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(m_pHID,&CHidWorker::onDataIn,this,[=](quint8 *data,int len){
-
         quint8 cmd = data[3];
         // 0c 4d 14 61 4d 4c 20 24 12 14 02 40 00 07 05 23 00 ce 5f 27 00 00 00 00 00 00 00 00 00 00 00 00
         // 10字节设备SN号
@@ -310,11 +324,13 @@ MainWindow::MainWindow(QWidget *parent)
             m_RecPad->setFunc(m_modeV);
             if(m_record)
             {
+                DoASRWork(true);
                 m_pHID->startRecord();
                 m_RecPad->show();
             }
             else
             {
+                DoASRWork(false);
                 m_pHID->stopRecord();
                 m_RecPad->hide();
                 m_RecPad->writePCM(nullptr,0);
@@ -332,18 +348,21 @@ MainWindow::MainWindow(QWidget *parent)
             break;
 
         case 0x9f: qDebug() << "语音搜索" ; //云指令
+            DoASRWork(true);
             m_pHID->setRecordPlay(false);
             m_pHID->startRecord();
             m_RecPad->show();
             m_record = false;
-            m_modeV = -1;
+            m_modeV = 10;
             break;
 
         case 0xa0: qDebug() << "结束" ;
+            DoASRWork(false);
             m_pHID->setRecordPlay(false);
             m_pHID->stopRecord();
             m_RecPad->hide();  // 自动粘贴
             m_record = false;
+            m_modeV = -1;
             break;
 
         case 0x1b:
@@ -414,9 +433,7 @@ MainWindow::MainWindow(QWidget *parent)
             m_pHID->StopRecorFile();
         }
     });
-    connect(ui->checkBoxTXASR,&QCheckBox::clicked,this,[=](bool checked){
-        DoASRWork(checked);
-    });
+
     {
         trayIcon = new QSystemTrayIcon(this);
         trayIcon->setIcon(QIcon(":/images/logo.png"));

@@ -94,6 +94,24 @@ DialogRecord::DialogRecord(QWidget *parent)
     m_XFV->setMontherLanguage(m_strTypeLang,m_strTypeAccent);
 }
 
+void DialogRecord::setOutsizeText(const QString&text,int state)
+{
+    ui->textEdit->setText(text);
+    if(state == 2)
+    {
+        if(m_nFunc == 2)
+        {
+            //m_XFT->translateText(text,m_pSetDlg->getTransLang1(),m_pSetDlg->getTransLang2());
+        }
+        else
+        {
+            SetTextToWinWithUnicode(text);
+            if(ui->checkBox->isChecked())
+                simulateKeyPress(VK_RETURN);
+        }
+    }
+}
+
 DialogRecord::~DialogRecord()
 {
     delete ui;
@@ -113,7 +131,7 @@ void DialogRecord::showEvent(QShowEvent *event)
 
     setGeometry(rcTip);
 
-    m_XFV->ReqAuthAudio();
+    //m_XFV->ReqAuthAudio();
     QDialog::showEvent(event);
 }
 
@@ -131,11 +149,11 @@ void DialogRecord::writePCM(char *data,int len)
 {
     if(!data || !len)
     {
-        m_XFV->WritePcmEnd();
-        return ;
+        //m_XFV->WritePcmEnd();
+        //return ;
     }
-    //qDebug() <<  "writePCM"  << len ;
-    m_XFV->WritePcmData(data,len);
+    //qDebug() <<  "writePCM"  << len;
+    //m_XFV->WritePcmData(data,len);
 
     short minValue = -32767;
     short maxValue = 32767;
