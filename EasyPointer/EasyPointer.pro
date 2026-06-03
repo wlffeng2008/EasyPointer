@@ -21,7 +21,7 @@ RC_LANG = 0x0004
 
 # 仅Windows平台生效
 win32 {
-    LIBS += -luser32 -lkernel32 -lpsapi # 链接窗口/进程相关库
+    LIBS += -luser32 -lkernel32 -lpsapi  -ldxva2# 链接窗口/进程相关库
 }
 
 LIBS += -L$$PWD -lhidapi

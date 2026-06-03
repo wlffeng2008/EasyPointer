@@ -9,65 +9,6 @@
 #include <QSystemTrayIcon>
 
 #include <QSettings>
-#include <QTimer>
-#include <QMap>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QUrl>
-
-class HttpHandler : public QObject
-{
-    Q_OBJECT
-public:
-    explicit HttpHandler(QObject *parent = nullptr) : QObject(parent)
-    {
-        manager = new QNetworkAccessManager(this);
-    }
-
-    void get(const QString &url)
-    {
-        QNetworkRequest request((QUrl(url)));
-        QNetworkReply *reply = manager->get(request);
-        connect(reply, &QNetworkReply::finished, this, [=]{
-            handleReply(reply);
-        });
-    }
-
-    void post(const QString &url, const QByteArray &data)
-    {
-        QNetworkRequest request((QUrl(url)));
-        request.setHeader(QNetworkRequest::ContentTypeHeader, QByteArray("application/json"));
-        QNetworkReply *reply = manager->post(request, data);
-        connect(reply, &QNetworkReply::finished, this, [=]{
-            handleReply(reply);
-        });
-    }
-
-private:
-    void handleReply(QNetworkReply *reply)
-    {
-        if (reply->error() != QNetworkReply::NoError)
-        {
-            QString error = reply->errorString();
-            qDebug() << "HttpHandler Error:" << error;
-        }
-        else
-        {
-            int code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-            QString text = reply->readAll();
-            onHttpReturn(text,code);
-        }
-        reply->deleteLater();
-    }
-
-signals:
-    void onHttpReturn(const QString&text,int code);
-    void onHttpWrror(const QString&error);
-
-private:
-    QNetworkAccessManager *manager=nullptr;
-};
 
 
 QT_BEGIN_NAMESPACE

@@ -2436,6 +2436,9 @@ background-image: url(:/images/jd.png);
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::FocusPolicy::NoFocus</enum>
+    </property>
     <property name="styleSheet">
      <string notr="true">QPushButton{background-color:transparent;}</string>
     </property>
@@ -2473,6 +2476,9 @@ background-image: url(:/images/jd.png);
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::FocusPolicy::NoFocus</enum>
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton{background-color:transparent;}
@@ -2666,9 +2672,9 @@ background-image: url(:/images/jd.png);
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupVoice"/>
-  <buttongroup name="buttonGroupCount"/>
   <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupColor"/>
+  <buttongroup name="buttonGroupCount"/>
   <buttongroup name="buttonGroupShape"/>
  </buttongroups>
 </ui>

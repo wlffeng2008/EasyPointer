@@ -331,12 +331,10 @@ bool DialogCloudCmd::startupApp(const QString&command)
     strText.replace("。","");
     strText.replace("，","");
     strText.replace("嗯","");
-    qDebug() << "开启程序00：" << strText;
     for(FrameAppTemplate*app:g_APPs)
     {
         if(app->isChecked() && app->m_strCommand.trimmed() == strText.trimmed())
         {
-            qDebug() << "开启程序11：" << strText;
             app->startup();
             return true ;
         }

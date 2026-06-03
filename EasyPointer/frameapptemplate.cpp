@@ -54,6 +54,7 @@ bool FrameAppTemplate::startup()
 {
     if(time(nullptr) - m_startTime < 10)
         return false;
+
     m_startTime = time(nullptr);
     //qDebug() << m_strExePath;
     QProcess::startDetached(m_strExePath,{});

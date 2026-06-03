@@ -26,6 +26,44 @@
 
 #include "TxASRClient.h"
 
+#include <Windows.h>
+#include <highlevelmonitorconfigurationapi.h>
+#include <QScreen>
+#include <QApplication>
+
+// 获取系统屏幕亮度（返回 0~100 整数）
+int getWinScreenBrightness()
+{
+    HWND hWnd = nullptr;//(HWND)QApplication::primaryScreen()->winId();
+    HMONITOR hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+
+    DWORD minVal = 0, maxVal = 0, curVal = 0;
+    if (GetMonitorBrightness(hMonitor, &minVal, &maxVal, &curVal))
+    {
+        // 转换为0~100百分比
+        return (int)(curVal * 100.0 / maxVal);
+    }
+    return -1; // 获取失败
+}
+
+// 设置系统屏幕亮度（percent: 0~100）
+bool setWinScreenBrightness(int percent)
+{
+    if (percent < 0) percent = 0;
+    if (percent > 100) percent = 100;
+
+    HWND hWnd = nullptr;//(HWND)QApplication::primaryScreen()->winId();
+    HMONITOR hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+
+    DWORD minVal = 0, maxVal = 0, curVal = 0;
+    if (!GetMonitorBrightness(hMonitor, &minVal, &maxVal, &curVal))
+        return false;
+
+    // 百分比转硬件数值
+    DWORD target = (DWORD)(percent / 100.0 * maxVal);
+    return SetMonitorBrightness(hMonitor, target);
+}
+
 static QList<quint32> colors={0xFF0000,0x00FF00,0x0000FF,0xFFFFFF,0xFF8000,0x800080,0xFFFF00,0x00FFFF,0x000000};
 
 MainWindow::MainWindow(QWidget *parent)
@@ -47,6 +85,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_pDSet = new DialogDeviceSet();
     m_pMSet = new DialogMKeySet();
+    qDebug() << "ScreenBrightness：" << getWinScreenBrightness() << GetLastError();
+    setWinScreenBrightness(50);
 
     setStyleSheet("QLabel{color:white;font-weight:600;}");
 
@@ -186,6 +226,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->checkBoxTXASR,&QCheckBox::clicked,this,[=](bool checked){
         DoASRWork(checked);
     });
+
+    pAsrClient->translateText("我是一个中国人。");
 
     m_pHID = new CHidWorker();
     connect(m_pHID,&CHidWorker::onPCMData,this,[=](const QByteArray&data){
