@@ -81,7 +81,7 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
 {
     ui->setupUi(this);
 
-    //setWindowFlags(windowFlags() | Qt::Dialog |Qt::Tool);
+    setWindowFlags(windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
 
     m_pModel = new QStandardItemModel(this);
     m_pModel->setHorizontalHeaderLabels(QString("类型,指令词,执行路径,删除").split(','));

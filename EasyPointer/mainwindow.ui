@@ -37,7 +37,7 @@ color:white;</string>
     <property name="geometry">
      <rect>
       <x>122</x>
-      <y>364</y>
+      <y>360</y>
       <width>329</width>
       <height>62</height>
      </rect>
@@ -521,7 +521,7 @@ QPushButton:checked  {
     <property name="geometry">
      <rect>
       <x>466</x>
-      <y>360</y>
+      <y>356</y>
       <width>265</width>
       <height>126</height>
      </rect>
@@ -1937,7 +1937,7 @@ background-image: url(:/images/jd.png);
     <property name="geometry">
      <rect>
       <x>122</x>
-      <y>360</y>
+      <y>356</y>
       <width>330</width>
       <height>34</height>
      </rect>
@@ -1956,7 +1956,7 @@ background-image: url(:/images/jd.png);
     <property name="geometry">
      <rect>
       <x>122</x>
-      <y>362</y>
+      <y>358</y>
       <width>598</width>
       <height>110</height>
      </rect>
@@ -2505,7 +2505,7 @@ background-image: url(:/images/jd.png);
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>462</y>
+      <y>458</y>
       <width>339</width>
       <height>20</height>
      </rect>
@@ -2671,10 +2671,10 @@ background-image: url(:/images/jd.png);
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupVoice"/>
-  <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupColor"/>
+  <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupCount"/>
+  <buttongroup name="buttonGroupVoice"/>
   <buttongroup name="buttonGroupShape"/>
  </buttongroups>
 </ui>
