@@ -15,7 +15,7 @@ void SetTextToWinWithUnicode(const QString&strText)
     keybd_event(VK_CONTROL,0x45, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
     return ;
 
-    std::u16string text = strText.toStdU16String() ;
+    std::u16string text = strText.toStdU16String();
 
     for (size_t i = 0; i < text.size(); i++){
         INPUT inputs[2] = {{0}};
@@ -33,7 +33,7 @@ void SetTextToWinWithUnicode(const QString&strText)
     }
 }
 
-typedef int CGKeyCode ;
+typedef int CGKeyCode;
 typedef int CGEventFlags;
 
 void simulateKeyDown(CGKeyCode keyCode)
@@ -99,16 +99,9 @@ void DialogRecord::setOutsizeText(const QString&text,int state)
     ui->textEdit->setText(text);
     if(state == 2)
     {
-        if(m_nFunc == 2)
-        {
-            //m_XFT->translateText(text,m_pSetDlg->getTransLang1(),m_pSetDlg->getTransLang2());
-        }
-        else
-        {
-            SetTextToWinWithUnicode(text);
-            if(ui->checkBox->isChecked())
-                simulateKeyPress(VK_RETURN);
-        }
+        SetTextToWinWithUnicode(text);
+        if(ui->checkBox->isChecked())
+            simulateKeyPress(VK_RETURN);
     }
 }
 

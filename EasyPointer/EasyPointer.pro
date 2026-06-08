@@ -9,13 +9,15 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 
+include(./QXlsx/QXlsx.pri)
+
 DESTDIR = ../../bin
 RC_ICONS = nmy.ico
 VERSION = 1.0.0.0
 TARGET = NmyStudio
 QMAKE_TARGET_COMPANY = "Nmy"
 QMAKE_TARGET_PRODUCT = "Nmy"
-QMAKE_TARGET_DESCRIPTION = "Nmy: Created by Qt6.11.0"
+QMAKE_TARGET_DESCRIPTION = "Nmy Pointer"
 QMAKE_TARGET_COPYRIGHT = "Nmy(2026.01)"
 RC_LANG = 0x0004
 

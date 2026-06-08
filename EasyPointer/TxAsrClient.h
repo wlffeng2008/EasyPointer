@@ -88,6 +88,7 @@ public:
 signals:
     void onASRText(const QString&text,int state);
     void onTransText(const QString&text,int state);
+    void onASRConnect(bool connect);
 
 private:QByteArray m_buf;
     bool m_useMic = true;

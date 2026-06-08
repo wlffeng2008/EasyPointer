@@ -38,7 +38,7 @@ public:
     void setMouseBtn(quint8 func=0xC0);
     void setLaser(bool on=true);
     void askStatus();
-    void checkState();
+    void askBattery();
     void setOnline(bool on=true);
     void setSample(quint8 index=1);
     void sendKey(quint8 key1, quint8 key0=0);

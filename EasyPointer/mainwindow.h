@@ -68,6 +68,7 @@ private:
 
     bool m_bRound = true;
     qreal m_enlarge= 1.5;
+    quint8 m_battery = 10;
 
     QColor m_color0;
     QColor m_color1;

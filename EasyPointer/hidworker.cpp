@@ -294,7 +294,11 @@ CHidWorker::CHidWorker()
     tmReadSN->start(5000);
     connect(tmReadSN,&QTimer::timeout,this,[=]{
         if(!m_bRecord)
-        readSN();
+        {
+            readSN();
+            QThread::msleep(20);
+            askBattery();
+        }
     });
 
     g_strWork = QApplication::applicationDirPath() + "/recordfile";
@@ -382,9 +386,16 @@ void CHidWorker::run()
         m_pAPlayer->setAudioInfo(16000/mode);
 
         readSN();
+        QThread::msleep(20);
         setMouse(false);
+        QThread::msleep(20);
         setLaser(false);
+        QThread::msleep(20);
         stopRecord();
+        QThread::msleep(20);
+        askBattery();
+
+
 
         quint8 szBufs[200][128] = {{0}};
 
@@ -507,9 +518,9 @@ void CHidWorker::setOnline(bool on)
     sendCmd(szCmd);
 }
 
-void CHidWorker::checkState()
+void CHidWorker::askBattery()
 {
-    quint8 szCmd[33]={0x0C,0x4D,0x05,0x69,00,0x4C};
+    quint8 szCmd[33]={0x0C,0x4D,0x02,0x90,00,0x4C};
     sendCmd(szCmd);
 }
 
@@ -651,5 +662,7 @@ void CHidWorker::StopRecorFile()
         QString strMP3 = m_strFile;
         strMP3.replace(".wav",".mp3");
         WAVFile2MP3File(m_strFile,strMP3);
+
+        QFile::remove(m_strFile);
     }
 }

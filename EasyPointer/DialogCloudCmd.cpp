@@ -2,8 +2,14 @@
 #include "ui_DialogCloudCmd.h"
 #include "FrameAppTemplate.h"
 
+#include <windows.h>
+#include <winuser.h>
+
+#include <QXlsx>
+using namespace QXlsx;
+
 #include <QJsonArray>
-#include <QJsonObject>
+#include <QProcess>
 #include <QJsonDocument>
 #include <QFile>
 #include <QMessageBox>
@@ -28,7 +34,6 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include <windows.h>
 #include <shlobj.h>
 #include <shlguid.h>
 #include <objbase.h>
@@ -82,6 +87,7 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
     ui->setupUi(this);
 
     setWindowFlags(windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
+    setStyleSheet("QLabel{color:black;font-weight:600;}");
 
     m_pModel = new QStandardItemModel(this);
     m_pModel->setHorizontalHeaderLabels(QString("类型,指令词,执行路径,删除").split(','));
@@ -92,9 +98,9 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
     pHeader->resizeSection(0,80);
     pHeader->setSectionResizeMode(1,QHeaderView::Fixed);
     pHeader->resizeSection(1,240);
-    ui->tableView->setFocusPolicy(Qt::NoFocus);
-    pHeader->resizeSection(3,60);
     pHeader->setSectionResizeMode(3,QHeaderView::Fixed);
+    pHeader->resizeSection(3,60);
+    ui->tableView->setFocusPolicy(Qt::NoFocus);
 
     saveLoadCommand(false);
 
@@ -162,10 +168,73 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
         ui->lineEditData->setText(strFile);
     });
 
-    setStyleSheet("QLabel{color:black;font-weight:600;}");
+    {
+        m_pModel1 = new QStandardItemModel(this);
+        m_pModel1->setHorizontalHeaderLabels(QString("指令词,备注,启用").split(','));
+        ui->tableView1->setModel(m_pModel1);
+        QHeaderView *pHeader = ui->tableView1->horizontalHeader();
+        pHeader->setSectionResizeMode(QHeaderView::Stretch);
+        pHeader->setSectionResizeMode(0,QHeaderView::Fixed);
+        pHeader->resizeSection(0,160);
+        //pHeader->setSectionResizeMode(1,QHeaderView::Fixed);
+        //pHeader->resizeSection(1,240);
+        pHeader->setSectionResizeMode(2,QHeaderView::Fixed);
+        pHeader->resizeSection(2,100);
+        ui->tableView1->setFocusPolicy(Qt::NoFocus);
+
+
+        // "返回桌面","窗口最小","
+        //                 电脑关机","
+        //                     运行","
+        //                         电脑锁屏","
+        //                             电脑静音","
+        //                                 音量10","
+        //                                     音量20","
+        //                                         音量30","
+        //                                             音量50","
+        //                                                 音量60","
+        //                                                     音量70","
+        //                                                         音量80","
+        //                                                             音量90","
+        //                                                                 音量100","
+        //                                                                     屏幕亮度30%","
+        //         屏幕亮度50%","
+        //         屏幕亮度70%","
+        //         屏幕亮度80%","
+        //         屏幕亮度100%","
+        //         打开控制面板","屏幕黑屏","播放","打开放大镜","关闭放大镜","Ctrl+c","Ctrl+v","截屏"};
+        QString strFile = QApplication::applicationDirPath() + "/defalutCommand.xlsx";
+        Document xlsx(strFile);
+        if (!xlsx.load())
+        {
+            QMessageBox::critical(this, "提示", "文件无法加载！\n" + strFile);
+        }
+        else
+        {
+            for(int i=0; i<200; i++)
+            {
+                QString strCell0 = xlsx.read(QString::asprintf("A%d", i+2)).toString().trimmed();
+                QString strCell1 = xlsx.read(QString::asprintf("B%d", i+2)).toString().trimmed();
+                QString strCell2 = xlsx.read(QString::asprintf("C%d", i+2)).toString().trimmed();
+                if(strCell0.isEmpty())
+                    continue;
+
+                QStandardItem *pItem0 = new QStandardItem(strCell0);
+                QStandardItem *pItem1 = new QStandardItem(strCell2);
+                QStandardItem *pItem2 = new QStandardItem("启用");
+                pItem2->setCheckable(true);
+                pItem2->setCheckState(Qt::Checked);
+
+                pItem0->setEditable(false);
+                pItem1->setEditable(false);
+                pItem2->setEditable(false);
+
+                m_pModel1->appendRow({pItem0,pItem1,pItem2});
+            }
+        }
+    }
 
     {
-
         g_Checks = Set.value("checkedApps").toStringList();
 
         QVBoxLayout *pVLayout = (QVBoxLayout *)ui->scrollAreaWidgetContents->layout() ;
@@ -196,8 +265,6 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
                     continue;
 
                 nCount ++ ;
-                //qDebug().noquote() << "快捷方式名称: " << fileInfo.fileName();
-                //qDebug().noquote() << "对应EXE路径: " << targetPath  << nCount;
 
                 CComPtr<IShellLinkW> pShellLink;
                 if (!SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLinkW, (LPVOID*)&pShellLink)))
@@ -226,7 +293,7 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
                         g_Checks.clear();
                         for(FrameAppTemplate*app:g_APPs){
                             if(app->isChecked())
-                                g_Checks.append(app->m_strShortCut) ;
+                                g_Checks.append(app->m_strShortCut);
                         }
                         Set.setValue("checkedApps",g_Checks);
                     }) ;
@@ -243,16 +310,16 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
 
         connect(ui->pushButtonAllOn,&QPushButton::clicked,this,[=]{
 
-            static bool bCheckAll = true ;
+            static bool bCheckAll = true;
             for(FrameAppTemplate *app: g_APPs){
-                app->setCheck(bCheckAll) ;
+                app->setCheck(bCheckAll);
             }
-            bCheckAll = !bCheckAll ;
+            bCheckAll = !bCheckAll;
 
             g_Checks.clear();
             for(FrameAppTemplate*app:g_APPs){
                 if(app->isChecked())
-                    g_Checks.append(app->m_strShortCut) ;
+                    g_Checks.append(app->m_strShortCut);
             }
             Set.setValue("checkedApps",g_Checks);
         });
@@ -331,12 +398,31 @@ bool DialogCloudCmd::startupApp(const QString&command)
     strText.replace("。","");
     strText.replace("，","");
     strText.replace("嗯","");
+
+    int count = m_pModel->rowCount();
+    for(int i=0; i<count; i++)
+    {
+        QStandardItem *item0 = m_pModel->item(i,1);
+        QStandardItem *item1 = m_pModel->item(i,2);
+
+        QString strKey = item0->text().trimmed();
+        QString strPath = item1->text().trimmed();
+
+        if(strKey == strText)
+        {
+            //QProcess::startDetached(strPath);
+
+            HINSTANCE result = ::ShellExecute(NULL, L"open", (LPCWSTR)strPath.toStdU16String().c_str(), NULL, NULL, SW_SHOWNORMAL);
+            return true;
+        }
+    }
+
     for(FrameAppTemplate*app:g_APPs)
     {
         if(app->isChecked() && app->m_strCommand.trimmed() == strText.trimmed())
         {
-            app->st                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             artup();
-            return true ;
+            app->startup();
+            return true;
         }
     }
     return false;

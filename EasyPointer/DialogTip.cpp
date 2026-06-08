@@ -51,7 +51,7 @@ void DialogTip::paintEvent(QPaintEvent *event)
     path.addRoundedRect(rect(),24,24);
     painter.setClipPath(path);
 
-    static QStringList images = {"数码光.jpg","放大镜.jpg","聚光灯.jpg","标注.jpg","扩音模式.jpg","打字模式.jpg","翻译模式.jpg"};
+    static QStringList images = {"数码光.jpg","放大镜.jpg","聚光灯.jpg","标注.jpg","扩音模式.jpg","打字模式.jpg","翻译模式.jpg","录音模式.jpg"};
 
     QString strImage = QApplication::applicationDirPath() + QString("/images/") + images[mode];
     painter.drawImage(rect(),QImage(strImage));

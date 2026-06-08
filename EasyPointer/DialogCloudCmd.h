@@ -21,6 +21,7 @@ public:
 private:
     Ui::DialogCloudCmd *ui;
     QStandardItemModel *m_pModel = nullptr;
+    QStandardItemModel *m_pModel1 = nullptr;
     void saveLoadCommand(bool save=true);
 };
 

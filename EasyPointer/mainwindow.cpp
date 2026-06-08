@@ -221,13 +221,17 @@ MainWindow::MainWindow(QWidget *parent)
     static auto *pAsrClient = DoASRWork(false);
     connect(pAsrClient,&TxAsrClient::onASRText,this,[=](const QString&text,int state){
         if(m_modeV == 10)  m_pCmd->startupApp(text);
-        if(m_modeV == 1 || m_modeV == 2)m_RecPad->setOutsizeText(text,state);
+        if(m_modeV == 1 || m_modeV == 2) m_RecPad->setOutsizeText(text,state);
+        if(m_modeV == 2)pAsrClient->translateText(text);
    });
+    connect(pAsrClient,&TxAsrClient::onTransText,this,[=](const QString&text,int state){
+        m_RecPad->setOutsizeText(text,state);
+    });
     connect(ui->checkBoxTXASR,&QCheckBox::clicked,this,[=](bool checked){
         DoASRWork(checked);
     });
 
-    pAsrClient->translateText("我是一个中国人。");
+    //pAsrClient->translateText("我是一个中国人。");
 
     m_pHID = new CHidWorker();
     connect(m_pHID,&CHidWorker::onPCMData,this,[=](const QByteArray&data){
@@ -264,7 +268,7 @@ MainWindow::MainWindow(QWidget *parent)
         switch(cmd)
         {
         case 0x91: qDebug() << "单击";
-            m_pHID->setMouse(true);
+            //m_pHID->setMouse(true);
             pFuncPad->hide();
             m_press = 0;
             break;
@@ -273,9 +277,13 @@ MainWindow::MainWindow(QWidget *parent)
         {
             m_pHID->setLaser(false);
             qDebug() << "双击";   // 仅切换功能
-            m_mode ++;
-            if(m_mode > 3)
+            m_mode++;
+            if(m_mode > 4)
                 m_mode = 0;
+
+            if(m_mode == 3)
+                m_pHID->setMouse(true);
+
             m_ModeTip->showMode(m_mode);
             if(m_mode == 0) ui->pushButton0->click();
             if(m_mode == 1) ui->pushButton1->click();
@@ -287,6 +295,17 @@ MainWindow::MainWindow(QWidget *parent)
             break;
 
         case 0x93: qDebug() << "长按" ;
+            if(m_mode != 3)
+            {
+                if(pFuncPad->isVisible())
+                {
+                    m_pHID->setMouse(false);
+                    QApplication::setOverrideCursor(Qt::BlankCursor);
+                    pFuncPad->hide();
+                    return;
+                }
+            }
+
             m_ModeTip->hide();
             if(m_mode == 0xFF) break;
             m_pHID->setMouse(true);
@@ -306,14 +325,14 @@ MainWindow::MainWindow(QWidget *parent)
 
         case 0x94: qDebug() << "松开" ;
             QApplication::restoreOverrideCursor();
-            QApplication::setOverrideCursor(Qt::ArrowCursor);
+            m_pHID->setMouse(true);
             if(m_mode != 3)
             {
+                QApplication::setOverrideCursor(Qt::BlankCursor);
+                m_pHID->setMouse(false);
                 if(!this->isMinimized())
                     show();
-
-                pFuncPad->hide();
-                //m_pHID->setMouse(false);
+                //pFuncPad->hide();
             }
 
             pFuncPad->setDrage(false);
@@ -342,6 +361,12 @@ MainWindow::MainWindow(QWidget *parent)
             if(m_modeV == 0xFF)
             {
                 qDebug() << "cancel:" << m_modeV;
+                break;
+            }
+
+            if(m_modeV == 3)
+            {
+                ui->checkBoxRecord->click();
                 break;
             }
 
@@ -384,7 +409,7 @@ MainWindow::MainWindow(QWidget *parent)
             m_pHID->stopRecord();
             m_pHID->setRecordPlay(false);
             m_modeV++;
-            if(m_modeV>2)
+            if(m_modeV>3)
                 m_modeV=0;
             m_ModeTip->showMode(4+m_modeV);
             break;
@@ -410,6 +435,12 @@ MainWindow::MainWindow(QWidget *parent)
         case 0x1b:
             break;
 
+        case 0x90:
+            //qDebug().noquote() << QByteArray((char *)data,len).toHex(' ');
+            m_battery = data[5];
+            ui->labelBattery->update();
+            break;
+
         case 0x61:
         {
             quint8 *stBuf=nullptr;
@@ -422,7 +453,6 @@ MainWindow::MainWindow(QWidget *parent)
                 ui->labelSN->setText(strSN);
 
                 stBuf = data + 16;
-                //m_pHID->askStatus();
             }
 
             if(data[2] == 0x08)
@@ -440,7 +470,7 @@ MainWindow::MainWindow(QWidget *parent)
                 quint8 batt = stBuf[offset+4];
                 quint8 ver = stBuf[offset+5];
 
-                //qDebug() << status << type << dpi << model << batt << ver;
+                // qDebug() << status << type << dpi << model << batt << ver;
             }
         }
             break;
@@ -478,7 +508,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     {
         trayIcon = new QSystemTrayIcon(this);
-        trayIcon->setIcon(QIcon(":/images/logo.png"));
+        trayIcon->setIcon(QIcon(":/images/logo.jpg"));
         trayIcon->setToolTip("NMY Pen");
         trayIcon->show();
 
@@ -510,13 +540,17 @@ MainWindow::MainWindow(QWidget *parent)
         connect(showAction, &QAction::triggered, this, &QMainWindow::showNormal);
         connect(hideAction, &QAction::triggered, this, &QMainWindow::hide);
         trayIcon->setContextMenu(trayMenu);
-        trayMenu->setStyleSheet("color:rea;");
+        trayMenu->setStyleSheet("color:red;");
     }
 
     ui->labelColor->hide();
 
     ui->labelAudioSet->installEventFilter(this);
     ui->labelCloudCmd->installEventFilter(this);
+    ui->labelAudioSet1->installEventFilter(this);
+    ui->labelCloudCmd1->installEventFilter(this);
+    ui->labelAutoStart->installEventFilter(this);
+    ui->labelBattery->installEventFilter(this);
     ui->page00->installEventFilter(this);
     ui->page01->installEventFilter(this);
     ui->page02->installEventFilter(this);
@@ -650,30 +684,46 @@ void MainWindow::paintEvent(QPaintEvent *event)
     p.drawImage(QRect(0,2,132,44), QImage(QApplication::applicationDirPath()+"/images/nmylogo.png"));
 
     {
-        QImage batt(":/images/batt.png");
-
-        QPainter p(&batt);
-        p.fillRect(QRect(3,3,50/100.0 * 23,10),QBrush(Qt::green));
-        ui->labelBattery->setPixmap(QPixmap::fromImage(batt));
     }
-
 }
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {
-    if(watched == ui->labelAudioSet && event->type() == QEvent::MouseButtonRelease)
+    if((watched == ui->labelAudioSet || watched == ui->labelAudioSet1)&& event->type() == QEvent::MouseButtonRelease)
     {
         QProcess::startDetached("control", QStringList() << "mmsys.cpl" << "sounds,,0");
         QProcess::startDetached("sndvol", QStringList{});
     }
 
-    if(watched == ui->labelCloudCmd && event->type() == QEvent::MouseButtonRelease)
+    if((watched == ui->labelCloudCmd || watched == ui->labelCloudCmd1) && event->type() == QEvent::MouseButtonRelease)
     {
         m_pCmd->show();
     }
 
     if(event->type() == QEvent::Paint)
     {
+        if(ui->labelBattery == watched)
+        {
+            QImage batt(":/images/batt.png");
+
+            QPainter p(&batt);
+            p.fillRect(QRect(3,3,m_battery/100.0 * 23,10),QBrush(Qt::green));
+
+            QFont font = p.font();
+            font.setBold(true);
+            font.setPixelSize(12);
+            p.setFont(font);
+            QTextOption to;
+            to.setAlignment(Qt::AlignCenter);
+            QColor color = Qt::blue;
+            if(m_battery<50)color = Qt::yellow;
+            if(m_battery<20)color = Qt::red;
+            p.setPen(color);
+            p.drawText(ui->labelBattery->rect(),QString("%1").arg(m_battery),to);
+            ui->labelBattery->setPixmap(QPixmap::fromImage(batt));
+            ui->labelBattery->setToolTip(tr("剩余电量") + QString(": %1%").arg(m_battery));
+            return QMainWindow::eventFilter(watched,event);
+        }
         static QImage bkImg = QImage(":/images/bk0.png");
         QWidget *Page = static_cast<QWidget *>(watched);
         QRect rc = Page->rect();
@@ -682,7 +732,11 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         int my = rc.center().y();
         QPoint  Center(mx,my);
 
-        if(ui->labelCloudCmd != watched && ui->labelAudioSet != watched)
+        if( ui->labelCloudCmd != watched &&
+            ui->labelAudioSet != watched &&
+            ui->labelCloudCmd1 != watched &&
+            ui->labelAudioSet1 != watched &&
+            ui->labelAutoStart != watched)
             p.drawImage(rc,bkImg);
 
         if(watched == ui->page00)

@@ -32,11 +32,11 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab0">
       <attribute name="title">
-       <string>自定义云指令</string>
+       <string>自定义指令</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
@@ -128,7 +128,7 @@
      </widget>
      <widget class="QWidget" name="tab1">
       <attribute name="title">
-       <string>本机全部软件</string>
+       <string>本机软件唤起</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
@@ -191,6 +191,23 @@ border-radius:8px;</string>
           <layout class="QVBoxLayout" name="verticalLayout_2"/>
          </widget>
         </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab2">
+      <attribute name="title">
+       <string>内置指令</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QLabel" name="labelTitle2">
+         <property name="text">
+          <string>内置指令列表</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTableView" name="tableView1"/>
        </item>
       </layout>
      </widget>

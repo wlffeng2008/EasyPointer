@@ -30,7 +30,7 @@ TxAsrClient::TxAsrClient(const QUrl& url, bool bUseMic, QObject* parent)
     connect(m_ws, &QWebSocket::connected, this, [=]{
         qDebug() << "ASR WebSocket Connected!";
         m_connect = true;
-
+        emit onASRConnect(true);
         if(m_useMic)
             startCapture();
     });
@@ -47,8 +47,8 @@ TxAsrClient::TxAsrClient(const QUrl& url, bool bUseMic, QObject* parent)
             if (state == 2)
             {
                 qDebug() << "识别结果:" << strText;
-                emit onASRText(strText,state);
             }
+            emit onASRText(strText,state);
         }
         else
         {
@@ -79,6 +79,7 @@ void TxAsrClient::stop()
     }
     m_working = false;
     m_connect = false;
+    emit onASRConnect(false);
 
     if(m_audioDevice) m_audioDevice->close();
     if(m_audioSource) m_audioSource->stop();
