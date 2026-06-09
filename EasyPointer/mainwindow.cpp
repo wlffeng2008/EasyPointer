@@ -220,20 +220,23 @@ MainWindow::MainWindow(QWidget *parent)
 
     static auto *pAsrClient = DoASRWork(false);
     connect(pAsrClient,&TxAsrClient::onASRText,this,[=](const QString&text,int state){
-        if(m_modeV == 10)  m_pCmd->startupApp(text);
+        if(m_modeV == 10 && state == 2)  m_pCmd->startupApp(text);
         if(m_modeV == 1 || m_modeV == 2) m_RecPad->setOutsizeText(text,state);
-        if(m_modeV == 2)pAsrClient->translateText(text);
+        if(m_modeV == 2) pAsrClient->translateText(text);
    });
     connect(pAsrClient,&TxAsrClient::onTransText,this,[=](const QString&text,int state){
         m_RecPad->setOutsizeText(text,state);
+    });
+    connect(pAsrClient,&TxAsrClient::onASRConnect,this,[=](bool connect){
+        ui->checkBoxTXASR->setChecked(connect);
     });
     connect(ui->checkBoxTXASR,&QCheckBox::clicked,this,[=](bool checked){
         DoASRWork(checked);
     });
 
-    //pAsrClient->translateText("我是一个中国人。");
-
     m_pHID = new CHidWorker();
+    m_pCmd->m_pWork = m_pHID;
+    m_pCmd->m_pPad = pFuncPad;
     connect(m_pHID,&CHidWorker::onPCMData,this,[=](const QByteArray&data){
         pAsrClient->userMic(false);
         pAsrClient->writePCM(data);
@@ -278,7 +281,7 @@ MainWindow::MainWindow(QWidget *parent)
             m_pHID->setLaser(false);
             qDebug() << "双击";   // 仅切换功能
             m_mode++;
-            if(m_mode > 4)
+            if(m_mode > 3)
                 m_mode = 0;
 
             if(m_mode == 3)
@@ -633,7 +636,7 @@ void MainWindow::updateValue()
         break;
 
     case 2:
-        m_radius2 = ui->horizontalSlider4->value() / 2;
+        m_radius2 = ui->horizontalSlider4->value();
         nAlph = ui->horizontalSlider5->value() * 255 / 100.0;
         m_color2 = Qt::black;
         m_color2.setAlpha(nAlph);
@@ -682,9 +685,6 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
     p.drawImage(this->rect(),      QImage(QApplication::applicationDirPath()+"/images/bground.png"));
     p.drawImage(QRect(0,2,132,44), QImage(QApplication::applicationDirPath()+"/images/nmylogo.png"));
-
-    {
-    }
 }
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
@@ -806,7 +806,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    qDebug() << event->key();
+    qDebug() << "MainWindow::keyPressEvent" << event->key() << event;
 
     QMainWindow::keyPressEvent(event);
 }

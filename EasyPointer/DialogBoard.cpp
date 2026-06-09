@@ -47,6 +47,15 @@ void DialogBoard::setMode(int mode)
     clearLines();
 }
 
+void DialogBoard::showBlack()
+{
+    m_onlyBlack=true;
+    m_mode = 4;
+    clearLines();
+    showFullScreen();
+    raise();
+}
+
 bool DialogBoard::event(QEvent *event)
 {
    return QDialog::event(event);

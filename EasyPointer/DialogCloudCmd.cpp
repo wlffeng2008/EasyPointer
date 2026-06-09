@@ -25,6 +25,7 @@ using namespace QXlsx;
 #include <QDebug>
 #include <QIcon>
 #include <QPixmap>
+#include <QScreen>
 #include <QFileInfo>
 #include <QScrollArea>
 #include <QVBoxLayout>
@@ -73,12 +74,11 @@ QPixmap getShortcutPixmap(const QString& targetPath, int iconIndex)
     return QPixmap();
 }
 
-static QSettings Set(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)+"/NMYPointSetting.ini",QSettings::IniFormat) ;
+static QSettings Set(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)+"/NMYPointSetting.ini",QSettings::IniFormat);
 
 static QList<FrameAppTemplate *>g_APPs;
 static QStringList g_Checks;
 static QJsonArray g_Commands;
-
 
 DialogCloudCmd::DialogCloudCmd(QWidget *parent)
     : QDialog(parent)
@@ -87,10 +87,10 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
     ui->setupUi(this);
 
     setWindowFlags(windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
-    setStyleSheet("QLabel{color:black;font-weight:600;}");
+    setStyleSheet("QLabel{color:black;font-weight:600;} QPushButton{color:black;font-weight:600;}");
 
     m_pModel = new QStandardItemModel(this);
-    m_pModel->setHorizontalHeaderLabels(QString("类型,指令词,执行路径,删除").split(','));
+    m_pModel->setHorizontalHeaderLabels(QString("类型,指令词,执行路径,启用,管理").split(','));
     ui->tableView->setModel(m_pModel);
     QHeaderView *pHeader = ui->tableView->horizontalHeader();
     pHeader->setSectionResizeMode(QHeaderView::Stretch);
@@ -99,13 +99,18 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
     pHeader->setSectionResizeMode(1,QHeaderView::Fixed);
     pHeader->resizeSection(1,240);
     pHeader->setSectionResizeMode(3,QHeaderView::Fixed);
-    pHeader->resizeSection(3,60);
+    pHeader->resizeSection(3,80);
+    pHeader->setSectionResizeMode(4,QHeaderView::Fixed);
+    pHeader->resizeSection(4,60);
     ui->tableView->setFocusPolicy(Qt::NoFocus);
 
     saveLoadCommand(false);
+    connect(m_pModel,&QStandardItemModel::itemChanged,this,[=](QStandardItem *item){
+        saveLoadCommand();
+    });
 
     connect(ui->tableView,&QTableView::clicked,this,[=](const QModelIndex &index){
-        if(index.column() == 3)
+        if(index.column() == 4)
         {
             if( QMessageBox::question(this,"提示","确定要删除此条指令词吗？") == QMessageBox::Yes)
             {
@@ -138,14 +143,19 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
 
         QStandardItem *item0 = new QStandardItem(strType);
         item0->setData(ui->comboBoxFunc->currentIndex());
-        item0->setEditable(false);
 
         QStandardItem *item1 = new QStandardItem(strWord);
         QStandardItem *item2 = new QStandardItem(strData);
-        QStandardItem *item3 = new QStandardItem("删除");
-        item3->setTextAlignment(Qt::AlignCenter);
+        QStandardItem *item3 = new QStandardItem("启用");
+        QStandardItem *item4 = new QStandardItem("删除");
+        item4->setTextAlignment(Qt::AlignCenter);
 
-        m_pModel->appendRow({item0,item1,item2,item3});
+        item0->setEditable(false);
+        item4->setEditable(false);
+        item3->setEditable(false);
+        item3->setCheckable(true);
+        item3->setCheckState(Qt::Checked);
+        m_pModel->appendRow({item0,item1,item2,item3,item4});
 
         saveLoadCommand();
     });
@@ -176,68 +186,20 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
         pHeader->setSectionResizeMode(QHeaderView::Stretch);
         pHeader->setSectionResizeMode(0,QHeaderView::Fixed);
         pHeader->resizeSection(0,160);
-        //pHeader->setSectionResizeMode(1,QHeaderView::Fixed);
-        //pHeader->resizeSection(1,240);
         pHeader->setSectionResizeMode(2,QHeaderView::Fixed);
-        pHeader->resizeSection(2,100);
+        pHeader->resizeSection(2,80);
         ui->tableView1->setFocusPolicy(Qt::NoFocus);
 
-
-        // "返回桌面","窗口最小","
-        //                 电脑关机","
-        //                     运行","
-        //                         电脑锁屏","
-        //                             电脑静音","
-        //                                 音量10","
-        //                                     音量20","
-        //                                         音量30","
-        //                                             音量50","
-        //                                                 音量60","
-        //                                                     音量70","
-        //                                                         音量80","
-        //                                                             音量90","
-        //                                                                 音量100","
-        //                                                                     屏幕亮度30%","
-        //         屏幕亮度50%","
-        //         屏幕亮度70%","
-        //         屏幕亮度80%","
-        //         屏幕亮度100%","
-        //         打开控制面板","屏幕黑屏","播放","打开放大镜","关闭放大镜","Ctrl+c","Ctrl+v","截屏"};
-        QString strFile = QApplication::applicationDirPath() + "/defalutCommand.xlsx";
-        Document xlsx(strFile);
-        if (!xlsx.load())
-        {
-            QMessageBox::critical(this, "提示", "文件无法加载！\n" + strFile);
-        }
-        else
-        {
-            for(int i=0; i<200; i++)
-            {
-                QString strCell0 = xlsx.read(QString::asprintf("A%d", i+2)).toString().trimmed();
-                QString strCell1 = xlsx.read(QString::asprintf("B%d", i+2)).toString().trimmed();
-                QString strCell2 = xlsx.read(QString::asprintf("C%d", i+2)).toString().trimmed();
-                if(strCell0.isEmpty())
-                    continue;
-
-                QStandardItem *pItem0 = new QStandardItem(strCell0);
-                QStandardItem *pItem1 = new QStandardItem(strCell2);
-                QStandardItem *pItem2 = new QStandardItem("启用");
-                pItem2->setCheckable(true);
-                pItem2->setCheckState(Qt::Checked);
-
-                pItem0->setEditable(false);
-                pItem1->setEditable(false);
-                pItem2->setEditable(false);
-
-                m_pModel1->appendRow({pItem0,pItem1,pItem2});
-            }
-        }
+        saveLoadDefault(false);
+        connect(m_pModel1,&QStandardItemModel::itemChanged,this,[=](QStandardItem *item){
+            saveLoadDefault();
+        });
     }
 
     {
         g_Checks = Set.value("checkedApps").toStringList();
 
-        QVBoxLayout *pVLayout = (QVBoxLayout *)ui->scrollAreaWidgetContents->layout() ;
+        QVBoxLayout *pVLayout = (QVBoxLayout *)ui->scrollAreaWidgetContents->layout();
         pVLayout->setContentsMargins(5, 0, 5, 0);
         pVLayout->setAlignment(Qt::AlignLeft|Qt::AlignTop);
 
@@ -246,9 +208,9 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
         int nCount = 0;
 
         QStringList Dirs =  QStandardPaths::standardLocations(QStandardPaths::DesktopLocation);
-        Dirs.append("C:\\Users\\Public\\Desktop") ;
+        Dirs.append("C:\\Users\\Public\\Desktop");
         Dirs.append(QDir::homePath() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs") ;
-        for(const QString&strPath:Dirs)
+        for(const QString&strPath:std::as_const(Dirs))
         {
             if (strPath.isEmpty())
                 continue;
@@ -264,7 +226,7 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
                 if (targetPath.isEmpty())
                     continue;
 
-                nCount ++ ;
+                nCount ++;
 
                 CComPtr<IShellLinkW> pShellLink;
                 if (!SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLinkW, (LPVOID*)&pShellLink)))
@@ -277,7 +239,7 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
                     strName.replace(".lnk","");
                     QString strShort = fileInfo.filePath();
 
-                    FrameAppTemplate *pAppItem = new FrameAppTemplate(this) ;
+                    FrameAppTemplate *pAppItem = new FrameAppTemplate(this);
 
                     QString strUuid = QString("%1").arg(qHash(targetPath));
                     QString strCmd = Set.value(strUuid).toString();
@@ -291,7 +253,7 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
 
                     connect(pAppItem,&FrameAppTemplate::checkChanged,this,[=]{
                         g_Checks.clear();
-                        for(FrameAppTemplate*app:g_APPs){
+                        for(FrameAppTemplate*app:std::as_const(g_APPs)){
                             if(app->isChecked())
                                 g_Checks.append(app->m_strShortCut);
                         }
@@ -324,7 +286,6 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
             Set.setValue("checkedApps",g_Checks);
         });
     }
-
 }
 
 void DialogCloudCmd::saveLoadCommand(bool save)
@@ -343,11 +304,13 @@ void DialogCloudCmd::saveLoadCommand(bool save)
                 QStandardItem *item0 = m_pModel->item(i,0);
                 QStandardItem *item1 = m_pModel->item(i,1);
                 QStandardItem *item2 = m_pModel->item(i,2);
+                QStandardItem *item3 = m_pModel->item(i,3);
 
                 QJsonObject jData;
                 jData["type"]=item0->data().toInt();
                 jData["word"]=item1->text();
                 jData["data"]=item2->text();
+                jData["enable"]=item3->checkState() == Qt::Checked;
                 all.append(jData);
             }
             QJsonDocument jDoc(all);
@@ -361,6 +324,7 @@ void DialogCloudCmd::saveLoadCommand(bool save)
         if (file.open(QIODevice::ReadOnly | QIODevice::Text))
         {
             QString strText = file.readAll();
+            file.close();
             QJsonDocument jDoc = QJsonDocument::fromJson(strText.toUtf8());
             if(jDoc.isArray())
             {
@@ -373,13 +337,82 @@ void DialogCloudCmd::saveLoadCommand(bool save)
                     QStandardItem *item0 = new QStandardItem(ui->comboBoxFunc->itemText(type));
                     QStandardItem *item1 = new QStandardItem(jData["word"].toString());
                     QStandardItem *item2 = new QStandardItem(jData["data"].toString());
-                    QStandardItem *item3 = new QStandardItem("删除");
-                    item3->setTextAlignment(Qt::AlignCenter);
+                    QStandardItem *item3 = new QStandardItem("启用");
+                    QStandardItem *item4 = new QStandardItem("删除");
 
-                    m_pModel->appendRow({item0,item1,item2,item3});
+                    item0->setEditable(false);
+                    item4->setEditable(false);
+                    item3->setEditable(false);
+                    item3->setCheckable(true);
+                    if(jData["enable"].toBool())
+                        item3->setCheckState(Qt::Checked);
+
+                    item4->setTextAlignment(Qt::AlignCenter);
+
+                    m_pModel->appendRow({item0,item1,item2,item3,item4});
                 }
             }
+        }
+    }
+}
+
+void DialogCloudCmd::saveLoadDefault(bool save)
+{
+    QString strCmdFile = QApplication::applicationDirPath() + "/default.json";
+
+    QFile file(strCmdFile);
+    if(save)
+    {
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            QJsonArray all;
+            int count = m_pModel1->rowCount();
+            for(int i=0; i<count; i++)
+            {
+                QStandardItem *item0 = m_pModel1->item(i,0);
+                QStandardItem *item1 = m_pModel1->item(i,1);
+                QStandardItem *item2 = m_pModel1->item(i,2);
+
+                QJsonObject jData;
+                jData["word"]=item0->text();
+                jData["text"]=item1->text();
+                jData["enable"]=item2->checkState() == Qt::Checked;
+                all.append(jData);
+            }
+            QJsonDocument jDoc(all);
+            QByteArray jText = jDoc.toJson();
+            file.write(jText);
             file.close();
+        }
+    }
+    else
+    {
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            QString strText = file.readAll();
+            file.close();
+            QJsonDocument jDoc = QJsonDocument::fromJson(strText.toUtf8());
+            if(jDoc.isArray())
+            {
+                QJsonArray all = jDoc.array();
+                int count = all.count();
+                for(int i=0; i<count; i++)
+                {
+                    QJsonObject jData = all[i].toObject();
+                    QStandardItem *item0 = new QStandardItem(jData["word"].toString());
+                    QStandardItem *item1 = new QStandardItem(jData["text"].toString());
+                    QStandardItem *item2 = new QStandardItem("启用");
+
+                    item0->setEditable(false);
+                    item2->setEditable(false);
+                    if(jData["enable"].toBool())
+                        item2->setCheckState(Qt::Checked);
+
+                    item2->setTextAlignment(Qt::AlignCenter);
+
+                    m_pModel1->appendRow({item0,item1,item2});
+                }
+            }
         }
     }
 }
@@ -389,40 +422,205 @@ DialogCloudCmd::~DialogCloudCmd()
     delete ui;
 }
 
+#include <mmdeviceapi.h>
+#include <endpointvolume.h>
+#include <objbase.h>
+#pragma comment(lib, "ole32.lib")
+#pragma comment(lib, "mmdevapi.lib")
+// 设置系统音量 0.0~1.0
+bool setMasterVolume(float fVol)
+{
+    CoInitialize(NULL);
+    IMMDeviceEnumerator *pEnum = nullptr;
+    if (FAILED(CoCreateInstance(
+            __uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL,
+            __uuidof(IMMDeviceEnumerator), (void**)&pEnum)))
+    {
+        CoUninitialize();
+        return false;
+    }
+
+    IMMDevice *pDev = nullptr;
+    if (FAILED(pEnum->GetDefaultAudioEndpoint(eRender, eConsole, &pDev)))
+    {
+        pEnum->Release();
+        CoUninitialize();
+        return false;
+    }
+
+    IAudioEndpointVolume *pVol = nullptr;
+    if (FAILED(pDev->Activate(
+            __uuidof(IAudioEndpointVolume), CLSCTX_ALL, NULL, (void**)&pVol)))
+    {
+        pDev->Release();
+        pEnum->Release();
+        CoUninitialize();
+        return false;
+    }
+
+    pVol->SetMasterVolumeLevelScalar(fVol, NULL);
+
+    pVol->Release();
+    pDev->Release();
+    pEnum->Release();
+    CoUninitialize();
+    return true;
+}
+
 bool DialogCloudCmd::startupApp(const QString&command)
 {
-    if(command.isEmpty())
-        return false;
     QString strText = command;
     strText.replace(".","");
     strText.replace("。","");
     strText.replace("，","");
     strText.replace("嗯","");
-
-    int count = m_pModel->rowCount();
-    for(int i=0; i<count; i++)
+    if(strText.isEmpty())
+        return false;
     {
-        QStandardItem *item0 = m_pModel->item(i,1);
-        QStandardItem *item1 = m_pModel->item(i,2);
-
-        QString strKey = item0->text().trimmed();
-        QString strPath = item1->text().trimmed();
-
-        if(strKey == strText)
+        int count = m_pModel1->rowCount();
+        for(int i=0; i<count; i++)
         {
-            //QProcess::startDetached(strPath);
+            QStandardItem *item0 = m_pModel1->item(i,0);
+            QStandardItem *item1 = m_pModel1->item(i,1);
+            QStandardItem *item2 = m_pModel1->item(i,2);
+            if(item2->checkState() != Qt::Checked)
+                continue;
 
-            HINSTANCE result = ::ShellExecute(NULL, L"open", (LPCWSTR)strPath.toStdU16String().c_str(), NULL, NULL, SW_SHOWNORMAL);
-            return true;
+            QString strKey = item0->text().trimmed();
+            QString strPath = item1->text().trimmed();
+
+            if(strKey == strText)
+            {
+                if(strKey == tr("返回桌面"))
+                {
+                    ShellExecuteA(NULL, "open", "C:\\Windows\\explorer.exe", "/n,/select,C:\\Users\\Default\\Desktop", NULL, SW_HIDE);
+                }
+
+                if(strKey == tr("窗口最小"))
+                {
+                }
+
+                if(strKey == tr("运行"))
+                {
+                }
+                if(strKey == tr("电脑锁屏"))
+                {
+                    LockWorkStation();
+                }
+
+                if(strKey == tr("电脑静音"))
+                {
+                    keybd_event(VK_VOLUME_MUTE, 0, 0, 0);
+                    keybd_event(VK_VOLUME_MUTE, 0, KEYEVENTF_KEYUP, 0);
+                }
+
+                if(strKey == tr("电脑音量"))
+                {
+                    setMasterVolume(0.6);
+                }
+
+                if(strKey == tr("屏幕亮度"))
+                {
+                    setMasterVolume(0.6);
+                }
+
+                if(strKey == tr("打开控制面板"))
+                {
+                    QProcess::execute("control.exe", QStringList{});
+                }
+                if(strKey == tr("屏幕黑屏"))
+                {
+                    m_pPad->showBlack();
+                }
+                if(strKey == tr("播放"))
+                {
+                }
+                if(strKey == tr("打开放大镜"))
+                {
+                    //m_pWork->sendKey(0x08,0x2E);
+
+                    QProcess::execute("magnify.exe", QStringList{});
+
+                    // // 打开放大镜 Win + =
+                    // INPUT input[4] = { 0 };
+
+                    // // 按下 Win
+                    // input[0].type = INPUT_KEYBOARD;
+                    // input[0].ki.wVk = VK_LWIN;
+
+                    // // 按下 =
+                    // input[1].type = INPUT_KEYBOARD;
+                    // input[1].ki.wVk = VK_OEM_PLUS;
+
+                    // // 松开 =
+                    // input[2].type = INPUT_KEYBOARD;
+                    // input[2].ki.wVk = VK_OEM_PLUS;
+                    // input[2].ki.dwFlags = KEYEVENTF_KEYUP;
+
+                    // // 松开 Win
+                    // input[3].type = INPUT_KEYBOARD;
+                    // input[3].ki.wVk = VK_LWIN;
+                    // input[3].ki.dwFlags = KEYEVENTF_KEYUP;
+
+                    // SendInput(4, input, sizeof(INPUT));
+                }
+
+                if(strKey == tr("关闭放大镜"))
+                {
+                    QProcess::execute("taskkill", QStringList() << "/f" << "/im" << "magnify.exe");
+                }
+                if(strKey == tr("复制"))
+                {
+                }
+
+                if(strKey == tr("粘贴"))
+                {
+                }
+
+                if(strKey == tr("截屏"))
+                {
+                    QScreen* primaryScreen = QGuiApplication::primaryScreen();
+                    QString strPath = QApplication::applicationDirPath() + "/CaptureFile";
+                    QDir CD(strPath);
+                    if(!CD.exists()) CD.mkdir(strPath);
+                    QString strTime = QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss");
+                    primaryScreen->grabWindow(0).save(strPath + QString("/%1.png").arg(strTime));
+                }
+
+                return true;
+            }
         }
     }
 
-    for(FrameAppTemplate*app:g_APPs)
     {
-        if(app->isChecked() && app->m_strCommand.trimmed() == strText.trimmed())
+        int count = m_pModel->rowCount();
+        for(int i=0; i<count; i++)
         {
-            app->startup();
-            return true;
+            QStandardItem *item0 = m_pModel->item(i,1);
+            QStandardItem *item1 = m_pModel->item(i,2);
+            QStandardItem *item2 = m_pModel->item(i,3);
+            if(item2->checkState() != Qt::Checked)
+                continue;
+
+            QString strKey = item0->text().trimmed();
+            QString strPath = item1->text().trimmed();
+
+            if(strKey == strText)
+            {
+                ::ShellExecute(NULL, L"open", (LPCWSTR)strPath.toStdU16String().c_str(), NULL, NULL, SW_SHOWNORMAL);
+                return true;
+            }
+        }
+    }
+
+    {
+        for(FrameAppTemplate*app:std::as_const(g_APPs))
+        {
+            if(app->isChecked() && app->m_strCommand.trimmed() == strText.trimmed())
+            {
+                app->startup();
+                return true;
+            }
         }
     }
     return false;

@@ -23,6 +23,7 @@ public:
     void setMode(int mode);
     void clearLines();
     void setDrage(bool set=true);
+    void showBlack();
 
     quint16 m_radius0;
     quint16 m_radius1;
