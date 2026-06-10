@@ -37,6 +37,7 @@ SOURCES += \
     DialogRecord.cpp \
     DialogTip.cpp \
     DialogTypeWord.cpp \
+    ToggleButton.cpp \
     TxAsrClient.cpp \
     caudioplayer.cpp \
     frameapptemplate.cpp \
@@ -57,6 +58,7 @@ HEADERS += \
     DialogRecord.h \
     DialogTip.h \
     DialogTypeWord.h \
+    ToggleButton.h \
     TxAsrClient.h \
     caudioplayer.h \
     frameapptemplate.h \

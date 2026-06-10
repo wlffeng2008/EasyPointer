@@ -530,7 +530,7 @@ QPushButton:checked  {
      <string notr="true"/>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="page10">
      <widget class="QFrame" name="frame0">
@@ -1174,7 +1174,7 @@ QPushButton:checked  {
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">#page01{background-color: rgb(170, 255, 255); }</string>
+     <string notr="true">#page01{background-color: rgb(170, 255, 255); } </string>
     </property>
     <property name="currentIndex">
      <number>4</number>
@@ -1218,14 +1218,15 @@ background-color:rgba(255,0,0,0.8);</string>
     </widget>
     <widget class="QWidget" name="page04">
      <property name="styleSheet">
-      <string notr="true">#page04{background-color: rgb(81, 122, 188);border:5px solid black; font-size:16px;}
+      <string notr="true">#page04{background-color: rgb(76,101,165);border:5px solid black; font-size:16px;}
+QRadioButton{color:white; font-size:18px; font-weight:bold;}
 </string>
      </property>
      <widget class="QPushButton" name="pushButtonTypeword">
       <property name="geometry">
        <rect>
-        <x>376</x>
-        <y>146</y>
+        <x>378</x>
+        <y>174</y>
         <width>149</width>
         <height>33</height>
        </rect>
@@ -1243,23 +1244,32 @@ background-color:rgba(255,0,0,0.8);</string>
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
-        <x>62</x>
+        <x>72</x>
         <y>26</y>
-        <width>211</width>
-        <height>26</height>
+        <width>223</width>
+        <height>30</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_16">
+       <property name="spacing">
+        <number>20</number>
+       </property>
+       <property name="rightMargin">
+        <number>20</number>
+       </property>
        <item>
         <widget class="QLabel" name="label_2">
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>-1</pointsize>
            <bold>true</bold>
           </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: rgb(255, 255, 127);font-size:22px;</string>
          </property>
          <property name="text">
           <string>黑屏倒计时</string>
@@ -1267,7 +1277,19 @@ background-color:rgba(255,0,0,0.8);</string>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBoxBlack">
+        <widget class="ToggleButton" name="checkBoxBlack">
+         <property name="minimumSize">
+          <size>
+           <width>52</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>52</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="cursor">
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
@@ -1278,16 +1300,19 @@ background-color:rgba(255,0,0,0.8);</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
-        <x>66</x>
-        <y>64</y>
-        <width>199</width>
-        <height>115</height>
+        <x>72</x>
+        <y>68</y>
+        <width>223</width>
+        <height>148</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_10">
+       <property name="spacing">
+        <number>12</number>
+       </property>
        <item>
         <widget class="QRadioButton" name="radioButton00">
          <property name="cursor">
@@ -1366,6 +1391,9 @@ background-color:rgba(255,0,0,0.8);</string>
          </item>
          <item>
           <widget class="QLabel" name="label_3">
+           <property name="styleSheet">
+            <string notr="true">color:white; font-size:16px; </string>
+           </property>
            <property name="text">
             <string>分钟</string>
            </property>
@@ -1947,7 +1975,7 @@ background-image: url(:/images/jd.png);
         <string>语言设置</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="res.qrc">
          <normaloff>:/images/setting.png</normaloff>:/images/setting.png</iconset>
        </property>
        <property name="checkable">
@@ -2204,7 +2232,7 @@ background-image: url(:/images/jd.png);
         <string>数字激光</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="res.qrc">
          <normaloff>:/images/123.png</normaloff>:/images/123.png</iconset>
        </property>
        <property name="checkable">
@@ -2230,7 +2258,7 @@ background-image: url(:/images/jd.png);
         <string>放大镜</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="res.qrc">
          <normaloff>:/images/find.png</normaloff>:/images/find.png</iconset>
        </property>
        <property name="checkable">
@@ -2253,7 +2281,7 @@ background-image: url(:/images/jd.png);
         <string>聚光灯</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="res.qrc">
          <normaloff>:/images/spot.png</normaloff>:/images/spot.png</iconset>
        </property>
        <property name="checkable">
@@ -2276,7 +2304,7 @@ background-image: url(:/images/jd.png);
         <string>全景标注</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="res.qrc">
          <normaloff>:/images/time.png</normaloff>:/images/time.png</iconset>
        </property>
        <property name="checkable">
@@ -2302,10 +2330,10 @@ background-image: url(:/images/jd.png);
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string>麦克风/倒计时</string>
+        <string>黑屏倒计时</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="res.qrc">
          <normaloff>:/images/mic.png</normaloff>:/images/mic.png</iconset>
        </property>
        <property name="checkable">
@@ -2334,7 +2362,7 @@ background-image: url(:/images/jd.png);
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>:/images/batt.png</pixmap>
+     <pixmap resource="res.qrc">:/images/batt.png</pixmap>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButtonMin">
@@ -2371,7 +2399,7 @@ background-image: url(:/images/jd.png);
      <string notr="true"/>
     </property>
     <property name="icon">
-     <iconset resource="../../Work/AKKOStudio/res.qrc">
+     <iconset resource="res.qrc">
       <normaloff>:/images/btn-min.png</normaloff>:/images/btn-min.png</iconset>
     </property>
     <property name="iconSize">
@@ -2413,7 +2441,7 @@ background-image: url(:/images/jd.png);
      <string/>
     </property>
     <property name="icon">
-     <iconset resource="../../Work/AKKOStudio/res.qrc">
+     <iconset resource="res.qrc">
       <normaloff>:/images/btn-close1.png</normaloff>:/images/btn-close1.png</iconset>
     </property>
     <property name="iconSize">
@@ -2459,21 +2487,12 @@ background-image: url(:/images/jd.png);
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBoxStart">
+      <widget class="ToggleButton" name="checkBoxStart">
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="styleSheet">
-        <string notr="true">    QCheckBox::indicator:unchecked {
-            background: transparent;
-            image: url(:/images/a-empty.png); }
-    QCheckBox::indicator:checked {
-            background: transparent;
-            image: url(:/images/a-checked.png); }
-
-    QCheckBox::indicator {
-            width: 39px;
-            height: 16px; }</string>
+        <string notr="true"/>
        </property>
        <property name="text">
         <string/>
@@ -2502,7 +2521,7 @@ background-image: url(:/images/jd.png);
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>:/images/share1.png</pixmap>
+        <pixmap resource="res.qrc">:/images/share1.png</pixmap>
        </property>
       </widget>
      </item>
@@ -2528,7 +2547,7 @@ background-image: url(:/images/jd.png);
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>:/images/setting1.png</pixmap>
+        <pixmap resource="res.qrc">:/images/setting1.png</pixmap>
        </property>
       </widget>
      </item>
@@ -2537,8 +2556,8 @@ background-image: url(:/images/jd.png);
    <widget class="QPushButton" name="pushButtonSendKey">
     <property name="geometry">
      <rect>
-      <x>748</x>
-      <y>422</y>
+      <x>746</x>
+      <y>440</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -2562,6 +2581,13 @@ background-image: url(:/images/jd.png);
    <zorder>pushButtonSendKey</zorder>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ToggleButton</class>
+   <extends>QCheckBox</extends>
+   <header>togglebutton.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>pushButton0</tabstop>
   <tabstop>pushButton1</tabstop>
@@ -2608,12 +2634,14 @@ background-image: url(:/images/jd.png);
   <tabstop>pushButtonMKey</tabstop>
   <tabstop>pushButtonMin</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupShape"/>
-  <buttongroup name="buttonGroupColor"/>
   <buttongroup name="buttonGroupCount"/>
+  <buttongroup name="buttonGroupShape"/>
   <buttongroup name="buttonGroupMain"/>
+  <buttongroup name="buttonGroupColor"/>
  </buttongroups>
 </ui>

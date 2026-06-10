@@ -725,6 +725,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             ui->labelBattery->setToolTip(tr("剩余电量") + QString(": %1%").arg(m_battery));
             return QMainWindow::eventFilter(watched,event);
         }
+
         static QImage bkImg = QImage(":/images/bk0.png");
         QWidget *Page = static_cast<QWidget *>(watched);
         QRect rc = Page->rect();
@@ -733,8 +734,8 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         int my = rc.center().y();
         QPoint  Center(mx,my);
 
-        if( ui->labelCloudCmd != watched &&
-            ui->labelAudioSet != watched &&
+        if( ui->labelCloudCmd  != watched &&
+            ui->labelAudioSet  != watched &&
             ui->labelCloudCmd1 != watched &&
             ui->labelAudioSet1 != watched &&
             ui->labelAutoStart != watched)
@@ -783,7 +784,8 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 
         if(watched == ui->page03)
         {
-            p.fillRect(rc,Qt::gray);
+            p.fillRect(rc,Qt::black);
+            p.fillRect(rc.adjusted(5,5,-5,-5),QColor(36,184,172));
 
             QPen LinePen(m_color3);
             LinePen.setWidth(m_radius3);
@@ -795,7 +797,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             QPoint A(20,my);
             for(int i=1; i<20; i++)
             {
-                QPoint B(20 + i*fStep, my + rand()%50 * (rand() % 2 ? -1 : 1));
+                QPoint B(10 + i*fStep, my + rand()%50 * (rand() % 2 ? -1 : 1));
                 p.drawLine(A,B);
                 A = B;
             }
