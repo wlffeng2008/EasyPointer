@@ -62,7 +62,7 @@ signals:
     void onRecordFile(quint32 duration);
 
 private:
-    QMutex m_mutex;
+
     QString m_strDevPath;
     hid_device *m_pDev=nullptr;
 

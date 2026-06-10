@@ -2609,6 +2609,19 @@ background-image: url(:/images/jd.png);
      </item>
     </layout>
    </widget>
+   <widget class="QPushButton" name="pushButtonSendKey">
+    <property name="geometry">
+     <rect>
+      <x>748</x>
+      <y>422</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PushButton</string>
+    </property>
+   </widget>
    <zorder>labelContact</zorder>
    <zorder>labelBattery</zorder>
    <zorder>pushButtonMin</zorder>
@@ -2621,6 +2634,7 @@ background-image: url(:/images/jd.png);
    <zorder>stackedWidget0</zorder>
    <zorder>stackedWidget1</zorder>
    <zorder>frameSetting</zorder>
+   <zorder>pushButtonSendKey</zorder>
   </widget>
  </widget>
  <tabstops>
@@ -2677,10 +2691,10 @@ background-image: url(:/images/jd.png);
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupMain"/>
+  <buttongroup name="buttonGroupCount"/>
   <buttongroup name="buttonGroupShape"/>
+  <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupColor"/>
   <buttongroup name="buttonGroupVoice"/>
-  <buttongroup name="buttonGroupCount"/>
  </buttongroups>
 </ui>

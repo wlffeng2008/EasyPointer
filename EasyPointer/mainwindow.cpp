@@ -858,3 +858,9 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 
     QMainWindow::mouseDoubleClickEvent(event);
 }
+
+void MainWindow::on_pushButtonSendKey_clicked()
+{
+    m_pHID->sendKey(0x2E,0x08);
+}
+

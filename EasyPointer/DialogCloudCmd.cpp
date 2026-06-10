@@ -430,12 +430,14 @@ DialogCloudCmd::~DialogCloudCmd()
 // 设置系统音量 0.0~1.0
 bool setMasterVolume(float fVol)
 {
+
     CoInitialize(NULL);
     IMMDeviceEnumerator *pEnum = nullptr;
     if (FAILED(CoCreateInstance(
             __uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL,
             __uuidof(IMMDeviceEnumerator), (void**)&pEnum)))
     {
+        qDebug() << "setMasterVolume failed 0";
         CoUninitialize();
         return false;
     }
@@ -443,6 +445,7 @@ bool setMasterVolume(float fVol)
     IMMDevice *pDev = nullptr;
     if (FAILED(pEnum->GetDefaultAudioEndpoint(eRender, eConsole, &pDev)))
     {
+        qDebug() << "setMasterVolume failed 1";
         pEnum->Release();
         CoUninitialize();
         return false;
@@ -452,13 +455,14 @@ bool setMasterVolume(float fVol)
     if (FAILED(pDev->Activate(
             __uuidof(IAudioEndpointVolume), CLSCTX_ALL, NULL, (void**)&pVol)))
     {
+        qDebug() << "setMasterVolume failed 2";
         pDev->Release();
         pEnum->Release();
         CoUninitialize();
         return false;
     }
 
-    pVol->SetMasterVolumeLevelScalar(fVol, NULL);
+    qDebug() << pVol->SetMasterVolumeLevelScalar(fVol, NULL);
 
     pVol->Release();
     pDev->Release();
@@ -503,6 +507,7 @@ bool DialogCloudCmd::startupApp(const QString&command)
                 if(strKey == tr("运行"))
                 {
                 }
+
                 if(strKey == tr("电脑锁屏"))
                 {
                     LockWorkStation();
@@ -514,10 +519,50 @@ bool DialogCloudCmd::startupApp(const QString&command)
                     keybd_event(VK_VOLUME_MUTE, 0, KEYEVENTF_KEYUP, 0);
                 }
 
-                if(strKey == tr("电脑音量"))
+                if(strKey == tr("音量10"))
+                {
+                    setMasterVolume(0.1);
+                }
+                if(strKey == tr("音量20"))
+                {
+                    setMasterVolume(0.2);
+                }
+                if(strKey == tr("音量30"))
+                {
+                    setMasterVolume(0.3);
+                }
+                if(strKey == tr("音量40"))
+                {
+                    setMasterVolume(0.4);
+                }
+                if(strKey == tr("音量50"))
+                {
+                    setMasterVolume(0.5);
+                }
+                if(strKey == tr("音量60"))
                 {
                     setMasterVolume(0.6);
                 }
+
+                if(strKey == tr("音量70"))
+                {
+                    setMasterVolume(0.7);
+                }
+                if(strKey == tr("音量80"))
+                {
+                    setMasterVolume(0.8);
+                }
+
+                if(strKey == tr("音量90"))
+                {
+                    setMasterVolume(0.9);
+                }
+
+                if(strKey == tr("音量100"))
+                {
+                    setMasterVolume(1.0);
+                }
+
 
                 if(strKey == tr("屏幕亮度"))
                 {
@@ -532,9 +577,11 @@ bool DialogCloudCmd::startupApp(const QString&command)
                 {
                     m_pPad->showBlack();
                 }
+
                 if(strKey == tr("播放"))
                 {
                 }
+
                 if(strKey == tr("打开放大镜"))
                 {
                     //m_pWork->sendKey(0x08,0x2E);
