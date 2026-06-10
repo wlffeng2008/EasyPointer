@@ -2,6 +2,7 @@
 #define DIALOGDEVICESET_H
 
 #include <QDialog>
+#include <hidworker.h>
 
 namespace Ui {
 class DialogDeviceSet;
@@ -14,7 +15,7 @@ class DialogDeviceSet : public QDialog
 public:
     explicit DialogDeviceSet(QWidget *parent = nullptr);
     ~DialogDeviceSet();
-
+    CHidWorker *m_pWork = nullptr;
 private:
     Ui::DialogDeviceSet *ui;
 };

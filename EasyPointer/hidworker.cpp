@@ -394,10 +394,9 @@ void CHidWorker::run()
         stopRecord();
         QThread::msleep(20);
         askBattery();
+        setTime();
 
-
-
-        quint8 szBufs[200][128] = {{0}};
+        quint8 szBufs[200][1024] = {{0}};
 
         int nUesed = 0;
         while(true)
@@ -541,6 +540,14 @@ void CHidWorker::stopRecord()
 {
     m_bRecord=false;
     quint8 szCmd[33]={0x0C,0x4D,0x05,0xB3,00,0x4C};
+    sendCmd(szCmd);
+}
+
+void CHidWorker::setTime()
+{
+    quint32 now = time(nullptr);
+    quint8 szCmd[33]={0x0C,0x4F,0x05,0xB3,00,00};
+    memcpy(szCmd+2,&now,4);
     sendCmd(szCmd);
 }
 

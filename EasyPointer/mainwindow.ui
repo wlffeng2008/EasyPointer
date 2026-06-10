@@ -530,7 +530,7 @@ QPushButton:checked  {
      <string notr="true"/>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="page10">
      <widget class="QFrame" name="frame0">
@@ -1174,7 +1174,7 @@ QPushButton:checked  {
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">#page01{background-color: rgb(170, 255, 255);}</string>
+     <string notr="true">#page01{background-color: rgb(170, 255, 255); }</string>
     </property>
     <property name="currentIndex">
      <number>4</number>
@@ -1218,162 +1218,9 @@ background-color:rgba(255,0,0,0.8);</string>
     </widget>
     <widget class="QWidget" name="page04">
      <property name="styleSheet">
-      <string notr="true">#page04{background-image: url(:/images/bk4.png);}</string>
+      <string notr="true">#page04{background-color: rgb(81, 122, 188);border:5px solid black;}
+</string>
      </property>
-     <widget class="QRadioButton" name="radioButton00">
-      <property name="geometry">
-       <rect>
-        <x>234</x>
-        <y>84</y>
-        <width>22</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroupCount</string>
-      </attribute>
-     </widget>
-     <widget class="QRadioButton" name="radioButton01">
-      <property name="geometry">
-       <rect>
-        <x>234</x>
-        <y>114</y>
-        <width>22</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroupCount</string>
-      </attribute>
-     </widget>
-     <widget class="QRadioButton" name="radioButton02">
-      <property name="geometry">
-       <rect>
-        <x>234</x>
-        <y>144</y>
-        <width>22</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroupCount</string>
-      </attribute>
-     </widget>
-     <widget class="QRadioButton" name="radioButton12">
-      <property name="geometry">
-       <rect>
-        <x>468</x>
-        <y>144</y>
-        <width>22</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroupVoice</string>
-      </attribute>
-     </widget>
-     <widget class="QRadioButton" name="radioButton11">
-      <property name="geometry">
-       <rect>
-        <x>468</x>
-        <y>114</y>
-        <width>22</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroupVoice</string>
-      </attribute>
-     </widget>
-     <widget class="QRadioButton" name="radioButton10">
-      <property name="geometry">
-       <rect>
-        <x>468</x>
-        <y>84</y>
-        <width>22</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroupVoice</string>
-      </attribute>
-     </widget>
-     <widget class="QLabel" name="label_14">
-      <property name="geometry">
-       <rect>
-        <x>76</x>
-        <y>170</y>
-        <width>67</width>
-        <height>30</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>-1</pointsize>
-        <fontweight>DemiBold</fontweight>
-       </font>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::FocusPolicy::ClickFocus</enum>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QLabel {
-background: transparent;
-color:#38ABB9;
-height:36px;
-font-size:20px;
-font-weight:600;
-}</string>
-      </property>
-      <property name="text">
-       <string>自定义</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignmentFlag::AlignCenter</set>
-      </property>
-     </widget>
      <widget class="QPushButton" name="pushButtonTypeword">
       <property name="geometry">
        <rect>
@@ -1396,59 +1243,124 @@ font-weight:600;
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBoxBlack">
+     <widget class="QWidget" name="">
       <property name="geometry">
        <rect>
-        <x>86</x>
-        <y>206</y>
-        <width>119</width>
-        <height>19</height>
+        <x>62</x>
+        <y>26</y>
+        <width>211</width>
+        <height>26</height>
        </rect>
       </property>
-      <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_16">
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>黑屏倒计时</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBoxBlack">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
-     <widget class="QRadioButton" name="radioButton03">
+     <widget class="QWidget" name="">
       <property name="geometry">
        <rect>
-        <x>234</x>
-        <y>174</y>
-        <width>22</width>
-        <height>22</height>
+        <x>66</x>
+        <y>64</y>
+        <width>199</width>
+        <height>115</height>
        </rect>
       </property>
-      <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroupCount</string>
-      </attribute>
-     </widget>
-     <widget class="QLineEdit" name="lineEditSetTime">
-      <property name="geometry">
-       <rect>
-        <x>146</x>
-        <y>172</y>
-        <width>60</width>
-        <height>28</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>45</string>
-      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_10">
+       <item>
+        <widget class="QRadioButton" name="radioButton00">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="text">
+          <string>60分钟</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupCount</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radioButton01">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="text">
+          <string>30分钟</string>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupCount</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radioButton02">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="text">
+          <string>10分钟</string>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupCount</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_17">
+         <item>
+          <widget class="QRadioButton" name="radioButton03">
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="text">
+            <string>自定义</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">buttonGroupCount</string>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEditSetTime">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>45</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
     </widget>
     <widget class="QWidget" name="page05">
@@ -2669,9 +2581,6 @@ background-image: url(:/images/jd.png);
   <tabstop>radioButton00</tabstop>
   <tabstop>radioButton01</tabstop>
   <tabstop>radioButton02</tabstop>
-  <tabstop>radioButton12</tabstop>
-  <tabstop>radioButton11</tabstop>
-  <tabstop>radioButton10</tabstop>
   <tabstop>pushButtonL0</tabstop>
   <tabstop>pushButtonL1</tabstop>
   <tabstop>pushButtonL2</tabstop>
@@ -2691,10 +2600,9 @@ background-image: url(:/images/jd.png);
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupCount"/>
   <buttongroup name="buttonGroupShape"/>
-  <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupColor"/>
-  <buttongroup name="buttonGroupVoice"/>
+  <buttongroup name="buttonGroupCount"/>
+  <buttongroup name="buttonGroupMain"/>
  </buttongroups>
 </ui>

@@ -92,7 +92,7 @@ border-radius:4px;</string>
      <x>455</x>
      <y>72</y>
      <width>315</width>
-     <height>469</height>
+     <height>435</height>
     </rect>
    </property>
    <property name="font">
@@ -312,12 +312,12 @@ border-radius:4px;</string>
     </property>
    </widget>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>464</x>
-     <y>556</y>
-     <width>235</width>
+     <x>454</x>
+     <y>554</y>
+     <width>275</width>
      <height>21</height>
     </rect>
    </property>
@@ -350,7 +350,7 @@ border-radius:4px;</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>208</x>

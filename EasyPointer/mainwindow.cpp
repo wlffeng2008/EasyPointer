@@ -236,6 +236,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_pHID = new CHidWorker();
     m_pCmd->m_pWork = m_pHID;
+    m_pDSet->m_pWork = m_pHID;
     m_pCmd->m_pPad = pFuncPad;
     connect(m_pHID,&CHidWorker::onPCMData,this,[=](const QByteArray&data){
         pAsrClient->userMic(false);
