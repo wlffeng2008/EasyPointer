@@ -158,12 +158,12 @@ MainWindow::MainWindow(QWidget *parent)
         updateValue();
         saveLoadParams();
     });
-    connect(ui->buttonGroupVoice,&QButtonGroup::idClicked,this,[=](int id){
-        int index = abs(id)-2;
-        m_voice = index;
-        updateValue();
-        saveLoadParams();
-    });
+    // connect(ui->buttonGroupVoice,&QButtonGroup::idClicked,this,[=](int id){
+    //     int index = abs(id)-2;
+    //     m_voice = index;
+    //     updateValue();
+    //     saveLoadParams();
+    // });
 
     for(int i=125; i<=500; i+=25)
     {
@@ -605,7 +605,7 @@ void MainWindow::saveLoadParams(bool save)
         m_bRound  = m_set->value("round1",true).toBool();
 
         ui->buttonGroupCount->button(-m_show-2)->click();
-        ui->buttonGroupVoice->button(-m_voice-2)->click();
+        //ui->buttonGroupVoice->button(-m_voice-2)->click();
         ui->buttonGroupColor->button(-m_iColor0-2)->click();
         if(!m_bRound) ui->pushButtonRect->click();
     }

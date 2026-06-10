@@ -1218,16 +1218,16 @@ background-color:rgba(255,0,0,0.8);</string>
     </widget>
     <widget class="QWidget" name="page04">
      <property name="styleSheet">
-      <string notr="true">#page04{background-color: rgb(81, 122, 188);border:5px solid black;}
+      <string notr="true">#page04{background-color: rgb(81, 122, 188);border:5px solid black; font-size:16px;}
 </string>
      </property>
      <widget class="QPushButton" name="pushButtonTypeword">
       <property name="geometry">
        <rect>
-        <x>508</x>
-        <y>144</y>
-        <width>75</width>
-        <height>23</height>
+        <x>376</x>
+        <y>146</y>
+        <width>149</width>
+        <height>33</height>
        </rect>
       </property>
       <property name="cursor">
@@ -1237,7 +1237,7 @@ background-color:rgba(255,0,0,0.8);</string>
        <string notr="true">border: 1px solid white; border-radius:8px; background-color:none;</string>
       </property>
       <property name="text">
-       <string>进入设置...</string>
+       <string>进入语音功能设置...</string>
       </property>
       <property name="flat">
        <bool>true</bool>
@@ -1347,6 +1347,12 @@ background-color:rgba(255,0,0,0.8);</string>
          </item>
          <item>
           <widget class="QLineEdit" name="lineEditSetTime">
+           <property name="maximumSize">
+            <size>
+             <width>60</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <pointsize>12</pointsize>
@@ -1355,6 +1361,13 @@ background-color:rgba(255,0,0,0.8);</string>
            </property>
            <property name="text">
             <string>45</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>分钟</string>
            </property>
           </widget>
          </item>
@@ -1934,7 +1947,7 @@ background-image: url(:/images/jd.png);
         <string>语言设置</string>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset>
          <normaloff>:/images/setting.png</normaloff>:/images/setting.png</iconset>
        </property>
        <property name="checkable">
@@ -2191,7 +2204,7 @@ background-image: url(:/images/jd.png);
         <string>数字激光</string>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset>
          <normaloff>:/images/123.png</normaloff>:/images/123.png</iconset>
        </property>
        <property name="checkable">
@@ -2217,7 +2230,7 @@ background-image: url(:/images/jd.png);
         <string>放大镜</string>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset>
          <normaloff>:/images/find.png</normaloff>:/images/find.png</iconset>
        </property>
        <property name="checkable">
@@ -2240,7 +2253,7 @@ background-image: url(:/images/jd.png);
         <string>聚光灯</string>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset>
          <normaloff>:/images/spot.png</normaloff>:/images/spot.png</iconset>
        </property>
        <property name="checkable">
@@ -2263,7 +2276,7 @@ background-image: url(:/images/jd.png);
         <string>全景标注</string>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset>
          <normaloff>:/images/time.png</normaloff>:/images/time.png</iconset>
        </property>
        <property name="checkable">
@@ -2292,7 +2305,7 @@ background-image: url(:/images/jd.png);
         <string>麦克风/倒计时</string>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset>
          <normaloff>:/images/mic.png</normaloff>:/images/mic.png</iconset>
        </property>
        <property name="checkable">
@@ -2321,7 +2334,7 @@ background-image: url(:/images/jd.png);
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="res.qrc">:/images/batt.png</pixmap>
+     <pixmap>:/images/batt.png</pixmap>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButtonMin">
@@ -2358,7 +2371,7 @@ background-image: url(:/images/jd.png);
      <string notr="true"/>
     </property>
     <property name="icon">
-     <iconset resource="res.qrc">
+     <iconset resource="../../Work/AKKOStudio/res.qrc">
       <normaloff>:/images/btn-min.png</normaloff>:/images/btn-min.png</iconset>
     </property>
     <property name="iconSize">
@@ -2400,7 +2413,7 @@ background-image: url(:/images/jd.png);
      <string/>
     </property>
     <property name="icon">
-     <iconset resource="res.qrc">
+     <iconset resource="../../Work/AKKOStudio/res.qrc">
       <normaloff>:/images/btn-close1.png</normaloff>:/images/btn-close1.png</iconset>
     </property>
     <property name="iconSize">
@@ -2489,7 +2502,7 @@ background-image: url(:/images/jd.png);
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="res.qrc">:/images/share1.png</pixmap>
+        <pixmap>:/images/share1.png</pixmap>
        </property>
       </widget>
      </item>
@@ -2515,7 +2528,7 @@ background-image: url(:/images/jd.png);
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="res.qrc">:/images/setting1.png</pixmap>
+        <pixmap>:/images/setting1.png</pixmap>
        </property>
       </widget>
      </item>
@@ -2595,9 +2608,7 @@ background-image: url(:/images/jd.png);
   <tabstop>pushButtonMKey</tabstop>
   <tabstop>pushButtonMin</tabstop>
  </tabstops>
- <resources>
-  <include location="res.qrc"/>
- </resources>
+ <resources/>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupShape"/>
