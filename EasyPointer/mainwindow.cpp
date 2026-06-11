@@ -85,8 +85,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_pDSet = new DialogDeviceSet();
     m_pMSet = new DialogMKeySet();
-    qDebug() << "ScreenBrightness：" << getWinScreenBrightness() << GetLastError();
-    setWinScreenBrightness(50);
+    //qDebug() << "ScreenBrightness：" << getWinScreenBrightness() << GetLastError();
+    //setWinScreenBrightness(50);
 
     setStyleSheet("QLabel{color:white;font-weight:600;}");
 
@@ -142,13 +142,24 @@ MainWindow::MainWindow(QWidget *parent)
         if(index == 0) ui->buttonGroupColor->button(-m_iColor0-2)->click();
         if(index == 3) ui->buttonGroupColor->button(-m_iColor3-2)->click();
 
+        ui->frameShape->setVisible(index == 2);
+        ui->horizontalFrame->setVisible(index == 0);
         updateValue();
         saveLoadParams();
     });
 
     connect(ui->buttonGroupColor,&QButtonGroup::idClicked,this,[=](int id){
+        if(m_bLoading) return;
         int index = abs(id)-2;
         m_iColor = index;
+
+        updateValue();
+        saveLoadParams();
+    });
+    connect(ui->buttonGroupSpot,&QButtonGroup::idClicked,this,[=](int id){
+        if(m_bLoading) return;
+        int index = abs(id)-2;
+        m_iSpot = index;
         updateValue();
         saveLoadParams();
     });
@@ -202,8 +213,15 @@ MainWindow::MainWindow(QWidget *parent)
         ui->labelValue31->setText(QString::asprintf("%1%%").arg(value));
     });
 
-    connect(ui->comboBoxEnlarge,&QComboBox::activated,this,[=](int index){
+    connect(ui->comboBoxEnlarge,&QComboBox::activated,this,[=](int index){        
+        if(m_bLoading) return;
         m_enlarge = (ui->comboBoxEnlarge->currentIndex() * 25 + 100)/100.0;
+        updateValue();
+    });
+
+    connect(ui->comboBoxEffect,&QComboBox::activated,this,[=](int index){
+        if(m_bLoading) return;
+        m_iEffect= index;
         updateValue();
     });
 
@@ -563,15 +581,44 @@ MainWindow::MainWindow(QWidget *parent)
     saveLoadParams(false);
     ui->pushButton0->click();
     updateValue();
+
+    m_EfOpticy = 0;
+    QTimer *pTMEf = new QTimer(this);
+    connect(pTMEf,&QTimer::timeout,this,[=]{
+        if(ui->stackedWidget0->currentIndex() != 0)
+            return;
+
+        if(m_iEffect == 1)
+        {
+            static int nDir = 1;
+            if(m_EfOpticy>255) nDir = -1;
+            if(m_EfOpticy<0) nDir = 1;
+            m_EfOpticy += 20 * nDir;
+            ui->stackedWidget0->update();
+        }
+
+        if(m_iEffect == 2)
+        {
+            if(m_EfOpticy == 255)
+                m_EfOpticy = 0;
+            else
+                m_EfOpticy = 255;
+            ui->stackedWidget0->update();
+        }
+    });
+    pTMEf->start(200);
 }
 
 void MainWindow::saveLoadParams(bool save)
 {
+    if(m_bLoading) return;
     m_set->beginGroup("settings");
     if(save)
     {
         m_set->setValue("icolor0",m_iColor0);
         m_set->setValue("icolor3",m_iColor3);
+        m_set->setValue("iSpot",m_iSpot);
+        m_set->setValue("iEffect",m_iEffect);
         m_set->setValue("radius0",ui->horizontalSlider0->value());
         m_set->setValue("opacity0",ui->horizontalSlider1->value());
         m_set->setValue("radius1",ui->horizontalSlider2->value());
@@ -588,6 +635,7 @@ void MainWindow::saveLoadParams(bool save)
     }
     else
     {
+        m_bLoading = true;
         ui->horizontalSlider0->setValue(m_set->value("radius0",20).toInt());
         ui->horizontalSlider1->setValue(m_set->value("opacity0",80).toInt());
         ui->horizontalSlider2->setValue(m_set->value("radius1",200).toInt());
@@ -600,14 +648,20 @@ void MainWindow::saveLoadParams(bool save)
         ui->comboBoxEnlarge->setCurrentIndex(m_set->value("enlarge",3).toInt());
         m_iColor0 = m_set->value("icolor0").toInt();
         m_iColor3 = m_set->value("icolor3").toInt();
+        m_iSpot   = m_set->value("iSpot").toInt();
+        m_iEffect = m_set->value("iEffect").toInt();
         m_show    = m_set->value("showIndex",2).toInt();
         m_voice   = m_set->value("showVoice",2).toInt();
         m_bRound  = m_set->value("round1",true).toBool();
-
-        ui->buttonGroupCount->button(-m_show-2)->click();
-        //ui->buttonGroupVoice->button(-m_voice-2)->click();
-        ui->buttonGroupColor->button(-m_iColor0-2)->click();
-        if(!m_bRound) ui->pushButtonRect->click();
+        m_iColor = m_iColor0;
+        QTimer::singleShot(100,this,[=]{
+            ui->buttonGroupCount->button(-m_show-2)->click();
+            ui->buttonGroupSpot->button(-m_iSpot-2)->click();
+            ui->buttonGroupColor->button(-m_iColor0-2)->click();
+            if(!m_bRound) ui->pushButtonRect->click();
+            ui->comboBoxEffect->setCurrentIndex(m_iEffect);
+            m_bLoading = false;
+        });
     }
     m_set->endGroup();
 }
@@ -623,10 +677,9 @@ void MainWindow::updateValue()
     switch(m_index)
     {
     case 0:
-        m_iColor0= m_iColor;
+        m_iColor0 = m_iColor;
         m_radius0 = ui->horizontalSlider0->value() / 2;
         nAlph = ui->horizontalSlider1->value() * 255 / 100.0;
-
         m_color0 = colors[m_iColor];
         m_color0.setAlpha(nAlph);
         break;
@@ -644,7 +697,7 @@ void MainWindow::updateValue()
         break;
 
     case 3:
-        m_iColor3= m_iColor;
+        m_iColor3 = m_iColor;
         m_radius3 = ui->horizontalSlider6->value();
         nAlph = ui->horizontalSlider7->value() * 255 / 100.0;
         m_color3 = colors[m_iColor];
@@ -670,6 +723,8 @@ void MainWindow::updateValue()
     pFuncPad->m_color1 = m_color1;
     pFuncPad->m_color2 = m_color2;
     pFuncPad->m_color3 = m_color3;
+    pFuncPad->m_iSpot  = m_iSpot;
+    pFuncPad->m_iEffect  = m_iEffect;
 
     update();
 }
@@ -746,7 +801,16 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             int radius = m_radius0;
             QRect rcFlag = QRect(mx-radius,my-radius,radius*2,radius*2);
 
-            p.setBrush(m_color0);
+            QColor tmpColor(m_color0);
+            if(m_iEffect != 0)
+            {
+                int nEf = m_EfOpticy;
+                if(nEf>255) nEf = 255;
+                if(nEf < 0) nEf = 0  ;
+                tmpColor.setAlpha(nEf);
+            }
+
+            p.setBrush(tmpColor);
             p.setPen(Qt::NoPen);
             p.drawEllipse(rcFlag);
         }
@@ -776,7 +840,10 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             p.fillRect(rc,m_color2);
 
             QPainterPath path;
-            path.addEllipse(rcDest);
+            if(m_iSpot == 0) path.addEllipse(rcDest);
+            if(m_iSpot == 1) path.addRect(rcDest);
+            if(m_iSpot == 2) path.addRect(rcDest.adjusted(0,dist*0.4,0,-dist*0.4));
+            if(m_iSpot == 3) path.addRect(rcDest.adjusted(dist*0.3,0,-dist*0.3,0));
             p.setClipPath(path);
 
             p.drawImage(Center-QPoint(dist,dist),bkImg,rcDest);
@@ -862,8 +929,4 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
     QMainWindow::mouseDoubleClickEvent(event);
 }
 
-void MainWindow::on_pushButtonSendKey_clicked()
-{
-    m_pHID->sendKey(0x2E,0x08);
-}
 

@@ -41,6 +41,37 @@ using namespace QXlsx;
 #include <atlbase.h>
 #include <atlconv.h>
 
+#define MONITOR_CONFIGURATION_API 1   // ⭐ 关键
+
+#include <windows.h>
+#include <physicalmonitorenumerationapi.h>
+#include <highlevelmonitorconfigurationapi.h>
+#pragma comment(lib, "dxva2.lib")
+
+void setMonitorBrightness(DWORD brightness)
+{
+    qDebug() << "setMonitorBrightness 0" << brightness;
+    HMONITOR hMonitor = MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY);
+
+    DWORD dwCount = 0;
+    GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, &dwCount);
+    if (dwCount == 0)
+        return;
+    qDebug() << "setMonitorBrightness 1" << brightness;
+
+    PHYSICAL_MONITOR* pMons = new PHYSICAL_MONITOR[dwCount];
+
+    GetPhysicalMonitorsFromHMONITOR(hMonitor, dwCount, pMons);
+
+    HANDLE hPhys = pMons[0].hPhysicalMonitor;
+
+    // brightness: 0–100
+    SetMonitorBrightness(hPhys, brightness);
+
+    DestroyPhysicalMonitors(dwCount, pMons);
+    delete[] pMons;
+}
+
 // 获取快捷方式目标路径
 QString getShortcutTargetPath(const QString& shortcutPath)
 {
@@ -495,6 +526,21 @@ bool DialogCloudCmd::startupApp(const QString&command)
 
             if(strKey == strText)
             {
+                if(strKey == tr("调出画笔"))
+                {
+                }
+                if(strKey == tr("一键清除"))
+                {
+                }
+                if(strKey == tr("全屏"))
+                {
+                }
+                if(strKey == tr("退出全屏"))
+                {
+                }
+                if(strKey == tr("关闭窗口"))
+                {
+                }
                 if(strKey == tr("返回桌面"))
                 {
                     ShellExecuteA(NULL, "open", "C:\\Windows\\explorer.exe", "/n,/select,C:\\Users\\Default\\Desktop", NULL, SW_HIDE);
@@ -563,16 +609,61 @@ bool DialogCloudCmd::startupApp(const QString&command)
                     setMasterVolume(1.0);
                 }
 
-
-                if(strKey == tr("屏幕亮度"))
+                if(strKey == tr("屏幕亮度10%"))
                 {
-                    setMasterVolume(0.6);
+                    setMonitorBrightness(10);
+                }
+
+                if(strKey == tr("屏幕亮度20%"))
+                {
+                    setMonitorBrightness(20);
+                }
+
+                if(strKey == tr("屏幕亮度30%"))
+                {
+                    setMonitorBrightness(30);
+                }
+
+                if(strKey == tr("屏幕亮度40%"))
+                {
+                    setMonitorBrightness(40);
+                }
+
+                if(strKey == tr("屏幕亮度50%"))
+                {
+                    setMonitorBrightness(50);
+                }
+
+                if(strKey == tr("屏幕亮度60%"))
+                {
+                    setMonitorBrightness(60);
+                }
+
+                if(strKey == tr("屏幕亮度70%"))
+                {
+                    setMonitorBrightness(70);
+                }
+
+                if(strKey == tr("屏幕亮度80%"))
+                {
+                    setMonitorBrightness(80);
+                }
+
+                if(strKey == tr("屏幕亮度90%"))
+                {
+                    setMonitorBrightness(90);
+                }
+
+                if(strKey == tr("屏幕亮度100%"))
+                {
+                    setMonitorBrightness(100);
                 }
 
                 if(strKey == tr("打开控制面板"))
                 {
                     QProcess::execute("control.exe", QStringList{});
                 }
+
                 if(strKey == tr("屏幕黑屏"))
                 {
                     m_pPad->showBlack();
@@ -587,35 +678,13 @@ bool DialogCloudCmd::startupApp(const QString&command)
                     //m_pWork->sendKey(0x08,0x2E);
 
                     QProcess::execute("magnify.exe", QStringList{});
-
-                    // // 打开放大镜 Win + =
-                    // INPUT input[4] = { 0 };
-
-                    // // 按下 Win
-                    // input[0].type = INPUT_KEYBOARD;
-                    // input[0].ki.wVk = VK_LWIN;
-
-                    // // 按下 =
-                    // input[1].type = INPUT_KEYBOARD;
-                    // input[1].ki.wVk = VK_OEM_PLUS;
-
-                    // // 松开 =
-                    // input[2].type = INPUT_KEYBOARD;
-                    // input[2].ki.wVk = VK_OEM_PLUS;
-                    // input[2].ki.dwFlags = KEYEVENTF_KEYUP;
-
-                    // // 松开 Win
-                    // input[3].type = INPUT_KEYBOARD;
-                    // input[3].ki.wVk = VK_LWIN;
-                    // input[3].ki.dwFlags = KEYEVENTF_KEYUP;
-
-                    // SendInput(4, input, sizeof(INPUT));
                 }
 
                 if(strKey == tr("关闭放大镜"))
                 {
                     QProcess::execute("taskkill", QStringList() << "/f" << "/im" << "magnify.exe");
                 }
+
                 if(strKey == tr("复制"))
                 {
                 }

@@ -416,6 +416,19 @@ border-radius:4px;</string>
     </item>
    </layout>
   </widget>
+  <widget class="QPushButton" name="pushButtonSendKey">
+   <property name="geometry">
+    <rect>
+     <x>456</x>
+     <y>518</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Send Key</string>
+   </property>
+  </widget>
  </widget>
  <resources>
   <include location="res.qrc"/>

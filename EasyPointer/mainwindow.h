@@ -42,8 +42,6 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
 
-private slots:
-    void on_pushButtonSendKey_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -69,9 +67,11 @@ private:
     quint16 m_radius2;
     quint16 m_radius3;
 
+    bool m_bLoading = false;
     bool m_bRound = true;
     qreal m_enlarge= 1.5;
     quint8 m_battery = 10;
+    qint16 m_EfOpticy = 0;
 
     QColor m_color0;
     QColor m_color1;
@@ -85,6 +85,8 @@ private:
     int m_show=0;
     int m_index=0;
     int m_iColor=0;
+    int m_iSpot=0;
+    int m_iEffect=0;
     void updateValue();
     DialogTip *m_ModeTip = nullptr;
 

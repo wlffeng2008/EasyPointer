@@ -39,6 +39,9 @@ public:
     QColor m_color3;
     int m_iColor0=0;
     int m_iColor3=0;
+    int m_iSpot=0;
+    int m_iEffect=0;
+    int m_EfOpticy=0;
     quint32 m_tmCount = 1800;
     quint32 m_onlyBlack = false;
 

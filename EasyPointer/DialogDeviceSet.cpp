@@ -14,3 +14,9 @@ DialogDeviceSet::~DialogDeviceSet()
 {
     delete ui;
 }
+
+
+void DialogDeviceSet::on_pushButtonSendKey_clicked()
+{
+    m_pWork->sendKey(0x2E,0x08);
+}

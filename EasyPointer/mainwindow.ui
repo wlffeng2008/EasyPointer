@@ -38,8 +38,8 @@ color:white;</string>
      <rect>
       <x>122</x>
       <y>360</y>
-      <width>329</width>
-      <height>62</height>
+      <width>330</width>
+      <height>105</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -48,7 +48,7 @@ color:white;</string>
     <property name="frameShadow">
      <enum>QFrame::Shadow::Raised</enum>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1">
+    <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1,0,0">
      <property name="leftMargin">
       <number>0</number>
      </property>
@@ -515,6 +515,85 @@ QPushButton:checked  {
        </item>
       </layout>
      </item>
+     <item>
+      <widget class="QFrame" name="horizontalFrame">
+       <layout class="QHBoxLayout" name="horizontalLayout_19">
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_13">
+          <property name="text">
+           <string>显示效果:</string>
+          </property>
+          <property name="indent">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBoxEffect">
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="maxVisibleItems">
+           <number>20</number>
+          </property>
+          <item>
+           <property name="text">
+            <string>无</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>呼吸</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>频闪</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_12">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Orientation::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
    </widget>
    <widget class="QStackedWidget" name="stackedWidget1">
@@ -901,6 +980,12 @@ QPushButton:checked  {
          </item>
          <item>
           <widget class="QComboBox" name="comboBoxEnlarge">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
            <property name="maxVisibleItems">
             <number>20</number>
            </property>
@@ -1225,8 +1310,8 @@ QRadioButton{color:white; font-size:18px; font-weight:bold;}
      <widget class="QPushButton" name="pushButtonTypeword">
       <property name="geometry">
        <rect>
-        <x>378</x>
-        <y>174</y>
+        <x>382</x>
+        <y>180</y>
         <width>149</width>
         <height>33</height>
        </rect>
@@ -2488,6 +2573,18 @@ background-image: url(:/images/jd.png);
      </item>
      <item>
       <widget class="ToggleButton" name="checkBoxStart">
+       <property name="minimumSize">
+        <size>
+         <width>52</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>52</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
@@ -2553,19 +2650,264 @@ background-image: url(:/images/jd.png);
      </item>
     </layout>
    </widget>
-   <widget class="QPushButton" name="pushButtonSendKey">
+   <widget class="QFrame" name="frameShape">
     <property name="geometry">
      <rect>
-      <x>746</x>
-      <y>440</y>
-      <width>75</width>
-      <height>23</height>
+      <x>122</x>
+      <y>360</y>
+      <width>330</width>
+      <height>62</height>
      </rect>
     </property>
-    <property name="text">
-     <string>PushButton</string>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
     </property>
+    <property name="frameShadow">
+     <enum>QFrame::Shadow::Raised</enum>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,1">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>聚光灯外观选择</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_18">
+       <property name="spacing">
+        <number>10</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="pushButton_Shape0">
+         <property name="minimumSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">    QPushButton {
+            border: 2px solid white;
+            background-color: transparent;
+            width:28px;
+            height:28px;
+			border-radius:14px;
+        }
+
+    QPushButton:hover    {  border: 2px solid #EAEAEA;}
+    QPushButton:checked  { 
+ 	background-image:url(:/images/checkflag.png); 
+   	background-repeat: no-repeat; 
+    background-position: center center;
+ }</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupSpot</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_Shape1">
+         <property name="minimumSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+            color: white;
+            border: 2px solid white;
+            background-color: transparent;
+            width:28px;
+            height:28px;
+			border-radius:0px;
+        }
+
+QPushButton:hover  { border: 2px solid #EAEAEA;}
+QPushButton:checked
+{
+ 	background-image:url(:/images/checkflag.png); 
+   	background-repeat: no-repeat; 
+    background-position: center center;
+ }</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupSpot</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_Shape2">
+         <property name="minimumSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">    QPushButton {
+            color: white;
+            border: 2px solid white;
+            background-color: transparent;
+            margin: 4px 0px;
+            outline: none;
+			width:28px;
+			height:28px;
+			border-radius:0px;
+        }
+
+    QPushButton:hover    { border: 2px solid #EAEAEA;}
+    QPushButton:checked  {
+ 	background-image:url(:/images/checkflag.png); 
+   	background-repeat: no-repeat; 
+    background-position: center center;
+ }</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupSpot</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_Shape3">
+         <property name="minimumSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>28</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">    QPushButton {
+            border: 2px solid white;
+            background-color: transparent;
+            margin: 0px 4px;
+			width:28px;
+			height:28px;
+			border-radius:0px;
+        }
+
+QPushButton:hover    {  border: 2px solid white;}
+QPushButton:checked  {
+ 	background-image:url(:/images/checkflag.png); 
+   	background-repeat: no-repeat; 
+    background-position: center center;
+ }</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">buttonGroupSpot</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_11">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
    </widget>
+   <zorder>frameShape</zorder>
    <zorder>labelContact</zorder>
    <zorder>labelBattery</zorder>
    <zorder>pushButtonMin</zorder>
@@ -2578,7 +2920,6 @@ background-image: url(:/images/jd.png);
    <zorder>stackedWidget0</zorder>
    <zorder>stackedWidget1</zorder>
    <zorder>frameSetting</zorder>
-   <zorder>pushButtonSendKey</zorder>
   </widget>
  </widget>
  <customwidgets>
@@ -2643,5 +2984,6 @@ background-image: url(:/images/jd.png);
   <buttongroup name="buttonGroupShape"/>
   <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupColor"/>
+  <buttongroup name="buttonGroupSpot"/>
  </buttongroups>
 </ui>

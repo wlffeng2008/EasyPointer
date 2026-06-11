@@ -29,6 +29,31 @@ DialogBoard::DialogBoard(QWidget *parent)
         }
     });
     m_tmBlack->start(1000);
+
+    m_EfOpticy = 0;
+    QTimer *pTMEf = new QTimer(this);
+    connect(pTMEf,&QTimer::timeout,this,[=]{
+        if(m_iEffect == 1)
+        {
+            static int nDir = 1;
+            if(m_EfOpticy>255) nDir = -1;
+            if(m_EfOpticy<0) nDir = 1;
+            m_EfOpticy += 20 * nDir;
+            update();
+            //ui->stackedWidget0->update();
+        }
+
+        if(m_iEffect == 2)
+        {
+            if(m_EfOpticy == 255)
+                m_EfOpticy = 0;
+            else
+                m_EfOpticy = 255;
+            update();
+            //ui->stackedWidget0->update();
+        }
+    });
+    pTMEf->start(200);
 }
 
 DialogBoard::~DialogBoard()
@@ -74,8 +99,17 @@ void DialogBoard::paintEvent(QPaintEvent *event)
     {
         int dist = m_radius0;
         QRect tarRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist));
+        QColor tmpColor(m_color0);
+        if(m_iEffect != 0)
+        {
+            int nEf = m_EfOpticy;
+            if(nEf>255) nEf = 255;
+            if(nEf < 0) nEf = 0  ;
+            tmpColor.setAlpha(nEf);
+        }
+
+        painter.setBrush(tmpColor);
         painter.setPen(Qt::NoPen);
-        painter.setBrush(m_color0);
         painter.drawEllipse(tarRect);
     }
     break;
@@ -102,9 +136,13 @@ void DialogBoard::paintEvent(QPaintEvent *event)
         painter.fillRect(this->rect(),m_color2);
 
         int dist = m_radius2;
+        QRect tmp(QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
 
         QPainterPath path;
-        path.addEllipse(QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
+        if(m_iSpot == 0) path.addEllipse(tmp);
+        if(m_iSpot == 1) path.addRect(tmp);
+        if(m_iSpot == 2) path.addRect(tmp.adjusted(0,dist*0.4,0,-dist*0.4));
+        if(m_iSpot == 3) path.addRect(tmp.adjusted(dist*0.3,0,-dist*0.3,0));
         painter.setClipPath(path);
 
         painter.drawPixmap(m_curPos-QPoint(dist,dist),m_screen,QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
