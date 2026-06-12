@@ -18,6 +18,8 @@ public:
     CHidWorker *m_pWork = nullptr;
 private slots:
     void on_pushButtonSendKey_clicked();
+    void on_pushButtonMonitor_clicked();
+
 private:
     Ui::DialogDeviceSet *ui;
 };
