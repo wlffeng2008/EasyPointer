@@ -521,11 +521,17 @@ QPushButton:checked  {
         <property name="spacing">
          <number>12</number>
         </property>
+        <property name="leftMargin">
+         <number>1</number>
+        </property>
         <property name="topMargin">
          <number>0</number>
         </property>
         <property name="rightMargin">
          <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>1</number>
         </property>
         <item>
          <widget class="QLabel" name="label_13">
@@ -2980,10 +2986,10 @@ QPushButton:checked  {
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupCount"/>
   <buttongroup name="buttonGroupShape"/>
-  <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupColor"/>
+  <buttongroup name="buttonGroupCount"/>
+  <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupSpot"/>
  </buttongroups>
 </ui>
