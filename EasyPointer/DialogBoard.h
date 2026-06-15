@@ -71,6 +71,7 @@ private:
     QPixmap m_screen;
     linePoints m_record;
     QList<linePoints> m_lines;
+    bool m_bActKeypress=true;
 };
 
 #endif // DIALOGBOARD_H

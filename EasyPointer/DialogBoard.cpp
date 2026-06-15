@@ -79,6 +79,9 @@ void DialogBoard::showBlack()
     clearLines();
     showFullScreen();
     raise();
+    QCursor::setPos(0xFFF,0xFFF);
+    m_bActKeypress=false;
+    QTimer::singleShot(3000,this,[=]{ m_bActKeypress = true; });
 }
 
 void DialogBoard::showMagnify(bool show)
@@ -279,16 +282,17 @@ void DialogBoard::wheelEvent(QWheelEvent *event)
 
 void DialogBoard::keyPressEvent(QKeyEvent *event)
 {
-    qDebug() << event;
-    if(m_mode==4)
-        hide();
+    if(m_mode == 4 && m_bActKeypress)
+        this->hide();
+
     QDialog::keyPressEvent(event);
 }
 
 void DialogBoard:: keyReleaseEvent(QKeyEvent *event)
 {
-    if(event->key() == Qt::Key_Escape)
-        hide();
+    if(event->key() == Qt::Key_Escape && m_bActKeypress)
+        this->hide();
+
     QDialog::keyReleaseEvent(event);
 }
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>400</height>
+    <height>388</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -65,12 +65,6 @@ QLabel{color:black;}</string>
        <height>0</height>
       </size>
      </property>
-     <property name="maximumSize">
-      <size>
-       <width>560</width>
-       <height>16777215</height>
-      </size>
-     </property>
      <property name="font">
       <font>
        <pointsize>-1</pointsize>
@@ -78,14 +72,14 @@ QLabel{color:black;}</string>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">QLabel{font-size:30px; font-weight:600; color: black;}</string>
+      <string notr="true">QLabel{font-size:24px; font-weight:600; color: black;}</string>
      </property>
      <property name="text">
       <string>语音打字</string>
      </property>
     </widget>
    </item>
-   <item>
+   <item alignment="Qt::AlignmentFlag::AlignTop">
     <widget class="QLabel" name="label_4">
      <property name="styleSheet">
       <string notr="true">QLabel{font-size:16px; font-weight:600; color: black;}</string>
@@ -157,18 +151,6 @@ QLabel{color:black;}</string>
    </item>
    <item>
     <widget class="QLabel" name="label_2">
-     <property name="minimumSize">
-      <size>
-       <width>560</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>560</width>
-       <height>16777215</height>
-      </size>
-     </property>
      <property name="font">
       <font>
        <pointsize>-1</pointsize>
@@ -176,14 +158,14 @@ QLabel{color:black;}</string>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">QLabel{font-size:30px; font-weight:600; color: black;}</string>
+      <string notr="true">QLabel{font-size:24px; font-weight:600; color: black;}</string>
      </property>
      <property name="text">
       <string>翻译打字</string>
      </property>
     </widget>
    </item>
-   <item>
+   <item alignment="Qt::AlignmentFlag::AlignTop">
     <widget class="QLabel" name="label_9">
      <property name="font">
       <font>
@@ -289,6 +271,19 @@ QLabel{color:black;}</string>
        </spacer>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item alignment="Qt::AlignmentFlag::AlignHCenter">
+    <widget class="QPushButton" name="pushButtonOK">
+     <property name="minimumSize">
+      <size>
+       <width>120</width>
+       <height>32</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>确定</string>
+     </property>
     </widget>
    </item>
   </layout>

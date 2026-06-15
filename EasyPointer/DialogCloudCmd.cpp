@@ -49,6 +49,7 @@ using namespace QXlsx;
 #include <highlevelmonitorconfigurationapi.h>
 #pragma comment(lib, "dxva2.lib")
 
+
 void setMonitorBrightness(DWORD brightness)
 {
     qDebug() << "setMonitorBrightness 0" << brightness;
@@ -140,6 +141,7 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
     connect(m_pModel,&QStandardItemModel::itemChanged,this,[=](QStandardItem *item){
         saveLoadCommand();
     });
+
 
     connect(ui->tableView,&QTableView::clicked,this,[=](const QModelIndex &index){
         if(index.column() == 4)
@@ -531,7 +533,7 @@ bool DialogCloudCmd::startupApp(const QString&command)
                 {
                     m_pWork->sendKey(0x13,0x01);
                 }
-                if(strKey == tr("一键清除"))
+                if(strKey == tr("清空屏幕"))
                 {
                     m_pWork->sendKey(0x08,0x01);
                 }
@@ -554,6 +556,10 @@ bool DialogCloudCmd::startupApp(const QString&command)
                 }
 
                 if(strKey == tr("窗口最小"))
+                {
+                    m_pWork->sendKey(0x07,0x08);
+                }
+                if(strKey == tr("窗口还原"))
                 {
                     m_pWork->sendKey(0x07,0x08);
                 }
@@ -687,7 +693,7 @@ bool DialogCloudCmd::startupApp(const QString&command)
 
                 if(strKey == tr("播放") || strKey == tr("暂停"))
                 {
-                    m_pWork->sendKey(0x06,0);
+                    m_pWork->sendKey(44,0);
                 }
 
                 if(strKey == tr("打开放大镜"))
@@ -705,7 +711,7 @@ bool DialogCloudCmd::startupApp(const QString&command)
 
                 if(strKey == tr("复制"))
                 {
-                    m_pWork->sendKey(0x06,0x01);
+                    QTimer::singleShot(100,this,[=]{ m_pWork->sendKey(0x06,0x01); });
                 }
 
                 if(strKey == tr("粘贴"))
@@ -760,14 +766,15 @@ bool DialogCloudCmd::startupApp(const QString&command)
         }
     }
 
-    int nEngine = 0;
-    QString strUrl = "https://www.baidu.com/s?wd=" ;
-    if(nEngine == 1)
-        strUrl = "https://www.google.com/search?q=" ;
-    if(nEngine == 2)
-        strUrl = "https://search.yahoo.com/search?p=" ;
+    if(ui->checkBoxSearch->isChecked())
+    {
+        int nEngine = 0;
+        QString strUrl = "https://www.baidu.com/s?wd=" ;
+        if(nEngine == 1) strUrl = "https://www.google.com/search?q=" ;
+        if(nEngine == 2) strUrl = "https://search.yahoo.com/search?p=" ;
 
-    QDesktopServices::openUrl(QUrl(strUrl + strText));
+        QDesktopServices::openUrl(QUrl(strUrl + strText));
+    }
 
     return false;
 }

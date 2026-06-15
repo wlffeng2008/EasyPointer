@@ -31,6 +31,8 @@
 #include <QScreen>
 #include <QApplication>
 
+bool g_bCommentVer=true;
+
 // 获取系统屏幕亮度（返回 0~100 整数）
 int getWinScreenBrightness()
 {
@@ -89,6 +91,8 @@ MainWindow::MainWindow(QWidget *parent)
     //setWinScreenBrightness(50);
 
     ui->labelSN->hide();
+    if(g_bCommentVer) ui->pushButton6->hide();
+
     setStyleSheet("QLabel{color:white;font-weight:600;}");
 
     QCoreApplication::setOrganizationName("NMY");
@@ -233,22 +237,29 @@ MainWindow::MainWindow(QWidget *parent)
 
     static auto *pAsrClient = DoASRWork(false);
     connect(pAsrClient,&TxAsrClient::onASRText,this,[=](const QString&text,int state){
-        m_RecPad->setPaintText(true);
         if(m_modeV == 10)
         {
+            m_RecPad->setType(0);
             m_RecPad->setPaintText(false);
             m_RecPad->setOutsizeText(text,1);
             if(state == 2)
-                m_pCmd->startupApp(text);
+            {
+                //m_RecPad->hide();
+                //m_pCmd->startupApp(text);
+            }
+            return;
         }
 
         if(m_modeV == 2)
         {
+            m_RecPad->setType(2);
             m_RecPad->setOutsizeText(text,1);
             pAsrClient->translateText(text);
         }
-        else
+
+        if(m_modeV == 1)
         {
+            m_RecPad->setType(1);
             m_RecPad->setOutsizeText(text,state);
         }
    });
@@ -262,6 +273,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->checkBoxTXASR,&QCheckBox::clicked,this,[=](bool checked){
         DoASRWork(checked);
     });
+    connect(m_RecPad,&DialogRecord::onFlushText,this,[=](const QString&text){
+        m_pCmd->startupApp(text);
+    });
 
     m_pHID = new CHidWorker();
     m_pCmd->m_pWork = m_pHID;
@@ -270,20 +284,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_pHID,&CHidWorker::onPCMData,this,[=](const QByteArray&data){
         pAsrClient->userMic(false);
         pAsrClient->writePCM(data);
-
+        m_RecPad->writePCM((char *)data.data(),data.size());
         m_RecPad->show();
-
-        if(m_modeV == 1 || m_modeV == 2)
-        {
-            m_RecPad->writePCM((char *)data.data(),data.size());
-        }
-        else
-        {
-            //m_RecPad->hide();
-        }
-        if(m_modeV == 10)
-        {
-        }
     });
 
     connect(pFuncPad,&DialogBoard::onCallunction,this,[=](int function=0){
@@ -478,9 +480,11 @@ MainWindow::MainWindow(QWidget *parent)
             m_record = false;
             m_pHID->stopRecord();
             m_pHID->setRecordPlay(false);
+            m_RecPad->setPaintText(false);
             m_modeV++;
             if(m_modeV>3)
                 m_modeV=0;
+            if(m_modeV == 1 || m_modeV == 2) m_RecPad->setPaintText(true);
             m_ModeTip->showMode(4+m_modeV);
             break;
 
@@ -488,6 +492,7 @@ MainWindow::MainWindow(QWidget *parent)
             DoASRWork(true);
             m_pHID->setRecordPlay(false);
             m_pHID->startRecord();
+            m_RecPad->setType(0);
             m_RecPad->show();
             m_record = false;
             m_modeV = 10;
@@ -495,6 +500,7 @@ MainWindow::MainWindow(QWidget *parent)
 
         case 0xa0: qDebug() << "结束" ;
             DoASRWork(false);
+            m_RecPad->DoFlush(m_modeV == 10);
             m_pHID->setRecordPlay(false);
             m_pHID->stopRecord();
             m_RecPad->hide();  // 自动粘贴
@@ -792,6 +798,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
     p.setRenderHint(QPainter::Antialiasing, true);
 
     p.drawImage(this->rect(),      QImage(QApplication::applicationDirPath()+"/images/bground.png"));
+    if(!g_bCommentVer)
     p.drawImage(QRect(0,2,132,44), QImage(QApplication::applicationDirPath()+"/images/nmylogo.png"));
 }
 

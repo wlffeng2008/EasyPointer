@@ -54,7 +54,6 @@ void simulateKeyPress(CGKeyCode keyCode)
     simulateKeyUp(keyCode);
 }
 
-
 DialogRecord::DialogRecord(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::DialogRecord)
@@ -62,36 +61,36 @@ DialogRecord::DialogRecord(QWidget *parent)
     ui->setupUi(this);
     setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint|Qt::WindowStaysOnTopHint);
 
-    m_XFV = new XFWSVoiceWrite();
-    connect(m_XFV,&XFWSVoiceWrite::send_voice_text,this,[=](const QString &strText,const QString &strpgs, int nTextSN, bool bTeminate){
-        qDebug() << strText;
-        ui->textEdit->setText(strText);
-        if(bTeminate)
-        {
-            if(m_nFunc == 2)
-            {
-                m_XFT->translateText(strText,m_pSetDlg->getTransLang1(),m_pSetDlg->getTransLang2());
-            }
-            else
-            {
-                SetTextToWinWithUnicode(strText);
-                if(ui->checkBox->isChecked())
-                    simulateKeyPress(VK_RETURN);
-            }
-        }
-    });
+    // m_XFV = new XFWSVoiceWrite();
+    // connect(m_XFV,&XFWSVoiceWrite::send_voice_text,this,[=](const QString &strText,const QString &strpgs, int nTextSN, bool bTeminate){
+    //     qDebug() << strText;
+    //     ui->textEdit->setText(strText);
+    //     if(bTeminate)
+    //     {
+    //         if(m_nFunc == 2)
+    //         {
+    //             m_XFT->translateText(strText,m_pSetDlg->getTransLang1(),m_pSetDlg->getTransLang2());
+    //         }
+    //         else
+    //         {
+    //             SetTextToWinWithUnicode(strText);
+    //             if(ui->checkBox->isChecked())
+    //                 simulateKeyPress(VK_RETURN);
+    //         }
+    //     }
+    // });
 
-    m_XFT = new FlyTextTranslate(this);
-    connect(m_XFT,&FlyTextTranslate::finish_translate,this,[=](const QString&text){
-        ui->textEdit->setText(text);        
-        SetTextToWinWithUnicode(text);
-        if(ui->checkBox->isChecked())
-            simulateKeyPress(VK_RETURN);
-    });
+    // m_XFT = new FlyTextTranslate(this);
+    // connect(m_XFT,&FlyTextTranslate::finish_translate,this,[=](const QString&text){
+    //     ui->textEdit->setText(text);
+    //     SetTextToWinWithUnicode(text);
+    //     if(ui->checkBox->isChecked())
+    //         simulateKeyPress(VK_RETURN);
+    // });
 
-    QString m_strTypeLang="zh_cn";
-    QString m_strTypeAccent="mandarin";
-    m_XFV->setMontherLanguage(m_strTypeLang,m_strTypeAccent);
+    // QString m_strTypeLang="zh_cn";
+    // QString m_strTypeAccent="mandarin";
+    // m_XFV->setMontherLanguage(m_strTypeLang,m_strTypeAccent);
 }
 
 void DialogRecord::setPaintText(bool set)
@@ -99,15 +98,39 @@ void DialogRecord::setPaintText(bool set)
     m_bCanPaint = set;
 }
 
+void DialogRecord::setType(int type)
+{
+    QStringList types={tr("云指令"),tr("语音打字"),tr("语音翻译")};
+    ui->labelType->setText(types[type]);
+}
+
 void DialogRecord::setOutsizeText(const QString&text,int state)
 {
     ui->textEdit->setText(text);
     if(state == 2 && m_bCanPaint)
     {
+        //DoFlush();
+    }
+}
+
+void DialogRecord::DoFlush(bool emitback)
+{
+    QString text = ui->textEdit->toPlainText().trimmed();
+    if(text.isEmpty())
+        return;
+
+    if(emitback)
+    {
+        emit onFlushText(text);
+    }
+    else
+    {
         SetTextToWinWithUnicode(text);
         if(ui->checkBox->isChecked())
             simulateKeyPress(VK_RETURN);
     }
+
+    ui->textEdit->setText("");
 }
 
 DialogRecord::~DialogRecord()
@@ -129,13 +152,12 @@ void DialogRecord::showEvent(QShowEvent *event)
 
     setGeometry(rcTip);
 
-    //m_XFV->ReqAuthAudio();
     QDialog::showEvent(event);
 }
 
 void DialogRecord::setFunc(int nFunc)
 {
-    ui->label->setText(nFunc == 1 ? tr("语音打字"): tr("翻译打字"));
+    ui->labelType->setText(nFunc == 1 ? tr("语音打字"): tr("翻译打字"));
 
     m_nFunc = nFunc;
 }
@@ -145,14 +167,6 @@ void DialogRecord::setFunc(int nFunc)
 
 void DialogRecord::writePCM(char *data,int len)
 {
-    if(!data || !len)
-    {
-        //m_XFV->WritePcmEnd();
-        //return ;
-    }
-    //qDebug() <<  "writePCM"  << len;
-    //m_XFV->WritePcmData(data,len);
-
     short minValue = -32767;
     short maxValue = 32767;
     int   micVolume = 0;

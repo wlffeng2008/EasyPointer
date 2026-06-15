@@ -16,17 +16,16 @@ public:
     explicit DialogTypeWord(QWidget *parent = nullptr);
     ~DialogTypeWord();
 
-    QString getMontherLang(bool bIsTyping=true) ;
-    QString getMontherAccent(bool bIsTyping=true) ;
-    QString getTransLang1() ;
-    QString getTransLang2() ;
-    bool autoPressReturn() ;
+    QString getMontherLang(bool bIsTyping=true);
+    QString getMontherAccent(bool bIsTyping=true);
+    QString getTransLang1();
+    QString getTransLang2();
 
-    void ShowVoiceText(const QString&strText,bool bAppend=true) ;
-    void showLog(const QString&strLog,bool bEnd) ;
-    QString getLastText() ;
 protected:
     void changeEvent(QEvent *pEvt);
+private slots:
+    void on_pushButtonOK_clicked();
+
 private:
 
     Ui::DialogTypeWord *ui;

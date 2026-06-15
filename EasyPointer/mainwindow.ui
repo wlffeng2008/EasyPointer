@@ -2551,7 +2551,7 @@ background-image: url(:/images/jd.png);
       <x>120</x>
       <y>458</y>
       <width>339</width>
-      <height>20</height>
+      <height>24</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_15">
@@ -2582,7 +2582,7 @@ background-image: url(:/images/jd.png);
        <property name="minimumSize">
         <size>
          <width>52</width>
-         <height>0</height>
+         <height>24</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -2986,17 +2986,10 @@ QPushButton:checked  {
  </resources>
  <connections/>
  <buttongroups>
-<<<<<<< HEAD
-=======
   <buttongroup name="buttonGroupShape"/>
-  <buttongroup name="buttonGroupColor"/>
   <buttongroup name="buttonGroupCount"/>
   <buttongroup name="buttonGroupMain"/>
->>>>>>> f28fea8d698f53161e18384ad7afa9ed84507a2f
+  <buttongroup name="buttonGroupColor"/>
   <buttongroup name="buttonGroupSpot"/>
-  <buttongroup name="buttonGroupColor"/>
-  <buttongroup name="buttonGroupShape"/>
-  <buttongroup name="buttonGroupCount"/>
-  <buttongroup name="buttonGroupMain"/>
  </buttongroups>
 </ui>

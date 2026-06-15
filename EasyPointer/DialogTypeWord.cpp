@@ -1582,8 +1582,6 @@ DialogTypeWord::DialogTypeWord(QWidget *parent)
     connect(ui->comboBoxLang1,&QComboBox::activated,this,[](int index){Set.setValue("Lang1",index) ;}) ;
     connect(ui->comboBoxLang2,&QComboBox::activated,this,[](int index){Set.setValue("Lang2",index) ;}) ;
     connect(ui->comboBoxLang3,&QComboBox::activated,this,[](int index){Set.setValue("Lang3",index) ;}) ;
-
-    //ui->typingLog->setMaximumBlockCount(10) ;
 }
 
 DialogTypeWord::~DialogTypeWord()
@@ -1730,34 +1728,9 @@ QString DialogTypeWord::getTransLang2()
     return Item["short"].toString();
 }
 
-QString DialogTypeWord::getLastText()
+
+void DialogTypeWord::on_pushButtonOK_clicked()
 {
-    //return ui->plainTextEdit->toPlainText().trimmed() ;
-    return QString();
+    this->hide();
 }
 
-void DialogTypeWord::ShowVoiceText(const QString&strText,bool bAppend)
-{
-    //ui->plainTextEdit->clear();
-    //ui->plainTextEdit->appendPlainText(strText);
-
-    //QClipboard *pClip = QApplication::clipboard() ;
-    //pClip->setText(strText);
-
-    //QWidget *focusWidget = QApplication::focusWidget();
-    //if(focusWidget == ui->plainTextEdit)
-    //   pClip->setText("");
-}
-
-void DialogTypeWord::showLog(const QString&strLog,bool bEnd)
-{
-    QDateTime currentDateTime = QDateTime::currentDateTime();
-    QString strLine=QString("[%1] %2: %3").arg(currentDateTime.toString("MM-dd hh:mm:ss.zzz")).arg(bEnd).arg(strLog);
-    //ui->typingLog->appendPlainText(strLine);
-}
-
-bool DialogTypeWord::autoPressReturn()
-{
-    return false;
-   // return ui->checkBoxEnter->isChecked() ;
-}
