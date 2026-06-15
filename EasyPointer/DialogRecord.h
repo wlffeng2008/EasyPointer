@@ -11,6 +11,15 @@ namespace Ui {
 class DialogRecord;
 }
 
+
+typedef int CGKeyCode;
+typedef int CGEventFlags;
+
+void simulateKeyDown(CGKeyCode keyCode);
+void simulateKeyUp(CGKeyCode keyCode);
+void simulateKeyPress(CGKeyCode keyCode);
+
+
 class DialogRecord : public QDialog
 {
     Q_OBJECT
@@ -23,6 +32,7 @@ public:
     void setFunc(int nFunc=1);
     void setRelate(DialogCloudCmd *pCmdDlg,DialogTypeWord *pSetDlg);
     void setOutsizeText(const QString&text,int state=0);
+    void setPaintText(bool set=true);
 protected:
     void showEvent(QShowEvent *event) override;
 
@@ -33,6 +43,7 @@ private:
     FlyTextTranslate *m_XFT = nullptr;
     DialogCloudCmd *m_pCmdDlg = nullptr;
     DialogTypeWord *m_pSetDlg = nullptr;
+    bool m_bCanPaint = true;
 };
 
 #endif // DIALOGRECORD_H

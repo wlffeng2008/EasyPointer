@@ -1,4 +1,5 @@
 #include "TxAsrClient.h"
+#include "qtimer.h"
 
 #include <QAudioFormat>
 #include <QAudioDevice>
@@ -27,12 +28,19 @@ TxAsrClient::TxAsrClient(const QUrl& url, bool bUseMic, QObject* parent)
 
     m_http = new HttpHandler();
 
+    m_pTMPush = new QTimer(this);
+
     connect(m_ws, &QWebSocket::connected, this, [=]{
         qDebug() << "ASR WebSocket Connected!";
         m_connect = true;
         emit onASRConnect(true);
         if(m_useMic)
             startCapture();
+    });
+
+    connect(m_pTMPush,&QTimer::timeout,this,[=]{
+        m_pTMPush->stop();
+        emit onASRText(m_strText,2);
     });
 
     connect(m_ws, &QWebSocket::textMessageReceived, this, [=](const QString& msg){
@@ -42,13 +50,20 @@ TxAsrClient::TxAsrClient(const QUrl& url, bool bUseMic, QObject* parent)
         if (jObj["code"].toInt() == 0)
         {
             QJsonObject res = jObj["result"].toObject();
-            QString strText(res["voice_text_str"].toString().trimmed());
+            m_strText = res["voice_text_str"].toString().trimmed();
             quint32 state = res["slice_type"].toInt() ; // 2 句子结束
+            m_pTMPush->stop();
             if (state == 2)
             {
-                qDebug() << "识别结果:" << strText;
+                m_pTMPush->start(10);
+                qDebug() << "识别结果:" << m_strText;
             }
-            emit onASRText(strText,state);
+            else
+            {
+                m_pTMPush->start(800);
+            }
+
+            //emit onASRText(m_strText,state);
         }
         else
         {

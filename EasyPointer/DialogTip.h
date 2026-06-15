@@ -23,6 +23,7 @@ protected:
 private:
     Ui::DialogTip *ui;
     int mode=0;
+    QTimer *m_pTMHide = nullptr;
 };
 
 #endif // DIALOGTIP_H

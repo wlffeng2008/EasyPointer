@@ -45,5 +45,5 @@ void DialogMKeySet::changeEvent(QEvent *pEvt)
         ui->comboBoxEngine->setItemText(2,tr("雅虎"));
     }
 
-    QWidget::changeEvent(pEvt) ;
+    QWidget::changeEvent(pEvt);
 }

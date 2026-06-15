@@ -1,6 +1,6 @@
 #include "ToggleButton.h"
 
-static QColor s_colorChecked   = 0x6329B6;
+static QColor s_colorChecked   = Qt::green;
 static QColor s_colorUnchecked = Qt::gray;
 
 void ToggleButton::setGlobalColor(const QColor&checkedColor,const QColor&UncheckedColor)

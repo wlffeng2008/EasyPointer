@@ -74,11 +74,17 @@ void DialogBoard::setMode(int mode)
 
 void DialogBoard::showBlack()
 {
-    m_onlyBlack=true;
+    m_showTime=false;
     m_mode = 4;
     clearLines();
     showFullScreen();
     raise();
+}
+
+void DialogBoard::showMagnify(bool show)
+{
+    m_bRound=true;
+    emit onCallunction(show ? 1 : 20);
 }
 
 bool DialogBoard::event(QEvent *event)
@@ -181,7 +187,7 @@ void DialogBoard::paintEvent(QPaintEvent *event)
         painter.setPen(pen);
         painter.setFont(font);
 
-        if(!m_onlyBlack)
+        if(m_showTime)
         {
             int remain = m_tmCount;
             int hour = remain/3600;

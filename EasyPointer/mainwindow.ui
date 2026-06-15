@@ -2237,7 +2237,7 @@ background-image: url(:/images/jd.png);
      <item>
       <widget class="QLabel" name="label_18">
        <property name="text">
-        <string>软件版本：V1.0.0</string>
+        <string>软件版本：V1.0.1</string>
        </property>
       </widget>
      </item>
@@ -2980,10 +2980,10 @@ QPushButton:checked  {
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupCount"/>
-  <buttongroup name="buttonGroupShape"/>
-  <buttongroup name="buttonGroupMain"/>
-  <buttongroup name="buttonGroupColor"/>
   <buttongroup name="buttonGroupSpot"/>
+  <buttongroup name="buttonGroupColor"/>
+  <buttongroup name="buttonGroupShape"/>
+  <buttongroup name="buttonGroupCount"/>
+  <buttongroup name="buttonGroupMain"/>
  </buttongroups>
 </ui>

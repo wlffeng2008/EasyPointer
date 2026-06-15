@@ -24,6 +24,7 @@ public:
     void clearLines();
     void setDrage(bool set=true);
     void showBlack();
+    void showMagnify(bool show=true);
 
     quint16 m_radius0;
     quint16 m_radius1;
@@ -43,7 +44,10 @@ public:
     int m_iEffect=0;
     int m_EfOpticy=0;
     quint32 m_tmCount = 1800;
-    quint32 m_onlyBlack = false;
+    quint32 m_showTime = true;
+
+signals:
+    void onCallunction(int function=0);
 
 protected:
     bool event(QEvent *event) override;

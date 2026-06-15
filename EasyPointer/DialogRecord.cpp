@@ -33,8 +33,8 @@ void SetTextToWinWithUnicode(const QString&strText)
     }
 }
 
-typedef int CGKeyCode;
-typedef int CGEventFlags;
+// typedef int CGKeyCode;
+// typedef int CGEventFlags;
 
 void simulateKeyDown(CGKeyCode keyCode)
 {
@@ -94,10 +94,15 @@ DialogRecord::DialogRecord(QWidget *parent)
     m_XFV->setMontherLanguage(m_strTypeLang,m_strTypeAccent);
 }
 
+void DialogRecord::setPaintText(bool set)
+{
+    m_bCanPaint = set;
+}
+
 void DialogRecord::setOutsizeText(const QString&text,int state)
 {
     ui->textEdit->setText(text);
-    if(state == 2)
+    if(state == 2 && m_bCanPaint)
     {
         SetTextToWinWithUnicode(text);
         if(ui->checkBox->isChecked())

@@ -18,6 +18,12 @@ DialogTip::DialogTip(QWidget *parent)
     setStyleSheet("QDialog { background-color: rgba(180, 180, 180, 0.8);  border: none; border-radius: 24px;}");
 
     setFixedSize(120,120);
+
+    m_pTMHide = new QTimer(this);
+    connect(m_pTMHide,&QTimer::timeout,this,[=]{
+        hide();
+        m_pTMHide->stop();
+    });
 }
 
 DialogTip::~DialogTip()
@@ -29,13 +35,14 @@ DialogTip::~DialogTip()
 {
     this->mode = mode;
     show();
-    QTimer::singleShot(2000,this,[=]{hide();});
+    m_pTMHide->stop();
+    m_pTMHide->start(2000);
 
     int nPosX = QApplication::screens().at(0)->geometry().width()/2 -60;
     int nPosY = QApplication::screens().at(0)->geometry().height() - 220;
     QRect rcTip(nPosX,nPosY,120,120);
-
     setGeometry(rcTip);
+    update();
  }
 
 void DialogTip::paintEvent(QPaintEvent *event)

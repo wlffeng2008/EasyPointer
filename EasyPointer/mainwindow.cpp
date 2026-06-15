@@ -88,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent)
     //qDebug() << "ScreenBrightness：" << getWinScreenBrightness() << GetLastError();
     //setWinScreenBrightness(50);
 
+    ui->labelSN->hide();
     setStyleSheet("QLabel{color:white;font-weight:600;}");
 
     QCoreApplication::setOrganizationName("NMY");
@@ -169,12 +170,6 @@ MainWindow::MainWindow(QWidget *parent)
         updateValue();
         saveLoadParams();
     });
-    // connect(ui->buttonGroupVoice,&QButtonGroup::idClicked,this,[=](int id){
-    //     int index = abs(id)-2;
-    //     m_voice = index;
-    //     updateValue();
-    //     saveLoadParams();
-    // });
 
     for(int i=125; i<=500; i+=25)
     {
@@ -238,12 +233,28 @@ MainWindow::MainWindow(QWidget *parent)
 
     static auto *pAsrClient = DoASRWork(false);
     connect(pAsrClient,&TxAsrClient::onASRText,this,[=](const QString&text,int state){
-        if(m_modeV == 10 && state == 2)  m_pCmd->startupApp(text);
-        if(m_modeV == 1 || m_modeV == 2) m_RecPad->setOutsizeText(text,state);
-        if(m_modeV == 2) pAsrClient->translateText(text);
+        m_RecPad->setPaintText(true);
+        if(m_modeV == 10)
+        {
+            m_RecPad->setPaintText(false);
+            m_RecPad->setOutsizeText(text,1);
+            if(state == 2)
+                m_pCmd->startupApp(text);
+        }
+
+        if(m_modeV == 2)
+        {
+            m_RecPad->setOutsizeText(text,1);
+            pAsrClient->translateText(text);
+        }
+        else
+        {
+            m_RecPad->setOutsizeText(text,state);
+        }
    });
-    connect(pAsrClient,&TxAsrClient::onTransText,this,[=](const QString&text,int state){
-        m_RecPad->setOutsizeText(text,state);
+    connect(pAsrClient,&TxAsrClient::onTransText,this,[=](const QString&text,int state){        
+        m_RecPad->setPaintText(true);
+        m_RecPad->setOutsizeText(text,2);
     });
     connect(pAsrClient,&TxAsrClient::onASRConnect,this,[=](bool connect){
         ui->checkBoxTXASR->setChecked(connect);
@@ -260,19 +271,40 @@ MainWindow::MainWindow(QWidget *parent)
         pAsrClient->userMic(false);
         pAsrClient->writePCM(data);
 
-        if(m_modeV == 10)
-        {
-        }
+        m_RecPad->show();
 
         if(m_modeV == 1 || m_modeV == 2)
         {
-            m_RecPad->show();
             m_RecPad->writePCM((char *)data.data(),data.size());
         }
         else
         {
+            //m_RecPad->hide();
+        }
+        if(m_modeV == 10)
+        {
+        }
+    });
+
+    connect(pFuncPad,&DialogBoard::onCallunction,this,[=](int function=0){
+        switch (function) {
+        case 1:
+            hide();
             m_RecPad->hide();
-            //m_pHID->stopRecord();
+            pFuncPad->capScreen();
+            pFuncPad->setMode(m_mode);
+            pFuncPad->showFullScreen();
+            pFuncPad->raise();
+            m_pHID->setMouse(true);
+            QApplication::setOverrideCursor(Qt::BlankCursor);
+            break;
+
+        case 20:
+            pFuncPad->hide();
+            QApplication::setOverrideCursor(Qt::ArrowCursor);
+            break;
+        default:
+            break;
         }
     });
 
@@ -289,14 +321,22 @@ MainWindow::MainWindow(QWidget *parent)
         // 1字节设备型号高8位
         switch(cmd)
         {
+        case 0xc0:
         case 0x91: qDebug() << "单击";
             //m_pHID->setMouse(true);
             pFuncPad->hide();
             m_press = 0;
             break;
 
+        //
+        case 0xc1:
+        case 0xc2:
+        case 0xc3:
+        case 0xc4:
+        case 0xc5:
         case 0x92:
         {
+            updateValue();
             m_pHID->setLaser(false);
             qDebug() << "双击";   // 仅切换功能
             m_mode++;
@@ -316,6 +356,15 @@ MainWindow::MainWindow(QWidget *parent)
         }
             break;
 
+        case 0xc7:
+        case 0xc8:
+        case 0xc9:
+        case 0xca:
+        //case 0xcb:
+        //case 0xcc:
+        //case 0xcd:
+        //case 0xce:
+        //case 0xcf:
         case 0x93: qDebug() << "长按" ;
             if(m_mode != 3)
             {
@@ -354,7 +403,6 @@ MainWindow::MainWindow(QWidget *parent)
                 m_pHID->setMouse(false);
                 if(!this->isMinimized())
                     show();
-                //pFuncPad->hide();
             }
 
             pFuncPad->setDrage(false);
@@ -588,11 +636,13 @@ MainWindow::MainWindow(QWidget *parent)
         if(ui->stackedWidget0->currentIndex() != 0)
             return;
 
+        pTMEf->stop();
+        int interval = 200;
         if(m_iEffect == 1)
         {
             static int nDir = 1;
             if(m_EfOpticy>255) nDir = -1;
-            if(m_EfOpticy<0) nDir = 1;
+            if(m_EfOpticy<80) nDir = 1;
             m_EfOpticy += 20 * nDir;
             ui->stackedWidget0->update();
         }
@@ -600,13 +650,15 @@ MainWindow::MainWindow(QWidget *parent)
         if(m_iEffect == 2)
         {
             if(m_EfOpticy == 255)
-                m_EfOpticy = 0;
+                m_EfOpticy = 80;
             else
                 m_EfOpticy = 255;
             ui->stackedWidget0->update();
+            interval = 600;
         }
+        pTMEf->start(interval);
     });
-    pTMEf->start(200);
+    pTMEf->start(20);
 }
 
 void MainWindow::saveLoadParams(bool save)
@@ -717,7 +769,7 @@ void MainWindow::updateValue()
     if(m_show == 2) showTime = 600;
     if(m_show == 3) showTime = ui->lineEditSetTime->text().toInt() * 60;
     pFuncPad->m_tmCount= showTime;
-    pFuncPad->m_onlyBlack= ui->checkBoxBlack->isChecked();
+    pFuncPad->m_showTime= ui->checkBoxBlack->isChecked();
 
     pFuncPad->m_color0 = m_color0;
     pFuncPad->m_color1 = m_color1;

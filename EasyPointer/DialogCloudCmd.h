@@ -24,7 +24,6 @@ public:
     CHidWorker *m_pWork = nullptr;
     DialogBoard *m_pPad = nullptr;
 
-
 private:
     Ui::DialogCloudCmd *ui;
     QStandardItemModel *m_pModel = nullptr;

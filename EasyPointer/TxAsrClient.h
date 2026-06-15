@@ -99,6 +99,8 @@ private:QByteArray m_buf;
     QIODevice    *m_audioDevice = nullptr;
     QAudioSource *m_audioSource = nullptr;
     void startCapture();
+    QString m_strText;
+    QTimer *m_pTMPush = nullptr;
 
     HttpHandler *m_http = nullptr;
 };

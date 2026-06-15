@@ -34,6 +34,7 @@ using namespace QXlsx;
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QDesktopServices>
 
 #include <shlobj.h>
 #include <shlguid.h>
@@ -205,7 +206,7 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
 
         if(strFile.isEmpty())
             return;
-
+        strFile.replace("/","\\");
         ui->lineEditData->setText(strFile);
     });
 
@@ -461,7 +462,6 @@ DialogCloudCmd::~DialogCloudCmd()
 // 设置系统音量 0.0~1.0
 bool setMasterVolume(float fVol)
 {
-
     CoInitialize(NULL);
     IMMDeviceEnumerator *pEnum = nullptr;
     if (FAILED(CoCreateInstance(
@@ -509,6 +509,7 @@ bool DialogCloudCmd::startupApp(const QString&command)
     strText.replace("。","");
     strText.replace("，","");
     strText.replace("嗯","");
+    strText.replace("%","");
     if(strText.isEmpty())
         return false;
     {
@@ -528,133 +529,148 @@ bool DialogCloudCmd::startupApp(const QString&command)
             {
                 if(strKey == tr("调出画笔"))
                 {
+                    m_pWork->sendKey(0x13,0x01);
                 }
                 if(strKey == tr("一键清除"))
                 {
+                    m_pWork->sendKey(0x08,0x01);
                 }
                 if(strKey == tr("全屏"))
                 {
+                    m_pWork->sendKey(62,0);
                 }
                 if(strKey == tr("退出全屏"))
                 {
+                    m_pWork->sendKey(41,0);
                 }
                 if(strKey == tr("关闭窗口"))
                 {
+                    m_pWork->sendKey(61,226);
                 }
                 if(strKey == tr("返回桌面"))
                 {
-                    ShellExecuteA(NULL, "open", "C:\\Windows\\explorer.exe", "/n,/select,C:\\Users\\Default\\Desktop", NULL, SW_HIDE);
+                    m_pWork->sendKey(0x07,0x08);
+                    //ShellExecuteA(NULL, "open", "C:\\Windows\\explorer.exe", "/n,/select,C:\\Users\\Default\\Desktop", NULL, SW_HIDE);
                 }
 
                 if(strKey == tr("窗口最小"))
                 {
+                    m_pWork->sendKey(0x07,0x08);
                 }
 
                 if(strKey == tr("运行"))
                 {
+                    m_pWork->sendKey(21,0x08);
                 }
 
                 if(strKey == tr("电脑锁屏"))
                 {
-                    LockWorkStation();
+                    ::LockWorkStation();
                 }
 
-                if(strKey == tr("电脑静音"))
+                if(strKey == tr("电脑黑屏"))
+                {
+                    m_pPad->showBlack();
+                }
+
+                if(strKey == tr("电脑关机"))
+                {
+                    ::WinExec("shutdown -s -t 0",SW_HIDE);
+                }
+
+                if(strKey == tr("系统静音"))
                 {
                     keybd_event(VK_VOLUME_MUTE, 0, 0, 0);
                     keybd_event(VK_VOLUME_MUTE, 0, KEYEVENTF_KEYUP, 0);
                 }
 
-                if(strKey == tr("音量10"))
+                if(strKey == tr("系统音量10"))
                 {
                     setMasterVolume(0.1);
                 }
-                if(strKey == tr("音量20"))
+                if(strKey == tr("系统音量20"))
                 {
                     setMasterVolume(0.2);
                 }
-                if(strKey == tr("音量30"))
+                if(strKey == tr("系统音量30"))
                 {
                     setMasterVolume(0.3);
                 }
-                if(strKey == tr("音量40"))
+                if(strKey == tr("系统音量40"))
                 {
                     setMasterVolume(0.4);
                 }
-                if(strKey == tr("音量50"))
+                if(strKey == tr("系统音量50"))
                 {
                     setMasterVolume(0.5);
                 }
-                if(strKey == tr("音量60"))
+                if(strKey == tr("系统音量60"))
                 {
                     setMasterVolume(0.6);
                 }
-
-                if(strKey == tr("音量70"))
+                if(strKey == tr("系统音量70"))
                 {
                     setMasterVolume(0.7);
                 }
-                if(strKey == tr("音量80"))
+                if(strKey == tr("系统音量80"))
                 {
                     setMasterVolume(0.8);
                 }
-
-                if(strKey == tr("音量90"))
+                if(strKey == tr("系统音量90"))
                 {
                     setMasterVolume(0.9);
                 }
-
-                if(strKey == tr("音量100"))
+                if(strKey == tr("系统音量100"))
                 {
                     setMasterVolume(1.0);
                 }
 
-                if(strKey == tr("屏幕亮度10%"))
+                if(strKey == tr("屏幕亮度10"))
                 {
                     setMonitorBrightness(10);
                 }
 
-                if(strKey == tr("屏幕亮度20%"))
+                if(strKey == tr("屏幕亮度20"))
                 {
                     setMonitorBrightness(20);
                 }
 
-                if(strKey == tr("屏幕亮度30%"))
+                if(strKey == tr("屏幕亮度30"))
                 {
                     setMonitorBrightness(30);
                 }
 
-                if(strKey == tr("屏幕亮度40%"))
+                if(strKey == tr("屏幕亮度40"))
                 {
                     setMonitorBrightness(40);
                 }
 
-                if(strKey == tr("屏幕亮度50%"))
+                if(strKey == tr("屏幕亮度50"))
                 {
                     setMonitorBrightness(50);
                 }
 
-                if(strKey == tr("屏幕亮度60%"))
+                if(strKey == tr("屏幕亮度60"))
                 {
                     setMonitorBrightness(60);
                 }
 
-                if(strKey == tr("屏幕亮度70%"))
+                if(strKey == tr("屏幕亮度70"))
                 {
                     setMonitorBrightness(70);
                 }
 
-                if(strKey == tr("屏幕亮度80%"))
+                if(strKey == tr("屏幕亮度80"))
                 {
                     setMonitorBrightness(80);
                 }
 
-                if(strKey == tr("屏幕亮度90%"))
+                if(strKey == tr("屏幕亮度90"))
                 {
                     setMonitorBrightness(90);
                 }
 
-                if(strKey == tr("屏幕亮度100%"))
+                if(strKey == tr("屏幕亮度100"))
                 {
                     setMonitorBrightness(100);
                 }
@@ -669,28 +685,32 @@ bool DialogCloudCmd::startupApp(const QString&command)
                     m_pPad->showBlack();
                 }
 
-                if(strKey == tr("播放"))
+                if(strKey == tr("播放") || strKey == tr("暂停"))
                 {
+                    m_pWork->sendKey(0x06,0);
                 }
 
                 if(strKey == tr("打开放大镜"))
                 {
+                    m_pPad->showMagnify();
                     //m_pWork->sendKey(0x08,0x2E);
-
-                    QProcess::execute("magnify.exe", QStringList{});
+                    //QProcess::execute("magnify.exe", QStringList{});
                 }
 
                 if(strKey == tr("关闭放大镜"))
                 {
-                    QProcess::execute("taskkill", QStringList() << "/f" << "/im" << "magnify.exe");
+                    m_pPad->showMagnify(false);
+                    //QProcess::execute("taskkill", QStringList() << "/f" << "/im" << "magnify.exe");
                 }
 
                 if(strKey == tr("复制"))
                 {
+                    m_pWork->sendKey(0x06,0x01);
                 }
 
                 if(strKey == tr("粘贴"))
                 {
+                    m_pWork->sendKey(25,0x01);
                 }
 
                 if(strKey == tr("截屏"))
@@ -720,7 +740,7 @@ bool DialogCloudCmd::startupApp(const QString&command)
 
             QString strKey = item0->text().trimmed();
             QString strPath = item1->text().trimmed();
-
+            strPath.replace("/","\\");
             if(strKey == strText)
             {
                 ::ShellExecute(NULL, L"open", (LPCWSTR)strPath.toStdU16String().c_str(), NULL, NULL, SW_SHOWNORMAL);
@@ -739,5 +759,15 @@ bool DialogCloudCmd::startupApp(const QString&command)
             }
         }
     }
+
+    int nEngine = 0;
+    QString strUrl = "https://www.baidu.com/s?wd=" ;
+    if(nEngine == 1)
+        strUrl = "https://www.google.com/search?q=" ;
+    if(nEngine == 2)
+        strUrl = "https://search.yahoo.com/search?p=" ;
+
+    QDesktopServices::openUrl(QUrl(strUrl + strText));
+
     return false;
 }
