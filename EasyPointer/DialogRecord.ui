@@ -31,11 +31,8 @@
      </item>
      <item>
       <widget class="QLabel" name="labelType">
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-         <bold>true</bold>
-        </font>
+       <property name="styleSheet">
+        <string notr="true">font: 700 14pt &quot;Microsoft YaHei UI&quot;;</string>
        </property>
        <property name="text">
         <string>语音打字</string>

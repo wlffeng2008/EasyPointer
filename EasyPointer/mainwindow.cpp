@@ -231,6 +231,11 @@ MainWindow::MainWindow(QWidget *parent)
     m_pDSet->m_pWork = m_pHID;
     m_pCmd->m_pPad = pFuncPad;
     connect(m_pHID,&CHidWorker::onPCMData,this,[=](const QByteArray&data){
+        if(m_nModeS2 == 255)
+        {
+            m_pHID->stopRecord();
+            return;
+        }
         if(m_nModeS2 != 0)
         {
             pAsrClient->userMic(false);
@@ -452,7 +457,7 @@ MainWindow::MainWindow(QWidget *parent)
 
         case 0xa0: qDebug() << "结束" ;
             DoASRWork(false);
-            if(m_nModeS2 == 4)
+            if(m_nModeS2 == 3)
                 m_RecPad->DoFlush(true);
             m_pHID->setRecordPlay(false);
             m_pHID->stopRecord();
