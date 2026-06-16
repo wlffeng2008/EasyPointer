@@ -100,11 +100,11 @@ void DialogRecord::setPaintText(bool set)
     m_bCanPaint = set;
 }
 
-void DialogRecord::setType(int type)
+void DialogRecord::setMode(int nMode)
 {
-    m_bCanPaint = (type>0);
-    QStringList types={tr("云指令"),tr("语音打字"),tr("语音翻译")};
-    ui->labelType->setText(types[type]);
+    m_bCanPaint = (nMode != 3);
+    QStringList types = {tr("扩音模式"),tr("语音打字"),tr("语音翻译"),tr("云指令")};
+    ui->labelType->setText(types[nMode]);
 }
 
 void DialogRecord::setOutsizeText(const QString&text,int state)
@@ -132,10 +132,6 @@ void DialogRecord::DoFlush(bool emitback)
         if(ui->checkBox->isChecked())
             simulateKeyPress(VK_RETURN);
     }
-
-    QTimer::singleShot(10000,this,[=]{
-        //ui->textEdit->setText("");
-    });
 }
 
 DialogRecord::~DialogRecord()
@@ -160,17 +156,11 @@ void DialogRecord::showEvent(QShowEvent *event)
     QDialog::showEvent(event);
 }
 
-void DialogRecord::setFunc(int nFunc)
-{
-    ui->labelType->setText(nFunc == 1 ? tr("语音打字"): tr("翻译打字"));
-
-    m_nFunc = nFunc;
-}
 
 #define MAX(a,b) ( ((a) > (b)) ? (a):(b) )
 #define MIN(a,b) ( ((a) < (b)) ? (a):(b) )
 
-void DialogRecord::writePCM(char *data,int len)
+void DialogRecord::writePCM(const char *data, int len)
 {
     short minValue = -32767;
     short maxValue = 32767;

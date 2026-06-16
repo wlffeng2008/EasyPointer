@@ -33,39 +33,6 @@
 
 bool g_bCommentVer=true;
 
-// 获取系统屏幕亮度（返回 0~100 整数）
-int getWinScreenBrightness()
-{
-    HWND hWnd = nullptr;//(HWND)QApplication::primaryScreen()->winId();
-    HMONITOR hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
-
-    DWORD minVal = 0, maxVal = 0, curVal = 0;
-    if (GetMonitorBrightness(hMonitor, &minVal, &maxVal, &curVal))
-    {
-        // 转换为0~100百分比
-        return (int)(curVal * 100.0 / maxVal);
-    }
-    return -1; // 获取失败
-}
-
-// 设置系统屏幕亮度（percent: 0~100）
-bool setWinScreenBrightness(int percent)
-{
-    if (percent < 0) percent = 0;
-    if (percent > 100) percent = 100;
-
-    HWND hWnd = nullptr;//(HWND)QApplication::primaryScreen()->winId();
-    HMONITOR hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
-
-    DWORD minVal = 0, maxVal = 0, curVal = 0;
-    if (!GetMonitorBrightness(hMonitor, &minVal, &maxVal, &curVal))
-        return false;
-
-    // 百分比转硬件数值
-    DWORD target = (DWORD)(percent / 100.0 * maxVal);
-    return SetMonitorBrightness(hMonitor, target);
-}
-
 static QList<quint32> colors={0xFF0000,0x00FF00,0x0000FF,0xFFFFFF,0xFF8000,0x800080,0xFFFF00,0x00FFFF,0x000000};
 
 MainWindow::MainWindow(QWidget *parent)
@@ -87,13 +54,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_pDSet = new DialogDeviceSet();
     m_pMSet = new DialogMKeySet();
-    //qDebug() << "ScreenBrightness：" << getWinScreenBrightness() << GetLastError();
-    //setWinScreenBrightness(50);
 
     ui->labelSN->hide();
+    ui->labelColor->hide();
     if(g_bCommentVer) ui->pushButton6->hide();
 
-    setStyleSheet("QLabel{color:white;font-weight:600;}");
+    setStyleSheet("QLabel{color:white; font-weight:600;}");
 
     QCoreApplication::setOrganizationName("NMY");
     QCoreApplication::setApplicationName("NMYPointer");
@@ -237,34 +203,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     static auto *pAsrClient = DoASRWork(false);
     connect(pAsrClient,&TxAsrClient::onASRText,this,[=](const QString&text,int state){
-        if(m_modeV == 10)
+        if(m_nModeS2 == 2)
         {
-            m_RecPad->setType(0);
-            m_RecPad->setPaintText(false);
-            m_RecPad->setOutsizeText(text,1);
-            if(state == 2)
-            {
-                //m_RecPad->hide();
-                //m_pCmd->startupApp(text);
-            }
-            return;
-        }
-
-        if(m_modeV == 2)
-        {
-            m_RecPad->setType(2);
             m_RecPad->setOutsizeText(text,1);
             pAsrClient->translateText(text);
         }
-
-        if(m_modeV == 1)
+        else
         {
-            m_RecPad->setType(1);
             m_RecPad->setOutsizeText(text,state);
         }
    });
-    connect(pAsrClient,&TxAsrClient::onTransText,this,[=](const QString&text,int state){        
-        m_RecPad->setPaintText(true);
+    connect(pAsrClient,&TxAsrClient::onTransText,this,[=](const QString&text,int state){
         m_RecPad->setOutsizeText(text,2);
     });
     connect(pAsrClient,&TxAsrClient::onASRConnect,this,[=](bool connect){
@@ -282,10 +231,13 @@ MainWindow::MainWindow(QWidget *parent)
     m_pDSet->m_pWork = m_pHID;
     m_pCmd->m_pPad = pFuncPad;
     connect(m_pHID,&CHidWorker::onPCMData,this,[=](const QByteArray&data){
-        pAsrClient->userMic(false);
-        pAsrClient->writePCM(data);
-        m_RecPad->writePCM((char *)data.data(),data.size());
-        m_RecPad->show();
+        if(m_nModeS2 != 0)
+        {
+            pAsrClient->userMic(false);
+            pAsrClient->writePCM(data);
+            m_RecPad->writePCM(data.data(),data.size());
+            m_RecPad->show();
+        }
     });
 
     connect(pFuncPad,&DialogBoard::onCallunction,this,[=](int function=0){
@@ -294,7 +246,7 @@ MainWindow::MainWindow(QWidget *parent)
             hide();
             m_RecPad->hide();
             pFuncPad->capScreen();
-            pFuncPad->setMode(m_mode);
+            pFuncPad->setMode(m_nModeS1);
             pFuncPad->showFullScreen();
             pFuncPad->raise();
             m_pHID->setMouse(true);
@@ -341,18 +293,18 @@ MainWindow::MainWindow(QWidget *parent)
             updateValue();
             m_pHID->setLaser(false);
             qDebug() << "双击";   // 仅切换功能
-            m_mode++;
-            if(m_mode > 3)
-                m_mode = 0;
+            m_nModeS1++;
+            if(m_nModeS1 > 3)
+                m_nModeS1 = 0;
 
-            if(m_mode == 3)
+            if(m_nModeS1 == 3)
                 m_pHID->setMouse(true);
 
-            m_ModeTip->showMode(m_mode);
-            if(m_mode == 0) ui->pushButton0->click();
-            if(m_mode == 1) ui->pushButton1->click();
-            if(m_mode == 2) ui->pushButton2->click();
-            if(m_mode == 3) ui->pushButton3->click();
+            m_ModeTip->showMode(m_nModeS1);
+            if(m_nModeS1 == 0) ui->pushButton0->click();
+            if(m_nModeS1 == 1) ui->pushButton1->click();
+            if(m_nModeS1 == 2) ui->pushButton2->click();
+            if(m_nModeS1 == 3) ui->pushButton3->click();
             m_press = 0;
             pFuncPad->hide();
         }
@@ -362,13 +314,8 @@ MainWindow::MainWindow(QWidget *parent)
         case 0xc8:
         case 0xc9:
         case 0xca:
-        //case 0xcb:
-        //case 0xcc:
-        //case 0xcd:
-        //case 0xce:
-        //case 0xcf:
         case 0x93: qDebug() << "长按" ;
-            if(m_mode != 3)
+            if(m_nModeS1 != 3)
             {
                 if(pFuncPad->isVisible())
                 {
@@ -380,26 +327,31 @@ MainWindow::MainWindow(QWidget *parent)
             }
 
             m_ModeTip->hide();
-            if(m_mode == 0xFF) break;
+            if(m_nModeS1 == 0xFF) break;
             m_pHID->setMouse(true);
             m_press ++;
-            if(m_mode != 3 || m_press >= 1)
+            if(m_nModeS1 != 3 || m_press >= 1)
                 pFuncPad->setDrage();
 
             QTimer::singleShot(100,this,[=]{
                 hide();
                 pFuncPad->capScreen();
-                pFuncPad->setMode(m_mode);
+                pFuncPad->setMode(m_nModeS1);
                 pFuncPad->showFullScreen();
                 pFuncPad->raise();
                 QApplication::setOverrideCursor(Qt::BlankCursor);
             });
             break;
 
+        //case 0xcb:
+        //case 0xcc:
+        //case 0xcd:
+        //case 0xce:
+        //case 0xcf:
         case 0x94: qDebug() << "松开" ;
             QApplication::restoreOverrideCursor();
             m_pHID->setMouse(true);
-            if(m_mode != 3)
+            if(m_nModeS1 != 3)
             {
                 QApplication::setOverrideCursor(Qt::BlankCursor);
                 m_pHID->setMouse(false);
@@ -429,14 +381,13 @@ MainWindow::MainWindow(QWidget *parent)
             break;
 
         case 0x9d: // s2 单击
-            qDebug() << "m_modeV:" << m_modeV;
-            if(m_modeV == 0xFF)
+            qDebug() << "m_nModeS2:" << m_nModeS2;
+            if(m_nModeS2 == 0xFF)
             {
-                qDebug() << "cancel:" << m_modeV;
                 break;
             }
 
-            if(m_modeV == 3)
+            if(m_nModeS2 == 3)
             {
                 ui->checkBoxRecord->click();
                 break;
@@ -444,7 +395,7 @@ MainWindow::MainWindow(QWidget *parent)
 
             m_pHID->setRecordPlay(false);
             m_record = !m_record;
-            if(m_modeV == 0)
+            if(m_nModeS2 == 0)
             {
                 if(m_record)
                 {
@@ -460,7 +411,7 @@ MainWindow::MainWindow(QWidget *parent)
             }
 
             m_pHID->setRecordPlay(false);
-            m_RecPad->setFunc(m_modeV);
+            m_RecPad->setMode(m_nModeS2);
             if(m_record)
             {
                 DoASRWork(true);
@@ -481,45 +432,46 @@ MainWindow::MainWindow(QWidget *parent)
             m_pHID->stopRecord();
             m_pHID->setRecordPlay(false);
             m_RecPad->setPaintText(false);
-            m_modeV++;
-            if(m_modeV>3)
-                m_modeV=0;
-            if(m_modeV == 1 || m_modeV == 2) m_RecPad->setPaintText(true);
-            m_ModeTip->showMode(4+m_modeV);
+            m_nModeS2++;
+            if(m_nModeS2 > 3)
+                m_nModeS2 = 0;
+            if(m_nModeS2 == 1 || m_nModeS2 == 2)
+                m_RecPad->setPaintText(true);
+            m_ModeTip->showMode(4+m_nModeS2);
             break;
 
         case 0x9f: qDebug() << "语音搜索" ; //云指令
             DoASRWork(true);
             m_pHID->setRecordPlay(false);
             m_pHID->startRecord();
-            m_RecPad->setType(0);
+            m_RecPad->setMode(3);
             m_RecPad->show();
             m_record = false;
-            m_modeV = 10;
+            m_nModeS2 = 3;
             break;
 
         case 0xa0: qDebug() << "结束" ;
             DoASRWork(false);
-            if(m_modeV == 10) m_RecPad->DoFlush(true);
+            if(m_nModeS2 == 4)
+                m_RecPad->DoFlush(true);
             m_pHID->setRecordPlay(false);
             m_pHID->stopRecord();
-            m_RecPad->hide();  // 自动粘贴
+            m_RecPad->hide();
             m_record = false;
-            m_modeV = -1;
+            m_nModeS2 = -1;
             break;
 
         case 0x1b:
             break;
 
         case 0x90:
-            //qDebug().noquote() << QByteArray((char *)data,len).toHex(' ');
             m_battery = data[5];
             ui->labelBattery->update();
             break;
 
         case 0x61:
         {
-            quint8 *stBuf=nullptr;
+            quint8 *stBuf = nullptr;
             if(data[2] == 0x14)
             {
                 QString strSN = QString("SN: ");
@@ -619,8 +571,6 @@ MainWindow::MainWindow(QWidget *parent)
         trayMenu->setStyleSheet("color:red;");
     }
 
-    ui->labelColor->hide();
-
     ui->labelAudioSet->installEventFilter(this);
     ui->labelCloudCmd->installEventFilter(this);
     ui->labelAudioSet1->installEventFilter(this);
@@ -647,7 +597,7 @@ MainWindow::MainWindow(QWidget *parent)
         if(m_iEffect == 1)
         {
             static int nDir = 1;
-            if(m_EfOpticy>255) nDir = -1;
+            if(m_EfOpticy>240) nDir = -1;
             if(m_EfOpticy<80) nDir = 1;
             m_EfOpticy += 20 * nDir;
             ui->stackedWidget0->update();
@@ -655,10 +605,10 @@ MainWindow::MainWindow(QWidget *parent)
 
         if(m_iEffect == 2)
         {
-            if(m_EfOpticy == 255)
+            if(m_EfOpticy == 240)
                 m_EfOpticy = 80;
             else
-                m_EfOpticy = 255;
+                m_EfOpticy = 240;
             ui->stackedWidget0->update();
             interval = 600;
         }
@@ -837,7 +787,6 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             p.drawText(ui->labelBattery->rect(),QString("%1").arg(m_battery),to);
             ui->labelBattery->setPixmap(QPixmap::fromImage(batt));
             ui->labelBattery->setToolTip(tr("剩余电量") + QString(": %1%").arg(m_battery));
-            return QMainWindow::eventFilter(watched,event);
         }
 
         static QImage bkImg = QImage(":/images/bk0.png");
@@ -848,15 +797,9 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         int my = rc.center().y();
         QPoint  Center(mx,my);
 
-        if( ui->labelCloudCmd  != watched &&
-            ui->labelAudioSet  != watched &&
-            ui->labelCloudCmd1 != watched &&
-            ui->labelAudioSet1 != watched &&
-            ui->labelAutoStart != watched)
-            p.drawImage(rc,bkImg);
-
         if(watched == ui->page00)
         {
+            p.drawImage(rc,bkImg);
             int radius = m_radius0;
             QRect rcFlag = QRect(mx-radius,my-radius,radius*2,radius*2);
 
@@ -876,6 +819,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 
         if(watched == ui->page01)
         {
+            p.drawImage(rc,bkImg);
             int dist = m_radius1;
             qreal factor = m_enlarge;
 
@@ -893,6 +837,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 
         if(watched == ui->page02)
         {
+            p.drawImage(rc,bkImg);
             int dist = m_radius2;
             QRect rcDest = QRect(Center-QPoint(dist,dist),Center+QPoint(dist,dist));
 
@@ -910,6 +855,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 
         if(watched == ui->page03)
         {
+            p.drawImage(rc,bkImg);
             p.fillRect(rc,Qt::black);
             p.fillRect(rc.adjusted(5,5,-5,-5),QColor(36,184,172));
 
@@ -963,6 +909,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
         move(event->globalPosition().toPoint() - m_dragPosition);
         event->accept();
     }
+
     QMainWindow::mouseMoveEvent(event);
 }
 

@@ -42,15 +42,14 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
 
-
 private:
     Ui::MainWindow *ui;
 
     QPoint m_dragPosition;
     bool m_dragging = false;
 
-    quint8 m_mode   = -1;
-    quint8 m_modeV  = -1;
+    quint8 m_nModeS1  = -1;
+    quint8 m_nModeS2  = -1;
     quint8 m_press  =  0;
     CHidWorker *m_pHID = nullptr;
     DialogBoard *pFuncPad = nullptr;

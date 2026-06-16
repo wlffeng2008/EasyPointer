@@ -1268,7 +1268,7 @@ QPushButton:checked  {
      <string notr="true">#page01{background-color: rgb(170, 255, 255); } </string>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="page00">
      <property name="styleSheet">
@@ -2986,10 +2986,10 @@ QPushButton:checked  {
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupShape"/>
-  <buttongroup name="buttonGroupCount"/>
-  <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupColor"/>
+  <buttongroup name="buttonGroupMain"/>
+  <buttongroup name="buttonGroupCount"/>
   <buttongroup name="buttonGroupSpot"/>
+  <buttongroup name="buttonGroupShape"/>
  </buttongroups>
 </ui>

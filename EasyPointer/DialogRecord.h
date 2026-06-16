@@ -26,12 +26,11 @@ public:
     explicit DialogRecord(QWidget *parent = nullptr);
     ~DialogRecord();
 
-    void writePCM(char *data,int len);
-    void setFunc(int nFunc=1);
+    void writePCM(const char *data, int len);
+    void setMode(int nMode=0);
     void setRelate(DialogCloudCmd *pCmdDlg,DialogTypeWord *pSetDlg);
     void setOutsizeText(const QString&text,int state=0);
     void setPaintText(bool set=true);
-    void setType(int type=0);
     void DoFlush(bool emitback=false);
 
 signals:
@@ -42,7 +41,7 @@ protected:
 
 private:
     Ui::DialogRecord *ui;
-    quint8 m_nFunc = 0;
+    quint8 m_nMode = 0;
     DialogCloudCmd *m_pCmdDlg = nullptr;
     DialogTypeWord *m_pSetDlg = nullptr;
     bool m_bCanPaint = true;
