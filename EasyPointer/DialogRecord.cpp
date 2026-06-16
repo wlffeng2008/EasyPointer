@@ -1,8 +1,10 @@
 #include "DialogRecord.h"
 #include "ui_DialogRecord.h"
+
 #include <Windows.h>
 #include <QScreen>
 #include <QClipboard>
+#include <QTimer>
 
 void SetTextToWinWithUnicode(const QString&strText)
 {
@@ -131,7 +133,9 @@ void DialogRecord::DoFlush(bool emitback)
             simulateKeyPress(VK_RETURN);
     }
 
-    ui->textEdit->setText("");
+    QTimer::singleShot(10000,this,[=]{
+        //ui->textEdit->setText("");
+    });
 }
 
 DialogRecord::~DialogRecord()
