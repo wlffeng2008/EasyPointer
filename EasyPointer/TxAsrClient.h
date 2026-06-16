@@ -58,7 +58,7 @@ private:
         {
             int code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
             QString text = reply->readAll();
-            onHttpReturn(text,code);
+            emit onHttpReturn(text,code);
         }
         reply->deleteLater();
     }
