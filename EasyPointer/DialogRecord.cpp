@@ -100,6 +100,7 @@ void DialogRecord::setPaintText(bool set)
 
 void DialogRecord::setType(int type)
 {
+    m_bCanPaint = (type>0);
     QStringList types={tr("云指令"),tr("语音打字"),tr("语音翻译")};
     ui->labelType->setText(types[type]);
 }
@@ -109,7 +110,7 @@ void DialogRecord::setOutsizeText(const QString&text,int state)
     ui->textEdit->setText(text);
     if(state == 2 && m_bCanPaint)
     {
-        //DoFlush();
+        DoFlush();
     }
 }
 

@@ -500,7 +500,7 @@ MainWindow::MainWindow(QWidget *parent)
 
         case 0xa0: qDebug() << "结束" ;
             DoASRWork(false);
-            m_RecPad->DoFlush(m_modeV == 10);
+            if(m_modeV == 10) m_RecPad->DoFlush(true);
             m_pHID->setRecordPlay(false);
             m_pHID->stopRecord();
             m_RecPad->hide();  // 自动粘贴
