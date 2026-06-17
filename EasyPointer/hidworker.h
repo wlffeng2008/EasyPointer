@@ -59,7 +59,7 @@ protected:
 signals:
     void onDataIn(quint8 *,int);
     void onPCMData(const QByteArray&data);
-    void onDisconnect();
+    void onConnect(int nMode, bool connected=true);
     void onRecordFile(quint32 duration);
 
 private:
