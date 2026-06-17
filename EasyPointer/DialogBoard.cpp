@@ -33,25 +33,27 @@ DialogBoard::DialogBoard(QWidget *parent)
     m_EfOpticy = 0;
     QTimer *pTMEf = new QTimer(this);
     connect(pTMEf,&QTimer::timeout,this,[=]{
+        pTMEf->stop();
+        int interval = 200;
         if(m_iEffect == 1)
         {
             static int nDir = 1;
-            if(m_EfOpticy>255) nDir = -1;
-            if(m_EfOpticy<0) nDir = 1;
+            if(m_EfOpticy>240) nDir = -1;
+            if(m_EfOpticy<80) nDir = 1;
             m_EfOpticy += 20 * nDir;
             update();
-            //ui->stackedWidget0->update();
         }
 
         if(m_iEffect == 2)
         {
-            if(m_EfOpticy == 255)
-                m_EfOpticy = 0;
+            if(m_EfOpticy == 240)
+                m_EfOpticy = 80;
             else
-                m_EfOpticy = 255;
+                m_EfOpticy = 240;
             update();
-            //ui->stackedWidget0->update();
+            interval = 600;
         }
+        pTMEf->start(interval);
     });
     pTMEf->start(200);
 }

@@ -812,8 +812,8 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             if(m_iEffect != 0)
             {
                 int nEf = m_EfOpticy;
-                if(nEf>255) nEf = 255;
-                if(nEf < 0) nEf = 0  ;
+                if(nEf>240) nEf = 240;
+                if(nEf <80) nEf = 80 ;
                 tmpColor.setAlpha(nEf);
             }
 

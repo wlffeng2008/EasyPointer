@@ -382,8 +382,10 @@ void CHidWorker::run()
 
         if(!m_pDev) continue;
 
-        QThread::msleep(200);
+        QThread::msleep(20);
         m_pAPlayer->setAudioInfo(16000/mode);
+
+        emit onConnect(mode,true);
 
         readSN();
         QThread::msleep(20);
@@ -393,16 +395,20 @@ void CHidWorker::run()
         QThread::msleep(20);
         stopRecord();
         QThread::msleep(20);
-        askBattery();
         setTime();
+        QThread::msleep(20);
+        askBattery();
 
         quint8 szBufs[200][1024] = {{0}};
 
         int nUesed = 0;
+        int nRead = 33;
+        if(mode == 2)
+            nRead = 1001;
         while(true)
         {
             quint8 *szBuf = szBufs[nUesed++ % 200];
-            int nRet = hid_read_timeout(pDev,szBuf,33,0xFFFF);
+            int nRet = hid_read_timeout(pDev,szBuf,nRead,0xFFFF);
 
             if(nRet <  0) break;
             if(nRet == 0) continue;
@@ -410,9 +416,9 @@ void CHidWorker::run()
             if(szBuf[0] == 0x1b)
             {
                 quint8 eBuf[1024] = {0};
-                MicLink::encrypt(szBuf + 1, eBuf, 32);
+                MicLink::encrypt(szBuf + 1, eBuf, nRet-1);
 
-                int count = 56;
+                int count = (nRet - 1 - 4) * 2;
                 short aBuf[1024] = {0};
                 MicLink::adpcm_to_pcm((short *)(eBuf), aBuf, count*2);
 
@@ -430,14 +436,16 @@ void CHidWorker::run()
             }
             else
             {
-                QByteArray Log((const char *)(szBuf),nRet);
-                qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
+                //QByteArray Log((const char *)(szBuf),nRet);
+                //qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
                 emit onDataIn(szBuf,32);
             }
         }
 
         hid_close(pDev);
         m_pDev = nullptr;
+
+        emit onConnect(mode,false);
     }
 }
 

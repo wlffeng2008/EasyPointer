@@ -1268,7 +1268,7 @@ QPushButton:checked  {
      <string notr="true">#page01{background-color: rgb(170, 255, 255); } </string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="page00">
      <property name="styleSheet">
