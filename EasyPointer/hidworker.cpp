@@ -1,15 +1,17 @@
 
+#include "hidworker.h"
+#include "hidapi.h"
+
+#include "lame.h"
+#pragma comment(lib,"libmp3lame.lib")
+
 #include <QDebug>
 #include <QTimer>
 #include <QApplication>
 #include <QMutexLocker>
 #include <QDir>
-
-#include "hidapi.h"
-#include "hidworker.h"
-#include "lame.h"
-#include "qjsonobject.h"
-#pragma comment(lib,"libmp3lame.lib")
+#include <QMediaDevices>
+#include <QJsonObject>
 
 class WaveUntils
 {
@@ -328,6 +330,8 @@ void CHidWorker::setHidVIDPID(quint16 VID, quint16 PID)
 
 void CHidWorker::run()
 {
+    QThread::msleep(200);
+    emit onConnect(1,false);
     while (!m_bEndWork)
     {
         int mode = 1;
@@ -431,7 +435,7 @@ void CHidWorker::run()
                 }
                 else
                 {
-                    emit onPCMData(data);
+                    emit onDevPcmData(data);
                 }
             }
             else
@@ -637,7 +641,11 @@ void CHidWorker::setRecordPlay(bool set)
 
 void CHidWorker::StarRecorFile(const QString&strFile)
 {
-    if(!m_pDev) return;
+    if(!m_pDev)
+    {
+        if(!startCapture())
+            return;
+    }
 
     m_strTemp = g_strWork + "/temp.pcm";
     m_RecFile.setFileName(m_strTemp);
@@ -671,6 +679,13 @@ void CHidWorker::StopRecorFile()
     {
         onRecordFile(-1);
         stopRecord();
+
+        if(m_audioDevice) m_audioDevice->close();
+        if(m_audioSource) m_audioSource->stop();
+
+        m_audioDevice = nullptr;
+        m_audioSource = nullptr;
+
         m_RecFile.close();
 
         PCMFile2WAVFile(m_strTemp,m_strFile);
@@ -681,3 +696,28 @@ void CHidWorker::StopRecorFile()
         QFile::remove(m_strFile);
     }
 }
+
+
+bool CHidWorker::startCapture()
+{
+    QAudioDevice inputDevice = QMediaDevices::defaultAudioInput();
+    if(inputDevice.isNull())
+        return false;
+
+    QAudioFormat fmt = inputDevice.preferredFormat();
+    fmt.setSampleRate(16000);
+    fmt.setChannelCount(1);
+    fmt.setSampleFormat(QAudioFormat::Int16);
+    m_audioSource = new QAudioSource(inputDevice,fmt);
+    if(!m_audioSource)
+        return false;
+    m_audioDevice = m_audioSource->start();
+    m_audioSource->setBufferSize(1280);  // 建议每 40ms 读一次 → 16000 * 2 * 0.04 = 1280 bytes
+    connect(m_audioDevice, &QIODevice::readyRead, this, [=]{
+        QByteArray pcm = m_audioDevice->readAll();
+        emit onMicPcmData(pcm);
+        WritePCMData(pcm);
+    });
+    return true;
+}
+

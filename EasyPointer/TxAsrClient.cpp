@@ -62,8 +62,6 @@ TxAsrClient::TxAsrClient(const QUrl& url, bool bUseMic, QObject* parent)
             {
                 m_pTMPush->start(800);
             }
-
-            //emit onASRText(m_strText,state);
         }
         else
         {
@@ -77,7 +75,6 @@ TxAsrClient::TxAsrClient(const QUrl& url, bool bUseMic, QObject* parent)
     });
 
     m_url = url;
-    //start();
 }
 
 TxAsrClient::~TxAsrClient()
@@ -132,16 +129,16 @@ void TxAsrClient::startCapture()
     fmt.setSampleRate(16000);
     fmt.setChannelCount(1);
     fmt.setSampleFormat(QAudioFormat::Int16);
-    m_working=true;
+    m_working = true;
     m_audioSource = new QAudioSource(inputDevice,fmt);
-    // 建议每 40ms 读一次 → 16000 * 2 * 0.04 = 1280 bytes
     m_audioDevice = m_audioSource->start();
-    m_audioSource->setBufferSize(1280);
+    m_audioSource->setBufferSize(1280);  // 建议每 40ms 读一次 → 16000 * 2 * 0.04 = 1280 bytes
     connect(m_audioDevice, &QIODevice::readyRead, this, [=]{
         while (m_audioDevice->bytesAvailable() >= 1280 && m_useMic)
         {
             QByteArray pcm = m_audioDevice->read(1280);
             writePCM(pcm);
+            emit onMicPcmData(pcm);
             if(!m_working)
             {
                 stop();

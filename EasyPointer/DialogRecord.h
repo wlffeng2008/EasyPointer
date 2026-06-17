@@ -26,7 +26,7 @@ public:
     explicit DialogRecord(QWidget *parent = nullptr);
     ~DialogRecord();
 
-    void writePCM(const char *data, int len);
+    void writePCM(const QByteArray&pcm);
     void setMode(int nMode=0);
     void setRelate(DialogCloudCmd *pCmdDlg,DialogTypeWord *pSetDlg);
     void setOutsizeText(const QString&text,int state=0);

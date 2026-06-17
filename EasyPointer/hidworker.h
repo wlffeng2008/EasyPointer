@@ -11,6 +11,7 @@
 #include <QList>
 #include <QStringList>
 #include <QMutex>
+#include <QAudioSource>
 
 #include <QFile>
 
@@ -58,7 +59,8 @@ protected:
 
 signals:
     void onDataIn(quint8 *,int);
-    void onPCMData(const QByteArray&data);
+    void onDevPcmData(const QByteArray&pcm);
+    void onMicPcmData(const QByteArray&pcm);
     void onConnect(int nMode, bool connected=true);
     void onRecordFile(quint32 duration);
 
@@ -77,6 +79,11 @@ private:
 
     bool m_bEndWork = false;
     void sendCmd(quint8 *pCmd);
+
+
+    QIODevice    *m_audioDevice = nullptr;
+    QAudioSource *m_audioSource = nullptr;
+    bool startCapture();
 
     quint32 m_recordTime=0;
     QFile   m_RecFile;

@@ -61,7 +61,7 @@ DialogRecord::DialogRecord(QWidget *parent)
     , ui(new Ui::DialogRecord)
 {
     ui->setupUi(this);
-    setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint|Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint|Qt::WindowStaysOnTopHint);
 
     // m_XFV = new XFWSVoiceWrite();
     // connect(m_XFV,&XFWSVoiceWrite::send_voice_text,this,[=](const QString &strText,const QString &strpgs, int nTextSN, bool bTeminate){
@@ -103,7 +103,7 @@ void DialogRecord::setPaintText(bool set)
 void DialogRecord::setMode(int nMode)
 {
     m_bCanPaint = (nMode != 3);
-    QStringList types = {tr("扩音模式"),tr("语音打字"),tr("语音翻译"),tr("云指令")};
+    QStringList types = {tr("扩音模式"),tr("语音打字"),tr("语音翻译"),tr("云指令"),tr("录音模式")};
     ui->labelType->setText(types[nMode]);
 }
 
@@ -160,18 +160,18 @@ void DialogRecord::showEvent(QShowEvent *event)
 #define MAX(a,b) ( ((a) > (b)) ? (a):(b) )
 #define MIN(a,b) ( ((a) < (b)) ? (a):(b) )
 
-void DialogRecord::writePCM(const char *data, int len)
+void DialogRecord::writePCM(const QByteArray &pcm)
 {
     short minValue = -32767;
     short maxValue = 32767;
     int   micVolume = 0;
 
-    short *pVoice = (short *)data;
-    for(int i=0;i<len/2;i++)
+    short *pVoice = (short *)pcm.data();
+    for(int i=0; i<pcm.size()/2; i++)
     {
         int value = MAX(MIN(pVoice[i],maxValue), minValue);
         micVolume = MAX(micVolume,value);
     }
 
-    ui->progressBar->setValue(micVolume*600/maxValue);
+    ui->progressBar->setValue(micVolume*560/maxValue);
 }

@@ -79,6 +79,7 @@ private:
     int m_iColor0=0;
     int m_iColor3=0;
 
+    bool m_bConnected=false;
     bool m_record=false;
     int m_voice=0;
     int m_show=0;

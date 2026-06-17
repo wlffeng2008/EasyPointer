@@ -253,7 +253,7 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
             QStringList filters;
             filters << "*.lnk";
             QFileInfoList fileList = desktopDir.entryInfoList(filters, QDir::AllEntries,QDir::SortFlag::Name);
-            for (const QFileInfo& fileInfo : fileList)
+            for (const QFileInfo& fileInfo : std::as_const(fileList))
             {
                 QString shortcutPath = fileInfo.filePath();
                 QString targetPath = getShortcutTargetPath(shortcutPath);
@@ -722,11 +722,14 @@ bool DialogCloudCmd::startupApp(const QString&command)
                 if(strKey == tr("截屏"))
                 {
                     QScreen* primaryScreen = QGuiApplication::primaryScreen();
-                    QString strPath = QApplication::applicationDirPath() + "/CaptureFile";
-                    QDir CD(strPath);
-                    if(!CD.exists()) CD.mkdir(strPath);
-                    QString strTime = QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss");
-                    primaryScreen->grabWindow(0).save(strPath + QString("/%1.png").arg(strTime));
+                    if(primaryScreen)
+                    {
+                        QString strPath = QApplication::applicationDirPath() + "/CaptureFile";
+                        QDir CD(strPath);
+                        if(!CD.exists()) CD.mkdir(strPath);
+                        QString strTime = QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss");
+                        primaryScreen->grabWindow(0).save(strPath + QString("/%1.png").arg(strTime));
+                    }
                 }
 
                 return true;

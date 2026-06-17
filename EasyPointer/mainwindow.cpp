@@ -55,9 +55,16 @@ MainWindow::MainWindow(QWidget *parent)
     m_pDSet = new DialogDeviceSet();
     m_pMSet = new DialogMKeySet();
 
+    m_pHID = new CHidWorker();
+    m_pCmd->m_pWork = m_pHID;
+    m_pDSet->m_pWork = m_pHID;
+    m_pCmd->m_pPad = pFuncPad;
+
     ui->labelSN->hide();
     ui->labelColor->hide();
-    if(g_bCommentVer) ui->pushButton6->hide();
+
+    if(g_bCommentVer)
+        ui->pushButton6->hide();
 
     setStyleSheet("QLabel{color:white; font-weight:600;}");
 
@@ -221,28 +228,72 @@ MainWindow::MainWindow(QWidget *parent)
     });
     connect(ui->checkBoxTXASR,&QCheckBox::clicked,this,[=](bool checked){
         DoASRWork(checked);
+        if(!m_bConnected)
+            pAsrClient->userMic(true);
+
+        if(checked)
+        {
+            m_RecPad->show();
+            m_RecPad->setMode(3);
+        }
+        else
+        {
+            m_RecPad->hide();
+        }
     });
+
+    connect(ui->checkBoxRecord,&QCheckBox::clicked,this,[=](bool checked){
+        if(checked)
+        {
+            m_RecPad->show();
+            m_RecPad->setMode(4);
+            m_pHID->StarRecorFile(QString::asprintf("%d.wav",time(nullptr)));
+        }
+        else
+        {
+            m_RecPad->hide();
+            m_pHID->StopRecorFile();
+        }
+    });
+
     connect(m_RecPad,&DialogRecord::onFlushText,this,[=](const QString&text){
         m_pCmd->startupApp(text);
     });
 
-    m_pHID = new CHidWorker();
-    m_pCmd->m_pWork = m_pHID;
-    m_pDSet->m_pWork = m_pHID;
-    m_pCmd->m_pPad = pFuncPad;
-    connect(m_pHID,&CHidWorker::onPCMData,this,[=](const QByteArray&data){
+    connect(m_pHID,&CHidWorker::onConnect,this,[=](int nMode,bool connected){
+        if(connected)
+        {
+            ui->labelConnect->setPixmap(QPixmap(nMode == 1 ? ":/images/2.4g.png" : ":/images/blue.png").scaled(24,24));
+        }
+        else
+        {
+            ui->labelConnect->clear();
+            ui->labelConnect->setText("未连接");
+        }
+    });
+
+    connect(m_pHID,&CHidWorker::onDevPcmData,this,[=](const QByteArray&pcm){
         if(m_nModeS2 == 255)
         {
             m_pHID->stopRecord();
             return;
         }
+
         if(m_nModeS2 != 0)
         {
             pAsrClient->userMic(false);
-            pAsrClient->writePCM(data);
-            m_RecPad->writePCM(data.data(),data.size());
+            pAsrClient->writePCM(pcm);
+            m_RecPad->writePCM(pcm);
             m_RecPad->show();
         }
+    });
+
+    connect(m_pHID,&CHidWorker::onMicPcmData,this,[=](const QByteArray&pcm){
+        m_RecPad->writePCM(pcm);
+    });
+
+    connect(pAsrClient,&TxAsrClient::onMicPcmData,this,[=](const QByteArray&pcm){
+        m_RecPad->writePCM(pcm);
     });
 
     connect(pFuncPad,&DialogBoard::onCallunction,this,[=](int function=0){
@@ -428,7 +479,6 @@ MainWindow::MainWindow(QWidget *parent)
                 DoASRWork(false);
                 m_pHID->stopRecord();
                 m_RecPad->hide();
-                m_RecPad->writePCM(nullptr,0);
             }
             break;
 
@@ -526,17 +576,6 @@ MainWindow::MainWindow(QWidget *parent)
     });
     connect(ui->pushButtonMKey,&QPushButton::clicked,this,[=]{
         m_pMSet->show();
-    });
-
-    connect(ui->checkBoxRecord,&QCheckBox::clicked,this,[=](bool checked){
-        if(checked)
-        {
-            m_pHID->StarRecorFile(QString::asprintf("%d.wav",time(nullptr)));
-        }
-        else
-        {
-            m_pHID->StopRecorFile();
-        }
     });
 
     {

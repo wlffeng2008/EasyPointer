@@ -2440,111 +2440,6 @@ background-image: url(:/images/jd.png);
      </item>
     </layout>
    </widget>
-   <widget class="QLabel" name="labelBattery">
-    <property name="geometry">
-     <rect>
-      <x>728</x>
-      <y>12</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap resource="res.qrc">:/images/batt.png</pixmap>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButtonMin">
-    <property name="geometry">
-     <rect>
-      <x>775</x>
-      <y>8</y>
-      <width>20</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>20</width>
-      <height>20</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>20</width>
-      <height>20</height>
-     </size>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::NoFocus</enum>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton{background-color:transparent;}</string>
-    </property>
-    <property name="text">
-     <string notr="true"/>
-    </property>
-    <property name="icon">
-     <iconset resource="res.qrc">
-      <normaloff>:/images/btn-min.png</normaloff>:/images/btn-min.png</iconset>
-    </property>
-    <property name="iconSize">
-     <size>
-      <width>20</width>
-      <height>20</height>
-     </size>
-    </property>
-    <property name="flat">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButtonExit">
-    <property name="geometry">
-     <rect>
-      <x>810</x>
-      <y>10</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>16</width>
-      <height>16</height>
-     </size>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::NoFocus</enum>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton{background-color:transparent;}
-</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="res.qrc">
-      <normaloff>:/images/btn-close1.png</normaloff>:/images/btn-close1.png</iconset>
-    </property>
-    <property name="iconSize">
-     <size>
-      <width>16</width>
-      <height>16</height>
-     </size>
-    </property>
-    <property name="flat">
-     <bool>true</bool>
-    </property>
-   </widget>
    <widget class="QFrame" name="frameSetting">
     <property name="geometry">
      <rect>
@@ -2913,6 +2808,118 @@ QPushButton:checked  {
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>8</y>
+      <width>191</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_20">
+     <property name="spacing">
+      <number>20</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="labelConnect">
+       <property name="text">
+        <string>未连接</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
+      <widget class="QLabel" name="labelBattery">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="res.qrc">:/images/batt.png</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonMin">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::FocusPolicy::NoFocus</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton{background-color:transparent;}</string>
+       </property>
+       <property name="text">
+        <string notr="true"/>
+       </property>
+       <property name="icon">
+        <iconset resource="res.qrc">
+         <normaloff>:/images/btn-min.png</normaloff>:/images/btn-min.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonExit">
+       <property name="maximumSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::FocusPolicy::NoFocus</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton{background-color:transparent;}
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="res.qrc">
+         <normaloff>:/images/btn-close1.png</normaloff>:/images/btn-close1.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
    <zorder>frameShape</zorder>
    <zorder>labelContact</zorder>
    <zorder>labelBattery</zorder>
@@ -2926,6 +2933,7 @@ QPushButton:checked  {
    <zorder>stackedWidget0</zorder>
    <zorder>stackedWidget1</zorder>
    <zorder>frameSetting</zorder>
+   <zorder>labelConnect</zorder>
   </widget>
  </widget>
  <customwidgets>
