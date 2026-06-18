@@ -17,7 +17,7 @@ DialogTip::DialogTip(QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground);
     setStyleSheet("QDialog { background-color: rgba(180, 180, 180, 0.8);  border: none; border-radius: 24px;}");
 
-    setFixedSize(120,120);
+    setFixedSize(128,128);
 
     m_pTMHide = new QTimer(this);
     connect(m_pTMHide,&QTimer::timeout,this,[=]{
@@ -40,7 +40,7 @@ DialogTip::~DialogTip()
 
     int nPosX = QApplication::screens().at(0)->geometry().width()/2 -60;
     int nPosY = QApplication::screens().at(0)->geometry().height() - 220;
-    QRect rcTip(nPosX,nPosY,120,120);
+    QRect rcTip(nPosX,nPosY,128,128);
     setGeometry(rcTip);
     update();
  }

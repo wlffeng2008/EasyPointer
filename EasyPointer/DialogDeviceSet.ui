@@ -281,10 +281,10 @@ border-radius:4px;</string>
      <x>454</x>
      <y>554</y>
      <width>275</width>
-     <height>21</height>
+     <height>28</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
     <item>
      <widget class="QLabel" name="label_4">
       <property name="font">
@@ -302,7 +302,7 @@ border-radius:4px;</string>
      </widget>
     </item>
     <item>
-     <widget class="QCheckBox" name="checkBoxUrl">
+     <widget class="ToggleButton" name="checkBoxUrl">
       <property name="text">
        <string>开启</string>
       </property>
@@ -403,6 +403,13 @@ border-radius:4px;</string>
    </property>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ToggleButton</class>
+   <extends>QCheckBox</extends>
+   <header>togglebutton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="res.qrc"/>
  </resources>

@@ -49,17 +49,14 @@ using namespace QXlsx;
 #include <highlevelmonitorconfigurationapi.h>
 #pragma comment(lib, "dxva2.lib")
 
-
 void setMonitorBrightness(DWORD brightness)
 {
-    qDebug() << "setMonitorBrightness 0" << brightness;
     HMONITOR hMonitor = MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY);
 
     DWORD dwCount = 0;
     GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, &dwCount);
     if (dwCount == 0)
         return;
-    qDebug() << "setMonitorBrightness 1" << brightness;
 
     PHYSICAL_MONITOR* pMons = new PHYSICAL_MONITOR[dwCount];
 
@@ -319,6 +316,18 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
             }
             Set.setValue("checkedApps",g_Checks);
         });
+
+        ui->checkBoxIgnore0->setChecked(Set.value("Ignore0").toBool());
+        ui->checkBoxIgnore1->setChecked(Set.value("Ignore1").toBool());
+        ui->checkBoxIgnore2->setChecked(Set.value("Ignore2").toBool());
+        ui->checkBoxSearch->setChecked(Set.value("Search").toBool());
+        ui->comboBoxEngine->setCurrentIndex(Set.value("SearchEngine").toInt());
+
+        connect(ui->checkBoxIgnore0,&QCheckBox::clicked,this,[=](bool clicked){ Set.setValue("Ignore0",clicked);});
+        connect(ui->checkBoxIgnore1,&QCheckBox::clicked,this,[=](bool clicked){ Set.setValue("Ignore1",clicked);});
+        connect(ui->checkBoxIgnore2,&QCheckBox::clicked,this,[=](bool clicked){ Set.setValue("Ignore2",clicked);});
+        connect(ui->checkBoxSearch,&QCheckBox::clicked,this,[=](bool clicked){ Set.setValue("Search",clicked);});
+        connect(ui->comboBoxEngine,&QComboBox::currentIndexChanged,this,[=](int index){ Set.setValue("SearchEngine",index); });
     }
 }
 
@@ -514,6 +523,7 @@ bool DialogCloudCmd::startupApp(const QString&command)
     strText.replace("%","");
     if(strText.isEmpty())
         return false;
+    if(!ui->checkBoxIgnore0->isChecked())
     {
         int count = m_pModel1->rowCount();
         for(int i=0; i<count; i++)
@@ -737,6 +747,7 @@ bool DialogCloudCmd::startupApp(const QString&command)
         }
     }
 
+    if(!ui->checkBoxIgnore1->isChecked())
     {
         int count = m_pModel->rowCount();
         for(int i=0; i<count; i++)
@@ -758,6 +769,7 @@ bool DialogCloudCmd::startupApp(const QString&command)
         }
     }
 
+    if(!ui->checkBoxIgnore2->isChecked())
     {
         for(FrameAppTemplate*app:std::as_const(g_APPs))
         {
@@ -771,7 +783,7 @@ bool DialogCloudCmd::startupApp(const QString&command)
 
     if(ui->checkBoxSearch->isChecked())
     {
-        int nEngine = 0;
+        int nEngine = ui->comboBoxEngine->currentIndex();
         QString strUrl = "https://www.baidu.com/s?wd=" ;
         if(nEngine == 1) strUrl = "https://www.google.com/search?q=" ;
         if(nEngine == 2) strUrl = "https://search.yahoo.com/search?p=" ;
