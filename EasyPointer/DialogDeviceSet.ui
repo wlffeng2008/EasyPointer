@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>我的设备</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QPushButton{color:black; font-size:14px;}</string>
+  </property>
   <widget class="QPushButton" name="pushButtonHelp">
    <property name="geometry">
     <rect>
@@ -101,7 +104,7 @@ border-radius:4px;</string>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true"/>
+    <string notr="true">color:black;</string>
    </property>
    <widget class="QLabel" name="label_10">
     <property name="geometry">
@@ -163,26 +166,6 @@ border-radius:4px;</string>
     </property>
     <property name="text">
      <string notr="true">2</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_14">
-    <property name="geometry">
-     <rect>
-      <x>28</x>
-      <y>116</y>
-      <width>21</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Cochin</family>
-      <pointsize>14</pointsize>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string notr="true">3</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButtonHelp_2">
@@ -291,26 +274,6 @@ border-radius:4px;</string>
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="label_24">
-    <property name="geometry">
-     <rect>
-      <x>28</x>
-      <y>160</y>
-      <width>21</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Cochin</family>
-      <pointsize>14</pointsize>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string notr="true">4</string>
-    </property>
-   </widget>
   </widget>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
@@ -329,9 +292,6 @@ border-radius:4px;</string>
         <family>Academy Engraved LET</family>
         <bold>true</bold>
        </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color: rgb(173, 173, 173);</string>
       </property>
       <property name="text">
        <string>弹出驱动下载地址</string>

@@ -43,7 +43,7 @@ public:
     void setOnline(bool on=true);
     void setSample(quint8 index=1);
     void sendKey(quint8 key1, quint8 key0=0);
-    void sendKey(quint16 key);
+    void sendCmbKey(quint16 key);
     void setTime();
 
     void close();

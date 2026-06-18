@@ -514,7 +514,7 @@ void CHidWorker::sendKey(quint8 key1,quint8 key0)
     sendCmd(szCmd);
 }
 
-void CHidWorker::sendKey(quint16 key)
+void CHidWorker::sendCmbKey(quint16 key)
 {
     quint8 key1 = (key&0xFF);
     quint8 key0 = (key&0xFF00)>>8;

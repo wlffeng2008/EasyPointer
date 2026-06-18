@@ -69,7 +69,7 @@ private:
     bool m_bLoading = false;
     bool m_bRound = true;
     qreal m_enlarge= 1.5;
-    quint8 m_battery = 10;
+    quint8 m_battery = 0;
     qint16 m_EfOpticy = 0;
 
     QColor m_color0;
