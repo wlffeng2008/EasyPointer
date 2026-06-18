@@ -8,7 +8,7 @@ DialogDeviceSet::DialogDeviceSet(QWidget *parent)
 {
     ui->setupUi(this);
 
-    setWindowFlags(Qt::Dialog|Qt::MSWindowsFixedSizeDialogHint);
+    setWindowFlags(Qt::Tool|Qt::MSWindowsFixedSizeDialogHint);
 }
 
 DialogDeviceSet::~DialogDeviceSet()

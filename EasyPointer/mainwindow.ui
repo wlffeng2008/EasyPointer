@@ -12,19 +12,22 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>10</pointsize>
-    <bold>true</bold>
+    <pointsize>-1</pointsize>
+    <fontweight>DemiBold</fontweight>
    </font>
   </property>
   <property name="cursor">
    <cursorShape>ArrowCursor</cursorShape>
+  </property>
+  <property name="focusPolicy">
+   <enum>Qt::FocusPolicy::StrongFocus</enum>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(32, 136, 180);
-color:white;</string>
+color:white;font-size:14px;font-weight:600;</string>
   </property>
   <property name="iconSize">
    <size>
@@ -1268,7 +1271,7 @@ QPushButton:checked  {
      <string notr="true">#page01{background-color: rgb(170, 255, 255); } </string>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="page00">
      <property name="styleSheet">
@@ -1356,7 +1359,7 @@ QRadioButton{color:white; font-size:18px; font-weight:bold;}
          <property name="font">
           <font>
            <pointsize>-1</pointsize>
-           <bold>true</bold>
+           <fontweight>DemiBold</fontweight>
           </font>
          </property>
          <property name="styleSheet">
@@ -1471,8 +1474,8 @@ QRadioButton{color:white; font-size:18px; font-weight:bold;}
            </property>
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
-             <bold>true</bold>
+             <pointsize>-1</pointsize>
+             <fontweight>DemiBold</fontweight>
             </font>
            </property>
            <property name="text">
@@ -1510,8 +1513,8 @@ QRadioButton{color:white; font-size:18px; font-weight:bold;}
       </property>
       <property name="font">
        <font>
-        <pointsize>16</pointsize>
-        <bold>true</bold>
+        <pointsize>-1</pointsize>
+        <fontweight>DemiBold</fontweight>
        </font>
       </property>
       <property name="text">
@@ -1532,8 +1535,8 @@ QRadioButton{color:white; font-size:18px; font-weight:bold;}
       </property>
       <property name="font">
        <font>
-        <pointsize>12</pointsize>
-        <bold>true</bold>
+        <pointsize>-1</pointsize>
+        <fontweight>DemiBold</fontweight>
        </font>
       </property>
       <property name="cursor">
@@ -1578,8 +1581,8 @@ QPushButton:checked{ color:blue;
       </property>
       <property name="font">
        <font>
-        <pointsize>12</pointsize>
-        <bold>true</bold>
+        <pointsize>-1</pointsize>
+        <fontweight>DemiBold</fontweight>
        </font>
       </property>
       <property name="cursor">
@@ -1624,8 +1627,8 @@ QPushButton:checked{ color:blue;
       </property>
       <property name="font">
        <font>
-        <pointsize>12</pointsize>
-        <bold>true</bold>
+        <pointsize>-1</pointsize>
+        <fontweight>DemiBold</fontweight>
        </font>
       </property>
       <property name="cursor">
@@ -1670,8 +1673,8 @@ QPushButton:checked{ color:blue;
       </property>
       <property name="font">
        <font>
-        <pointsize>12</pointsize>
-        <bold>true</bold>
+        <pointsize>-1</pointsize>
+        <fontweight>DemiBold</fontweight>
        </font>
       </property>
       <property name="cursor">
@@ -1716,8 +1719,8 @@ QPushButton:checked{ color:blue;
       </property>
       <property name="font">
        <font>
-        <pointsize>12</pointsize>
-        <bold>true</bold>
+        <pointsize>-1</pointsize>
+        <fontweight>DemiBold</fontweight>
        </font>
       </property>
       <property name="cursor">
@@ -1762,8 +1765,8 @@ QPushButton:checked{ color:blue;
       </property>
       <property name="font">
        <font>
-        <pointsize>12</pointsize>
-        <bold>true</bold>
+        <pointsize>-1</pointsize>
+        <fontweight>DemiBold</fontweight>
        </font>
       </property>
       <property name="cursor">
@@ -1808,7 +1811,7 @@ QPushButton:checked{ color:blue;
         <x>96</x>
         <y>38</y>
         <width>428</width>
-        <height>140</height>
+        <height>146</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -1981,14 +1984,15 @@ background-image: url(:/images/jd.png);
     <property name="geometry">
      <rect>
       <x>122</x>
-      <y>356</y>
+      <y>360</y>
       <width>330</width>
       <height>34</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <bold>true</bold>
+      <pointsize>-1</pointsize>
+      <fontweight>DemiBold</fontweight>
      </font>
     </property>
     <property name="text">
@@ -2007,8 +2011,8 @@ background-image: url(:/images/jd.png);
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
-      <bold>true</bold>
+      <pointsize>-1</pointsize>
+      <fontweight>DemiBold</fontweight>
      </font>
     </property>
     <property name="text">
@@ -2027,7 +2031,7 @@ background-image: url(:/images/jd.png);
      <rect>
       <x>0</x>
       <y>490</y>
-      <width>832</width>
+      <width>840</width>
       <height>28</height>
      </rect>
     </property>
@@ -2808,12 +2812,12 @@ QPushButton:checked  {
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>640</x>
-      <y>8</y>
-      <width>191</width>
+      <x>630</x>
+      <y>6</y>
+      <width>197</width>
       <height>33</height>
      </rect>
     </property>
@@ -2920,11 +2924,9 @@ QPushButton:checked  {
      </item>
     </layout>
    </widget>
+   <zorder>layoutWidget</zorder>
    <zorder>frameShape</zorder>
    <zorder>labelContact</zorder>
-   <zorder>labelBattery</zorder>
-   <zorder>pushButtonMin</zorder>
-   <zorder>pushButtonExit</zorder>
    <zorder>frameFunc</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
@@ -2933,7 +2935,6 @@ QPushButton:checked  {
    <zorder>stackedWidget0</zorder>
    <zorder>stackedWidget1</zorder>
    <zorder>frameSetting</zorder>
-   <zorder>labelConnect</zorder>
   </widget>
  </widget>
  <customwidgets>
@@ -2994,10 +2995,10 @@ QPushButton:checked  {
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupColor"/>
-  <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupCount"/>
-  <buttongroup name="buttonGroupSpot"/>
+  <buttongroup name="buttonGroupColor"/>
   <buttongroup name="buttonGroupShape"/>
+  <buttongroup name="buttonGroupMain"/>
+  <buttongroup name="buttonGroupSpot"/>
  </buttongroups>
 </ui>

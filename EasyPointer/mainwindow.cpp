@@ -25,6 +25,7 @@
 #include "DialogMKeySet.h"
 
 #include "TxASRClient.h"
+#include "KeyBoardMonitor.h"
 
 #include <Windows.h>
 #include <highlevelmonitorconfigurationapi.h>
@@ -43,6 +44,8 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint);
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowTitle("Nmy Pointer");
+
+    KeyBoardMonitor *pKBM = new KeyBoardMonitor(this);
 
     pFuncPad  = new DialogBoard();
     m_ModeTip = new DialogTip();
@@ -66,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
     if(g_bCommentVer)
         ui->pushButton6->hide();
 
-    setStyleSheet("QLabel{color:white; font-weight:600;}");
+    //setStyleSheet("QLabel{color:white; font-weight:600;}");
 
     QCoreApplication::setOrganizationName("NMY");
     QCoreApplication::setApplicationName("NMYPointer");
