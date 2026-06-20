@@ -2130,7 +2130,7 @@ background-image: url(:/images/jd.png);
         <string>语言设置</string>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset>
          <normaloff>:/images/setting.png</normaloff>:/images/setting.png</iconset>
        </property>
        <property name="checkable">
@@ -2387,7 +2387,7 @@ background-image: url(:/images/jd.png);
         <string>数字激光</string>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset>
          <normaloff>:/images/123.png</normaloff>:/images/123.png</iconset>
        </property>
        <property name="checkable">
@@ -2413,7 +2413,7 @@ background-image: url(:/images/jd.png);
         <string>放大镜</string>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset>
          <normaloff>:/images/find.png</normaloff>:/images/find.png</iconset>
        </property>
        <property name="checkable">
@@ -2436,7 +2436,7 @@ background-image: url(:/images/jd.png);
         <string>聚光灯</string>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset>
          <normaloff>:/images/spot.png</normaloff>:/images/spot.png</iconset>
        </property>
        <property name="checkable">
@@ -2459,7 +2459,7 @@ background-image: url(:/images/jd.png);
         <string>全景标注</string>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset>
          <normaloff>:/images/time.png</normaloff>:/images/time.png</iconset>
        </property>
        <property name="checkable">
@@ -2488,7 +2488,7 @@ background-image: url(:/images/jd.png);
         <string>黑屏倒计时</string>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset>
          <normaloff>:/images/mic.png</normaloff>:/images/mic.png</iconset>
        </property>
        <property name="checkable">
@@ -2583,7 +2583,7 @@ background-image: url(:/images/jd.png);
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="res.qrc">:/images/share1.png</pixmap>
+        <pixmap>:/images/share1.png</pixmap>
        </property>
       </widget>
      </item>
@@ -2609,7 +2609,7 @@ background-image: url(:/images/jd.png);
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="res.qrc">:/images/setting1.png</pixmap>
+        <pixmap>:/images/setting1.png</pixmap>
        </property>
       </widget>
      </item>
@@ -2901,7 +2901,7 @@ QPushButton:checked  {
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="res.qrc">:/images/batt.png</pixmap>
+        <pixmap>:/images/batt.png</pixmap>
        </property>
       </widget>
      </item>
@@ -2932,7 +2932,7 @@ QPushButton:checked  {
         <string notr="true"/>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset>
          <normaloff>:/images/btn-min.png</normaloff>:/images/btn-min.png</iconset>
        </property>
        <property name="iconSize">
@@ -2968,7 +2968,7 @@ QPushButton:checked  {
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset>
          <normaloff>:/images/btn-close1.png</normaloff>:/images/btn-close1.png</iconset>
        </property>
        <property name="iconSize">
@@ -3050,9 +3050,7 @@ QPushButton:checked  {
   <tabstop>pushButtonMKey</tabstop>
   <tabstop>pushButtonMin</tabstop>
  </tabstops>
- <resources>
-  <include location="res.qrc"/>
- </resources>
+ <resources/>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupSpot"/>
