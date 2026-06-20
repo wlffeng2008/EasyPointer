@@ -23,7 +23,7 @@ public:
     void setMode(int mode);
     void clearLines();
     void setDrage(bool set=true);
-    void showBlack();
+    void showBlack(bool show=true);
     void showMagnify(bool show=true);
 
     quint16 m_radius0;
@@ -31,7 +31,7 @@ public:
     quint16 m_radius2;
     quint16 m_radius3;
 
-    bool m_bRound  = true;
+    quint8 m_nMgfShape  = 0;
     qreal m_enlarge= 1.5;
 
     QColor m_color0;

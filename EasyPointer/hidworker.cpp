@@ -354,6 +354,13 @@ void CHidWorker::run()
                 break;
             }
 
+            pEDev = hid_enumerate(0x2571,0x4109);
+            if(pEDev)
+            {
+                mode = 2;
+                qDebug() << "hid_enumerate BLE" << Qt::hex << m_VID << 0x61AB;
+                break;
+            }
             QThread::msleep(500);
         }
 
@@ -387,7 +394,8 @@ void CHidWorker::run()
         if(!m_pDev) continue;
 
         QThread::msleep(20);
-        m_pAPlayer->setAudioInfo(16000/mode);
+        m_pAPlayer->setAudioInfo(16000);
+        if(mode == 2) setSample(1);
 
         emit onConnect(mode,true);
 
@@ -408,7 +416,7 @@ void CHidWorker::run()
         int nUesed = 0;
         int nRead = 33;
         if(mode == 2)
-            nRead = 1001;
+            nRead = 101;
         while(true)
         {
             quint8 *szBuf = szBufs[nUesed++ % 200];
@@ -440,8 +448,8 @@ void CHidWorker::run()
             }
             else
             {
-                //QByteArray Log((const char *)(szBuf),nRet);
-                //qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
+                QByteArray Log((const char *)(szBuf),nRet);
+                qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
                 emit onDataIn(szBuf,32);
             }
         }

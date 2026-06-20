@@ -74,8 +74,14 @@ void DialogBoard::setMode(int mode)
     clearLines();
 }
 
-void DialogBoard::showBlack()
+void DialogBoard::showBlack(bool show)
 {
+    if(!show)
+    {
+        hide();
+        return;
+    }
+
     m_showTime=false;
     m_mode = 4;
     clearLines();
@@ -88,7 +94,7 @@ void DialogBoard::showBlack()
 
 void DialogBoard::showMagnify(bool show)
 {
-    m_bRound=true;
+    //m_bRound=true;
     emit onCallunction(show ? 1 : 20);
 }
 
@@ -134,9 +140,19 @@ void DialogBoard::paintEvent(QPaintEvent *event)
         QRect tarRect(m_curPos-QPoint(dist*factor,dist*factor),m_curPos+QPoint(dist*factor,dist*factor));
 
         QPainterPath path;
-        path.addEllipse(tarRect);
-        if(m_bRound)
-            painter.setClipPath(path);
+        if(m_nMgfShape == 0)
+        {
+            path.addEllipse(tarRect);
+        }
+        if(m_nMgfShape == 1)
+        {
+            path.addRect(tarRect);
+        }
+        if(m_nMgfShape == 2)
+        {
+            path.addRect(tarRect.adjusted(0,dist*0.4,0,-dist*0.4));
+        }
+        painter.setClipPath(path);
 
         painter.drawPixmap(tarRect,tmp);
     }
@@ -284,8 +300,8 @@ void DialogBoard::wheelEvent(QWheelEvent *event)
 
 void DialogBoard::keyPressEvent(QKeyEvent *event)
 {
-    if(m_mode == 4 && m_bActKeypress)
-        this->hide();
+    //if(m_mode == 4 && m_bActKeypress)
+    //    this->hide();
 
     QDialog::keyPressEvent(event);
 }

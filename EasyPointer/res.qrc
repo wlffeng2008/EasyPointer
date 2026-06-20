@@ -43,5 +43,6 @@
         <file>images/open.png</file>
         <file>images/devicebook.jpg</file>
         <file>images/logo.jpg</file>
+        <file>images/logo-gray.png</file>
     </qresource>
 </RCC>

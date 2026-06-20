@@ -45,11 +45,13 @@ MainWindow::MainWindow(QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowTitle("Nmy Pointer");
 
-    KeyBoardMonitor *pKBM = new KeyBoardMonitor(this);
+    // KeyBoardMonitor *pKBM = new KeyBoardMonitor(this);
 
     pFuncPad  = new DialogBoard();
     m_ModeTip = new DialogTip();
     m_RecPad  = new DialogRecord();
+
+    m_pNoCnn = new DialogNoConnect(this);
 
     m_pTSet = new DialogTypeWord(this);
     m_pCmd = new DialogCloudCmd(this);
@@ -76,7 +78,10 @@ MainWindow::MainWindow(QWidget *parent)
     m_set = new QSettings();
 
     connect(ui->pushButtonExit,&QPushButton::clicked,this,[=]{ qApp->exit(); });
-    connect(ui->pushButtonMin,&QPushButton::clicked,this,[=]{ this->showMinimized(); });
+    connect(ui->pushButtonMin,&QPushButton::clicked,this,[=]{
+        m_pNoCnn->hide();
+        this->showMinimized();
+    });
 
     connect(ui->buttonGroupMain,&QButtonGroup::idClicked,this,[=](int id){
         int index = abs(id);
@@ -141,6 +146,13 @@ MainWindow::MainWindow(QWidget *parent)
         if(m_bLoading) return;
         int index = abs(id)-2;
         m_iSpot = index;
+        updateValue();
+        saveLoadParams();
+    });
+    connect(ui->buttonGroupShape,&QButtonGroup::idClicked,this,[=](int id){
+        if(m_bLoading) return;
+        int index = abs(id)-2;
+        m_nMgfShape = index;
         updateValue();
         saveLoadParams();
     });
@@ -264,14 +276,24 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(m_pHID,&CHidWorker::onConnect,this,[=](int nMode,bool connected){
+        m_bConnected = connected;
         if(connected)
         {
             ui->labelConnect->setPixmap(QPixmap(nMode == 1 ? ":/images/2.4g.png" : ":/images/blue.png").scaled(24,24));
+            trayIcon->setIcon(QIcon(":/images/logo.jpg"));
+            m_pNoCnn->accept();
         }
         else
         {
             ui->labelConnect->clear();
             ui->labelConnect->setText("未连接");
+            trayIcon->setIcon(QIcon(":/images/logo-gray.png"));
+            //m_pNoCnn->setFixedSize(size());
+            m_pNoCnn->setGeometry(this->geometry().adjusted(0,50,0,0));
+            if(this->isVisible() && !this->isMinimized())
+                m_pNoCnn->show();
+            m_pTSet->hide();
+            m_pCmd->hide();
         }
     });
 
@@ -305,7 +327,7 @@ MainWindow::MainWindow(QWidget *parent)
             hide();
             m_RecPad->hide();
             pFuncPad->capScreen();
-            pFuncPad->setMode(m_nModeS1);
+            pFuncPad->setMode(1);
             pFuncPad->showFullScreen();
             pFuncPad->raise();
             m_pHID->setMouse(true);
@@ -439,6 +461,8 @@ MainWindow::MainWindow(QWidget *parent)
         }
             break;
 
+        case 0xd8:
+        case 0xdb:
         case 0x9d: // s2 单击
             qDebug() << "m_nModeS2:" << m_nModeS2;
             if(m_nModeS2 == 0xFF)
@@ -485,6 +509,11 @@ MainWindow::MainWindow(QWidget *parent)
             }
             break;
 
+        case 0xdc:
+        case 0xdd:
+        case 0xdf:
+
+        case 0xe2:
         case 0x9e: // s2 双击
             m_record = false;
             m_pHID->stopRecord();
@@ -498,6 +527,7 @@ MainWindow::MainWindow(QWidget *parent)
             m_ModeTip->showMode(4+m_nModeS2);
             break;
 
+        case 0xe6:
         case 0x9f: qDebug() << "语音搜索" ; //云指令
             DoASRWork(true);
             m_pHID->setRecordPlay(false);
@@ -681,7 +711,7 @@ void MainWindow::saveLoadParams(bool save)
         m_set->setValue("opacity1",ui->horizontalSlider5->value());
         m_set->setValue("radius3",ui->horizontalSlider6->value());
         m_set->setValue("opacity3",ui->horizontalSlider7->value());
-        m_set->setValue("round1",ui->pushButtonRound->isChecked());
+        m_set->setValue("MgfShape",m_nMgfShape);
         m_set->setValue("enlarge",ui->comboBoxEnlarge->currentIndex());
         m_set->setValue("showBlack",ui->checkBoxBlack->isChecked());
         m_set->setValue("showTime",ui->lineEditSetTime->text());
@@ -707,13 +737,13 @@ void MainWindow::saveLoadParams(bool save)
         m_iEffect = m_set->value("iEffect").toInt();
         m_show    = m_set->value("showIndex",2).toInt();
         m_voice   = m_set->value("showVoice",2).toInt();
-        m_bRound  = m_set->value("round1",true).toBool();
+        m_nMgfShape  = m_set->value("MgfShape").toInt();
         m_iColor = m_iColor0;
         QTimer::singleShot(100,this,[=]{
             ui->buttonGroupCount->button(-m_show-2)->click();
             ui->buttonGroupSpot->button(-m_iSpot-2)->click();
             ui->buttonGroupColor->button(-m_iColor0-2)->click();
-            if(!m_bRound) ui->pushButtonRect->click();
+            ui->buttonGroupShape->button(-m_nMgfShape-2)->click();
             ui->comboBoxEffect->setCurrentIndex(m_iEffect);
             m_bLoading = false;
         });
@@ -741,7 +771,7 @@ void MainWindow::updateValue()
 
     case 1:
         m_radius1 = ui->horizontalSlider2->value() / 2;
-        m_bRound = ui->pushButtonRound->isChecked();
+        //m_nMgfShape = ui->pushButtonRound->isChecked();
         break;
 
     case 2:
@@ -765,7 +795,7 @@ void MainWindow::updateValue()
     pFuncPad->m_radius2 = m_radius2;
     pFuncPad->m_radius3 = m_radius3;
 
-    pFuncPad->m_bRound = m_bRound;
+    pFuncPad->m_nMgfShape = m_nMgfShape;
     pFuncPad->m_enlarge = m_enlarge;
     int showTime = 3600;
     if(m_show == 1) showTime = 1800;
@@ -797,6 +827,32 @@ void MainWindow::paintEvent(QPaintEvent *event)
     p.drawImage(this->rect(),      QImage(QApplication::applicationDirPath()+"/images/bground.png"));
     if(!g_bCommentVer)
     p.drawImage(QRect(0,2,132,44), QImage(QApplication::applicationDirPath()+"/images/nmylogo.png"));
+}
+
+bool MainWindow::event(QEvent *event)
+{
+    //qDebug() << event->type();
+    if( (event->type() == QEvent::WindowActivate || event->type() == QEvent::Show)&& !m_bConnected)
+    {
+        if(!m_pNoCnn->isMaximized())
+        {
+            m_pNoCnn->setGeometry(this->geometry().adjusted(0,50,0,0));
+            m_pNoCnn->show();
+
+            m_pTSet->hide();
+            m_pCmd->hide();
+        }
+        else
+        {
+            m_pNoCnn->hide();
+        }
+    }
+
+    if(event->type() == QEvent::WindowDeactivate || event->type() == QEvent::Hide)
+    {
+        m_pNoCnn->hide();
+    }
+    return QMainWindow::event(event);
 }
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
@@ -874,9 +930,20 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             QRect tarRect(Center-QPoint(dist*factor,dist*factor),Center+QPoint(dist*factor,dist*factor));
 
             QPainterPath path;
-            path.addEllipse(tarRect);
-            if(m_bRound)
-                p.setClipPath(path);
+            if(m_nMgfShape == 0)
+            {
+                path.addEllipse(tarRect);
+            }
+            if(m_nMgfShape == 1)
+            {
+                path.addRect(tarRect);
+            }
+            if(m_nMgfShape == 2)
+            {
+                int nH = tarRect.height();
+                path.addRect(tarRect.adjusted(0,nH*0.3,0,-nH*0.3));
+            }
+            p.setClipPath(path);
 
             p.setRenderHint(QPainter::SmoothPixmapTransform);
             p.drawImage(tarRect,tmp);
@@ -935,7 +1002,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton)
+    if (event->button() == Qt::LeftButton && !m_pNoCnn->isVisible())
     {
         if (event->pos().y() < 60)
         {

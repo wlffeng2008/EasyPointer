@@ -111,7 +111,7 @@ static QStringList g_Checks;
 static QJsonArray g_Commands;
 
 DialogCloudCmd::DialogCloudCmd(QWidget *parent)
-    : QDialog(parent)
+    : QDialog(nullptr)
     , ui(new Ui::DialogCloudCmd)
 {
     ui->setupUi(this);
@@ -329,6 +329,7 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
         connect(ui->checkBoxSearch,&QCheckBox::clicked,this,[=](bool clicked){ Set.setValue("Search",clicked);});
         connect(ui->comboBoxEngine,&QComboBox::currentIndexChanged,this,[=](int index){ Set.setValue("SearchEngine",index); });
     }
+    ui->tabWidget->setCurrentIndex(2);
 }
 
 void DialogCloudCmd::saveLoadCommand(bool save)
@@ -587,6 +588,11 @@ bool DialogCloudCmd::startupApp(const QString&command)
                 if(strKey == tr("电脑黑屏"))
                 {
                     m_pPad->showBlack();
+                }
+
+                if(strKey == tr("退出黑屏"))
+                {
+                    m_pPad->showBlack(false);
                 }
 
                 if(strKey == tr("电脑关机"))

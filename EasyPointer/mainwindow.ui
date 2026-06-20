@@ -974,6 +974,63 @@ QPushButton:checked  {
            </attribute>
           </widget>
          </item>
+         <item alignment="Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter">
+          <widget class="QPushButton" name="pushButtonRect2">
+           <property name="minimumSize">
+            <size>
+             <width>24</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="toolTip">
+            <string>正方形</string>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">    QPushButton {
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            background-color: white;
+            outline: none;
+            width:30px;
+            min-height:20px;
+            max-height:20px;
+			border-radius:0px;
+        }
+
+    QPushButton:hover    {  border: 1px solid #EAEAEA;}
+    QPushButton:checked  { 
+	border: 1px solid #EAEAEA;
+ 	background-image:url(:/images/checkflag2.png); 
+   	background-repeat: no-repeat; 
+    background-position: center center;
+ }</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="autoExclusive">
+            <bool>true</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">buttonGroupShape</string>
+           </attribute>
+          </widget>
+         </item>
          <item>
           <spacer name="horizontalSpacer_4">
            <property name="orientation">
@@ -2031,7 +2088,7 @@ background-image: url(:/images/jd.png);
      <rect>
       <x>0</x>
       <y>490</y>
-      <width>840</width>
+      <width>844</width>
       <height>28</height>
      </rect>
     </property>
@@ -2041,6 +2098,9 @@ background-image: url(:/images/jd.png);
      </property>
      <property name="leftMargin">
       <number>10</number>
+     </property>
+     <property name="rightMargin">
+      <number>5</number>
      </property>
      <item>
       <widget class="QPushButton" name="pushButton5">
@@ -2995,10 +3055,10 @@ QPushButton:checked  {
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupCount"/>
   <buttongroup name="buttonGroupColor"/>
-  <buttongroup name="buttonGroupShape"/>
   <buttongroup name="buttonGroupMain"/>
+  <buttongroup name="buttonGroupShape"/>
+  <buttongroup name="buttonGroupCount"/>
   <buttongroup name="buttonGroupSpot"/>
  </buttongroups>
 </ui>

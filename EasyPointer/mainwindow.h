@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "hidworker.h"
+#include "DialogNoConnect.h"
 
 #include <QMainWindow>
 #include <QTimer>
@@ -34,6 +35,7 @@ public:
     ~MainWindow();
 
 protected:
+    bool event(QEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
@@ -57,6 +59,8 @@ private:
 
     DialogTypeWord *m_pTSet = nullptr;
     DialogCloudCmd *m_pCmd = nullptr;
+    DialogNoConnect *m_pNoCnn = nullptr;
+    bool m_bConnected=false;
 
     DialogDeviceSet *m_pDSet;
     DialogMKeySet *m_pMSet;
@@ -67,7 +71,7 @@ private:
     quint16 m_radius3;
 
     bool m_bLoading = false;
-    bool m_bRound = true;
+    int m_nMgfShape = true;
     qreal m_enlarge= 1.5;
     quint8 m_battery = 0;
     qint16 m_EfOpticy = 0;
@@ -79,7 +83,6 @@ private:
     int m_iColor0=0;
     int m_iColor3=0;
 
-    bool m_bConnected=false;
     bool m_record=false;
     int m_voice=0;
     int m_show=0;
