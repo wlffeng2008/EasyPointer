@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>DialogNoConnect</class>
  <widget class="QDialog" name="DialogNoConnect">
+  <property name="enabled">
+   <bool>false</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -14,10 +17,11 @@
    <string>Dialog</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <item alignment="Qt::AlignmentFlag::AlignHCenter">
+   <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
     <widget class="QLabel" name="label">
      <property name="styleSheet">
-      <string notr="true">font: 32pt &quot;Microsoft YaHei&quot;;</string>
+      <string notr="true">font: 32pt &quot;Microsoft YaHei&quot;;color:white;
+background-color: transparent;</string>
      </property>
      <property name="text">
       <string>请插入USB接收器或连接蓝牙！</string>

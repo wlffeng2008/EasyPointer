@@ -5,12 +5,12 @@
 #include <QStyleOption>
 
 DialogNoConnect::DialogNoConnect(QWidget *parent)
-    : QDialog(nullptr)
+    : QDialog(parent)
     , ui(new Ui::DialogNoConnect)
 {
     ui->setupUi(this);
 
-    setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint|Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint);
 
     setAttribute(Qt::WA_TranslucentBackground);
 

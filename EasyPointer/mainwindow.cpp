@@ -92,6 +92,7 @@ MainWindow::MainWindow(QWidget *parent)
 
         ui->stackedWidget0->setCurrentIndex(index);
         ui->stackedWidget1->setCurrentIndex(index);
+        ui->pushButtonRect2->setFixedSize(24,16);
 
         ui->labelContact->setHidden(true);
         ui->frameColor->setHidden(true);
@@ -281,6 +282,7 @@ MainWindow::MainWindow(QWidget *parent)
         {
             ui->labelConnect->setPixmap(QPixmap(nMode == 1 ? ":/images/2.4g.png" : ":/images/blue.png").scaled(24,24));
             trayIcon->setIcon(QIcon(":/images/logo.jpg"));
+            setWindowIcon(QIcon(":/images/logo.jpg"));
             m_pNoCnn->accept();
         }
         else
@@ -288,7 +290,8 @@ MainWindow::MainWindow(QWidget *parent)
             ui->labelConnect->clear();
             ui->labelConnect->setText("未连接");
             trayIcon->setIcon(QIcon(":/images/logo-gray.png"));
-            //m_pNoCnn->setFixedSize(size());
+            setWindowIcon(QIcon(":/images/logo-gray.png"));
+
             m_pNoCnn->setGeometry(this->geometry().adjusted(0,50,0,0));
             if(this->isVisible() && !this->isMinimized())
                 m_pNoCnn->show();
@@ -841,14 +844,16 @@ bool MainWindow::event(QEvent *event)
 
             m_pTSet->hide();
             m_pCmd->hide();
+
+            this->raise();
         }
         else
         {
             m_pNoCnn->hide();
         }
     }
-
-    if(event->type() == QEvent::WindowDeactivate || event->type() == QEvent::Hide)
+//event->type() == QEvent::WindowDeactivate ||
+    if( event->type() == QEvent::Hide)
     {
         m_pNoCnn->hide();
     }

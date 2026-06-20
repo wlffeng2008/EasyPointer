@@ -47,6 +47,19 @@ void InstallKeyboardHook()
     {
         qDebug() << "钩子安装失败，错误码：" << GetLastError() ;
     }
+
+    RAWINPUTDEVICE rid[1];
+    rid[0].usUsagePage = 0x01;  // 通用桌面设备 (Generic Desktop Controls)
+    rid[0].usUsage = 0x02;      // 鼠标设备 (Mouse)
+    rid[0].dwFlags = RIDEV_INPUTSINK; // 允许在窗口失去焦点时也能接收数据
+    rid[0].hwndTarget = nullptr;   // 接收消息的窗口句柄
+
+    if (!RegisterRawInputDevices(rid, 1, sizeof(rid)))
+    {
+        // 注册失败处理
+        MessageBox(NULL, L"注册原始输入设备失败！", L"错误", MB_OK);
+        return ;
+    }
 }
 
 // 卸载钩子
