@@ -65,6 +65,9 @@ MainWindow::MainWindow(QWidget *parent)
     m_pDSet->m_pWork = m_pHID;
     m_pCmd->m_pPad = pFuncPad;
 
+    m_pBLE = new BleWorker(this);
+    m_pBLE->scanBleDevices("NMY");
+
     ui->labelSN->hide();
     ui->labelColor->hide();
 

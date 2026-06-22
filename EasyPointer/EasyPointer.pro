@@ -30,6 +30,7 @@ LIBS += -L$$PWD -lhidapi
 # LIBS += -luser32 -ladvapi32 -lole32 -lpropsys -luuid
 
 SOURCES += \
+    BleWorker.cpp \
     DialogBoard.cpp \
     DialogCloudCmd.cpp \
     DialogDeviceSet.cpp \
@@ -53,6 +54,7 @@ SOURCES += \
     xfwsvoicewrite.cpp
 
 HEADERS += \
+    BleWorker.h \
     DialogBoard.h \
     DialogCloudCmd.h \
     DialogDeviceSet.h \

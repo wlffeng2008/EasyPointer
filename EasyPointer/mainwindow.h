@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "hidworker.h"
+#include "BleWorker.h"
 #include "DialogNoConnect.h"
 
 #include <QMainWindow>
@@ -54,6 +55,7 @@ private:
     quint8 m_nModeS2  = -1;
     quint8 m_press  =  0;
     CHidWorker *m_pHID = nullptr;
+    BleWorker  *m_pBLE = nullptr;
     DialogBoard *pFuncPad = nullptr;
     DialogRecord *m_RecPad = nullptr;
 

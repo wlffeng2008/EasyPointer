@@ -448,8 +448,8 @@ void CHidWorker::run()
             }
             else
             {
-                QByteArray Log((const char *)(szBuf),nRet);
-                qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
+                //QByteArray Log((const char *)(szBuf),nRet);
+                //qDebug().noquote()<<"USB <=: "<< Log.toHex(' ') << "Len: "<< nRet;
                 emit onDataIn(szBuf,32);
             }
         }
