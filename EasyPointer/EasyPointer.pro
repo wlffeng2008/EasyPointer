@@ -1,4 +1,4 @@
-QT       += core gui multimedia websockets network
+QT       += core gui multimedia websockets network bluetooth
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
