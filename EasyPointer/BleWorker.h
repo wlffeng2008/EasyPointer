@@ -14,8 +14,8 @@ public:
     explicit BleWorker(QObject *parent = nullptr);
     void scanBleDevices(const QString &strName);
     void connectBle(const QString&strMac);
-
-    QLowEnergyController *m_control = nullptr;
+    void ReadRealData(bool read=true);
+    void ReadHWInfo();
 
 signals:
     void onBleDevice(const QString &strMac, const QString &strName);
@@ -23,6 +23,8 @@ signals:
 
 private:
     bool m_bExit=false;
+
+    QLowEnergyController *m_control = nullptr;
 
     void connectService(const QBluetoothUuid&Uuid);
     QLowEnergyService *m_service0 = nullptr;

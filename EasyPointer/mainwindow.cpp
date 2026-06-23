@@ -23,16 +23,16 @@
 #include "DialogTypeWord.h"
 #include "DialogDeviceSet.h"
 #include "DialogMKeySet.h"
+#include "DialogHealth.h"
 
 #include "TxASRClient.h"
-#include "KeyBoardMonitor.h"
 
 #include <Windows.h>
 #include <highlevelmonitorconfigurationapi.h>
 #include <QScreen>
 #include <QApplication>
 
-bool g_bCommentVer=true;
+bool g_bCommentVer=false;
 
 static QList<quint32> colors={0xFF0000,0x00FF00,0x0000FF,0xFFFFFF,0xFF8000,0x800080,0xFFFF00,0x00FFFF,0x000000};
 
@@ -45,11 +45,12 @@ MainWindow::MainWindow(QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowTitle("Nmy Pointer");
 
-    // KeyBoardMonitor *pKBM = new KeyBoardMonitor(this);
+    m_pKBM = new KeyBoardMonitor(this);
 
     pFuncPad  = new DialogBoard();
     m_ModeTip = new DialogTip();
     m_RecPad  = new DialogRecord();
+    m_Health  = new DialogHealth(this);
 
     m_pNoCnn = new DialogNoConnect(this);
 
@@ -66,32 +67,29 @@ MainWindow::MainWindow(QWidget *parent)
     m_pCmd->m_pPad = pFuncPad;
 
     m_pBLE = new BleWorker(this);
-    //m_pBLE->scanBleDevices("NMY");
+    m_pBLE->scanBleDevices("NMY");
+    m_Health->m_Reader = m_pBLE;
 
-    ui->labelSN->hide();
     ui->labelColor->hide();
 
     if(g_bCommentVer)
+    {
+        ui->labelSN->hide();
         ui->pushButton6->hide();
-
-    //setStyleSheet("QLabel{color:white; font-weight:600;}");
+    }
 
     QCoreApplication::setOrganizationName("NMY");
     QCoreApplication::setApplicationName("NMYPointer");
     m_set = new QSettings();
 
-    connect(ui->pushButtonExit,&QPushButton::clicked,this,[=]{ qApp->exit(); });
+    connect(ui->pushButtonExit,&QPushButton::clicked,this,[=]{ close(); });
     connect(ui->pushButtonMin,&QPushButton::clicked,this,[=]{
         m_pNoCnn->hide();
         this->showMinimized();
     });
 
     connect(ui->buttonGroupMain,&QButtonGroup::idClicked,this,[=](int id){
-        int index = abs(id);
-        if(index >= 4)
-            index -= 4;
-        else
-            index += 3;
+        int index = abs(id)-2;
 
         ui->stackedWidget0->setCurrentIndex(index);
         ui->stackedWidget1->setCurrentIndex(index);
@@ -206,7 +204,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->comboBoxEnlarge,&QComboBox::activated,this,[=](int index){        
         if(m_bLoading) return;
-        m_enlarge = (ui->comboBoxEnlarge->currentIndex() * 25 + 100)/100.0;
+        m_enlarge = (index * 25 + 100)/100.0;
         updateValue();
     });
 
@@ -351,6 +349,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(m_pHID,&CHidWorker::onDataIn,this,[=](quint8 *data,int len){
         quint8 cmd = data[3];
+        m_bConnected=true;
         // 0c 4d 14 61 4d 4c 20 24 12 14 02 40 00 07 05 23 00 ce 5f 27 00 00 00 00 00 00 00 00 00 00 00 00
         // 10字节设备SN号
         // 1字节录音状态：1: 16k  0:8k
@@ -369,17 +368,15 @@ MainWindow::MainWindow(QWidget *parent)
             m_press = 0;
             break;
 
-        //
         case 0xc1:
         case 0xc2:
         case 0xc3:
         case 0xc4:
         case 0xc5:
-        case 0x92:
+        case 0x92: qDebug() << "双击";   // 仅切换功能
         {
             updateValue();
             m_pHID->setLaser(false);
-            qDebug() << "双击";   // 仅切换功能
             m_nModeS1++;
             if(m_nModeS1 > 3)
                 m_nModeS1 = 0;
@@ -616,6 +613,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButtonMKey,&QPushButton::clicked,this,[=]{
         m_pMSet->show();
     });
+    connect(ui->pushButtonHealth,&QPushButton::clicked,this,[=]{
+        m_Health->show();
+    });
 
     {
         trayIcon = new QSystemTrayIcon(this);
@@ -660,6 +660,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->labelCloudCmd1->installEventFilter(this);
     ui->labelAutoStart->installEventFilter(this);
     ui->labelBattery->installEventFilter(this);
+
     ui->page00->installEventFilter(this);
     ui->page01->installEventFilter(this);
     ui->page02->installEventFilter(this);
@@ -698,6 +699,17 @@ MainWindow::MainWindow(QWidget *parent)
         pTMEf->start(interval);
     });
     pTMEf->start(20);
+
+
+    this->setAutoFillBackground(false);
+
+    this->setStyleSheet(R"(
+            #MainWindow{
+            background-color:transparent; color:black;}
+            QLabel{color:white;font-size:15px;font-weight:600;}
+            QCheckBox{color:white;font-size:15px;font-weight:600;}
+            QPushButton{color:white;font-size:15px;font-weight:600;}
+    )");
 }
 
 void MainWindow::saveLoadParams(bool save)
@@ -823,6 +835,7 @@ void MainWindow::updateValue()
 void MainWindow::paintEvent(QPaintEvent *event)
 {
     QMainWindow::paintEvent(event);
+
     QStyleOption opt;
     opt.initFrom(this);
     QPainter p(this);
@@ -830,15 +843,20 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
     p.setRenderHint(QPainter::Antialiasing, true);
 
-    p.drawImage(this->rect(),      QImage(QApplication::applicationDirPath()+"/images/bground.png"));
+    static QImage ImgBG=QImage(QApplication::applicationDirPath()+"/images/bground.png");
+    static QImage ImgLG=QImage(QApplication::applicationDirPath()+"/images/nmyLogo.png");
+
+    p.drawImage(this->rect(),      ImgBG);
     if(!g_bCommentVer)
-    p.drawImage(QRect(0,2,132,44), QImage(QApplication::applicationDirPath()+"/images/nmylogo.png"));
+        p.drawImage(QRect(0,2,132,44), ImgLG);
+
+    event->accept();
 }
 
 bool MainWindow::event(QEvent *event)
 {
     //qDebug() << event->type();
-    if( (event->type() == QEvent::WindowActivate || event->type() == QEvent::Show)&& !m_bConnected)
+    if( (event->type() == QEvent::WindowActivate || event->type() == QEvent::Show) && !m_bConnected)
     {
         if(!m_pNoCnn->isMaximized())
         {
@@ -855,11 +873,12 @@ bool MainWindow::event(QEvent *event)
             m_pNoCnn->hide();
         }
     }
-//event->type() == QEvent::WindowDeactivate ||
+
     if( event->type() == QEvent::Hide)
     {
         m_pNoCnn->hide();
     }
+
     return QMainWindow::event(event);
 }
 
@@ -903,11 +922,11 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         static QImage bkImg = QImage(":/images/bk0.png");
         QWidget *Page = static_cast<QWidget *>(watched);
         QRect rc = Page->rect();
-        QPainter p(Page);
         int mx = rc.center().x()-20;
         int my = rc.center().y();
         QPoint  Center(mx,my);
 
+        QPainter p(Page);
         if(watched == ui->page00)
         {
             p.drawImage(rc,bkImg);
@@ -1057,4 +1076,13 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
     QMainWindow::mouseDoubleClickEvent(event);
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    qDebug() << "MainWindow::closeEvent" ;
+    m_pKBM->DoStop();
 
+    this->hide();
+    QThread::msleep(100);
+    qApp->quit();
+    QMainWindow::closeEvent(event);
+}

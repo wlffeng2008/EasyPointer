@@ -17,17 +17,14 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 
     if (nCode >= 0)
     {
-        // WM_KEYDOWN = 按键按下
-        if (wParam == WM_KEYDOWN)
+        if (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN)
         {
             DWORD vkCode = pKeyData->vkCode;
-            qDebug() << "全局捕获按键 VK: " << vkCode;
-
-            // 字母A-Z
-            if (vkCode >= 'A' && vkCode <= 'Z')
-                qDebug() << " 字符: " << (char)vkCode;
+            //qDebug() << "全局捕获按键 VK: " << vkCode;
 
 
+            //if (vkCode >= 'A' && vkCode <= 'Z')
+                qDebug() << "字符: " << (char)vkCode << vkCode;
         }
     }
     // 传递钩子消息给下一个钩子，不拦截按键
@@ -54,11 +51,10 @@ void InstallKeyboardHook()
     rid[0].dwFlags = RIDEV_INPUTSINK; // 允许在窗口失去焦点时也能接收数据
     rid[0].hwndTarget = nullptr;   // 接收消息的窗口句柄
 
-    if (!RegisterRawInputDevices(rid, 1, sizeof(rid)))
+    if (!RegisterRawInputDevices(rid, 1, sizeof(RAWINPUTDEVICE)))
     {
-        // 注册失败处理
-        MessageBox(NULL, L"注册原始输入设备失败！", L"错误", MB_OK);
-        return ;
+        qDebug() << "注册原始输入设备失败，错误码：" << GetLastError() ;
+        //MessageBox(NULL, L"注册原始输入设备失败！", L"错误", MB_OK);
     }
 }
 
@@ -79,6 +75,13 @@ KeyBoardMonitor::KeyBoardMonitor(QObject *parent)
     start();
 }
 
+void KeyBoardMonitor::DoStop()
+{
+    m_bExit = true;
+    UninstallKeyboardHook();
+    quit();
+}
+
 
 void KeyBoardMonitor::run()
 {
@@ -87,6 +90,7 @@ void KeyBoardMonitor::run()
 #if 0
     while (true)
     {
+        if(m_bExit) break;
         // ESC退出
         //if (IsKeyPressed(VK_ESCAPE))
         //    break;
@@ -117,10 +121,12 @@ void KeyBoardMonitor::run()
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0) > 0)
     {
+        if(m_bExit) break;
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
 
+    qDebug() <<  "UninstallKeyboardHook" ;
     UninstallKeyboardHook();
 #endif
 }

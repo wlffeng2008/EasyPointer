@@ -117,7 +117,7 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
             return ;
         }
 
-        qDebug() << "创建蓝牙服务成功 " ;
+        qDebug() << "创建蓝牙服务成功0 " ;
 
         // 监听服务状态变化
         connect(m_service0,&QLowEnergyService::stateChanged ,this,[=](QLowEnergyService::ServiceState){
@@ -142,7 +142,6 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
                 if(props&QLowEnergyCharacteristic::WriteNoResponse || props&QLowEnergyCharacteristic::Write)
                 {
                     m_write0 = bleChar;
-                    m_service0->writeCharacteristic(bleChar,QByteArray(0x02,1));
                 }
             }
 
@@ -150,7 +149,7 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
 
         // 监听服务的characteristic变化，有数据传来
         connect(m_service0,&QLowEnergyService::characteristicChanged, this,[=](const QLowEnergyCharacteristic &info, const QByteArray &value){
-            //qDebug() << value.toHex(' ').toUpper();
+            qDebug() << value.toHex(' ').toUpper();
         });
 
         connect(m_service0, &QLowEnergyService::descriptorWritten,[=](QLowEnergyDescriptor,const QByteArray&value){
@@ -175,7 +174,7 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
             return ;
         }
 
-        qDebug() << "创建蓝牙服务成功 " ;
+        qDebug() << "创建蓝牙服务成功1 " ;
 
         // 监听服务状态变化
         connect(m_service1,&QLowEnergyService::stateChanged ,this,[=](QLowEnergyService::ServiceState){
@@ -200,7 +199,6 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
                 if(props&QLowEnergyCharacteristic::WriteNoResponse || props&QLowEnergyCharacteristic::Write)
                 {
                     m_write1 = bleChar;
-                    //readSN() ;
                 }
             }
 
@@ -225,7 +223,61 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
 
 
     if(Uuid.data1 == 0x6e40000a)
-    {}
+    {
+        if(m_service2) delete m_service2;
+        m_service2 = m_control->createServiceObject(Uuid,this); // 创建服务
+        if (!m_service2)
+        {
+            qDebug() << "创建蓝牙服务2失败！" ;
+            return ;
+        }
+
+        qDebug() << "创建蓝牙服务成功2 " ;
+
+        // 监听服务状态变化
+        connect(m_service2,&QLowEnergyService::stateChanged ,this,[=](QLowEnergyService::ServiceState){
+
+            QList<QLowEnergyCharacteristic> charList = m_service1->characteristics();
+            for(const QLowEnergyCharacteristic &bleChar: std::as_const(charList))
+            {
+                int nCharVal = bleChar.uuid().toUInt16();
+                const QLowEnergyCharacteristic::PropertyTypes props = bleChar.properties();
+                if(!bleChar.isValid())
+                    continue ;
+
+                qDebug().noquote() << "Characteristic: "<< bleChar.uuid() << bleChar.name() << QString::number(nCharVal,16).toUpper() << props;
+
+                if(props&QLowEnergyCharacteristic::Notify )
+                {
+                    QLowEnergyDescriptor descriptor = bleChar.descriptor(QBluetoothUuid::DescriptorType::ClientCharacteristicConfiguration);
+                    //qDebug().noquote()<<"descriptor isValid:" << descriptor.isValid() ;
+                    m_service2->writeDescriptor(descriptor,QByteArray::fromHex("0100"));
+                }
+
+                if(props&QLowEnergyCharacteristic::WriteNoResponse || props&QLowEnergyCharacteristic::Write)
+                {
+                    m_write2 = bleChar;
+                }
+            }
+
+        });
+
+        // 监听服务的characteristic变化，有数据传来
+        connect(m_service2,&QLowEnergyService::characteristicChanged, this,[=](const QLowEnergyCharacteristic &info, const QByteArray &value){
+            qDebug() << value.toHex(' ').toUpper();
+        });
+
+        connect(m_service2, &QLowEnergyService::descriptorWritten,[=](QLowEnergyDescriptor,const QByteArray&value){
+            qDebug().noquote() <<"描述符写入成功!"   << value.toHex();  });
+
+        connect(m_service2, &QLowEnergyService::errorOccurred, [=](QLowEnergyService::ServiceError error){
+            qDebug().noquote() << error;  });
+
+        connect(m_service2, &QLowEnergyService::characteristicRead,[=](const QLowEnergyCharacteristic &info, const QByteArray &value){
+            qDebug().noquote() << "Read <=:" << value.toHex(' ').toUpper() << value.data();  });
+
+        m_service2->discoverDetails();
+    }
 }
 
 
@@ -298,7 +350,6 @@ void BleWorker::connectBle(const QString&strMac)
     QBluetoothUuid uuid1("6e400003-b5a3-f393-e0a9-e50e24dcca9e");
     QBluetoothUuid uuid2("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
 
-
     m_service0 = m_control->createServiceObject(uuid0,this); // 创建服务
     if (!m_service0)
     {
@@ -307,5 +358,16 @@ void BleWorker::connectBle(const QString&strMac)
     }
 
     qDebug() << "创建蓝牙服务成功！ " ;
+}
 
+void BleWorker::ReadRealData(bool read)
+{
+    m_service0->writeCharacteristic(m_write0,QByteArray(read ? 0x01 : 0x02,1));
+    qDebug() << "ReadRealData" ;
+}
+
+void BleWorker::ReadHWInfo()
+{
+    m_service0->writeCharacteristic(m_write0,QByteArray(0x03,1));
+    qDebug() << "ReadHWInfo" ;
 }

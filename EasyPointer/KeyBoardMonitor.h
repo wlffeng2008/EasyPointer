@@ -10,6 +10,10 @@ class KeyBoardMonitor : public QThread
 public:
     explicit KeyBoardMonitor(QObject *parent = nullptr);
 
+    void DoStop();
+
+    bool m_bExit = false;
+
 protected:
     void run() override;
 };

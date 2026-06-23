@@ -4,6 +4,7 @@
 #include "hidworker.h"
 #include "BleWorker.h"
 #include "DialogNoConnect.h"
+#include "KeyBoardMonitor.h"
 
 #include <QMainWindow>
 #include <QTimer>
@@ -26,6 +27,7 @@ class DialogCloudCmd;
 class DialogTypeWord;
 class DialogDeviceSet;
 class DialogMKeySet;
+class DialogHealth;
 
 class MainWindow : public QMainWindow
 {
@@ -44,10 +46,11 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;
 
 private:
     Ui::MainWindow *ui;
-
+    KeyBoardMonitor *m_pKBM = nullptr;
     QPoint m_dragPosition;
     bool m_dragging = false;
 
@@ -58,6 +61,7 @@ private:
     BleWorker  *m_pBLE = nullptr;
     DialogBoard *pFuncPad = nullptr;
     DialogRecord *m_RecPad = nullptr;
+    DialogHealth *m_Health = nullptr;
 
     DialogTypeWord *m_pTSet = nullptr;
     DialogCloudCmd *m_pCmd = nullptr;
