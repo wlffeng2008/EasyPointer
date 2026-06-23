@@ -293,7 +293,7 @@ CHidWorker::CHidWorker()
         start();
     });
     QTimer *tmReadSN = new QTimer();
-    //tmReadSN->start(5000);
+    tmReadSN->start(5000);
     connect(tmReadSN,&QTimer::timeout,this,[=]{
         if(!m_bRecord)
         {

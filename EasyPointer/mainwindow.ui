@@ -979,13 +979,13 @@ QPushButton:checked  {
            <property name="minimumSize">
             <size>
              <width>24</width>
-             <height>16</height>
+             <height>18</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>24</width>
-             <height>16</height>
+             <height>18</height>
             </size>
            </property>
            <property name="cursor">
@@ -2088,7 +2088,7 @@ background-image: url(:/images/jd.png);
      <rect>
       <x>0</x>
       <y>490</y>
-      <width>844</width>
+      <width>924</width>
       <height>28</height>
      </rect>
     </property>
@@ -2130,7 +2130,7 @@ background-image: url(:/images/jd.png);
         <string>语言设置</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="res.qrc">
          <normaloff>:/images/setting.png</normaloff>:/images/setting.png</iconset>
        </property>
        <property name="checkable">
@@ -2246,6 +2246,44 @@ background-image: url(:/images/jd.png);
        </property>
        <property name="text">
         <string>M键</string>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>false</bool>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonHealth">
+       <property name="minimumSize">
+        <size>
+         <width>60</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">    QPushButton {
+            color: white;
+            border: none;
+            background: none;
+            padding: 0px 0px;
+            outline: none;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+    QPushButton:pressed  { background-color: #D8D8D8; color: white; }
+    QPushButton:checked  { background-color: #df6e35; color: white; }</string>
+       </property>
+       <property name="text">
+        <string>健康体检</string>
        </property>
        <property name="checkable">
         <bool>false</bool>
@@ -2387,7 +2425,7 @@ background-image: url(:/images/jd.png);
         <string>数字激光</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="res.qrc">
          <normaloff>:/images/123.png</normaloff>:/images/123.png</iconset>
        </property>
        <property name="checkable">
@@ -2413,7 +2451,7 @@ background-image: url(:/images/jd.png);
         <string>放大镜</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="res.qrc">
          <normaloff>:/images/find.png</normaloff>:/images/find.png</iconset>
        </property>
        <property name="checkable">
@@ -2436,7 +2474,7 @@ background-image: url(:/images/jd.png);
         <string>聚光灯</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="res.qrc">
          <normaloff>:/images/spot.png</normaloff>:/images/spot.png</iconset>
        </property>
        <property name="checkable">
@@ -2459,7 +2497,7 @@ background-image: url(:/images/jd.png);
         <string>全景标注</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="res.qrc">
          <normaloff>:/images/time.png</normaloff>:/images/time.png</iconset>
        </property>
        <property name="checkable">
@@ -2488,7 +2526,7 @@ background-image: url(:/images/jd.png);
         <string>黑屏倒计时</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="res.qrc">
          <normaloff>:/images/mic.png</normaloff>:/images/mic.png</iconset>
        </property>
        <property name="checkable">
@@ -2583,7 +2621,7 @@ background-image: url(:/images/jd.png);
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>:/images/share1.png</pixmap>
+        <pixmap resource="res.qrc">:/images/share1.png</pixmap>
        </property>
       </widget>
      </item>
@@ -2609,7 +2647,7 @@ background-image: url(:/images/jd.png);
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>:/images/setting1.png</pixmap>
+        <pixmap resource="res.qrc">:/images/setting1.png</pixmap>
        </property>
       </widget>
      </item>
@@ -2901,7 +2939,7 @@ QPushButton:checked  {
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>:/images/batt.png</pixmap>
+        <pixmap resource="res.qrc">:/images/batt.png</pixmap>
        </property>
       </widget>
      </item>
@@ -2932,7 +2970,7 @@ QPushButton:checked  {
         <string notr="true"/>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="res.qrc">
          <normaloff>:/images/btn-min.png</normaloff>:/images/btn-min.png</iconset>
        </property>
        <property name="iconSize">
@@ -2968,7 +3006,7 @@ QPushButton:checked  {
         <string/>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="res.qrc">
          <normaloff>:/images/btn-close1.png</normaloff>:/images/btn-close1.png</iconset>
        </property>
        <property name="iconSize">
@@ -3050,13 +3088,15 @@ QPushButton:checked  {
   <tabstop>pushButtonMKey</tabstop>
   <tabstop>pushButtonMin</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupSpot"/>
+  <buttongroup name="buttonGroupShape"/>
   <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupColor"/>
-  <buttongroup name="buttonGroupShape"/>
+  <buttongroup name="buttonGroupSpot"/>
   <buttongroup name="buttonGroupCount"/>
  </buttongroups>
 </ui>

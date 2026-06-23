@@ -150,7 +150,7 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
 
         // 监听服务的characteristic变化，有数据传来
         connect(m_service0,&QLowEnergyService::characteristicChanged, this,[=](const QLowEnergyCharacteristic &info, const QByteArray &value){
-            qDebug() << value.toHex(' ').toUpper();
+            //qDebug() << value.toHex(' ').toUpper();
         });
 
         connect(m_service0, &QLowEnergyService::descriptorWritten,[=](QLowEnergyDescriptor,const QByteArray&value){
