@@ -15,7 +15,7 @@ public:
     virtual ~CAudioPlayer(){ m_bExit = true; };
 
     void setAudioInfo(quint32 sampleRate,quint8 channels=1);
-    void forceExit(){ m_bExit = true; m_bset = true; };
+    void forceExit(){ m_bExit = true; m_bset = true; terminate(); };
     void pushBuf(const QByteArray&buf);
 
 signals:

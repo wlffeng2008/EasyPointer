@@ -61,7 +61,7 @@ signals:
     void onDataIn(quint8 *,int);
     void onDevPcmData(const QByteArray&pcm);
     void onMicPcmData(const QByteArray&pcm);
-    void onConnect(int nMode, bool connected=true);
+    void onHIDConnect(int nMode, bool connected=true);
     void onRecordFile(quint32 duration);
 
 private:

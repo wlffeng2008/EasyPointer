@@ -313,6 +313,7 @@ CHidWorker::~CHidWorker()
     m_pAPlayer->forceExit();
     m_bEndWork = true;
     close();
+    terminate();
 }
 
 void CHidWorker::close()
@@ -331,7 +332,7 @@ void CHidWorker::setHidVIDPID(quint16 VID, quint16 PID)
 void CHidWorker::run()
 {
     QThread::msleep(200);
-    emit onConnect(1,false);
+    emit onHIDConnect(1,false);
     while (!m_bEndWork)
     {
         int mode = 1;
@@ -382,7 +383,6 @@ void CHidWorker::run()
                 {
                     m_pDev = pDev;
                     m_strDevPath = pTDev->path;
-                    qDebug() << "Open HID:"<< pTDev->path;
                     break;
                 }
             }
@@ -397,7 +397,8 @@ void CHidWorker::run()
         m_pAPlayer->setAudioInfo(16000);
         if(mode == 2) setSample(1);
 
-        emit onConnect(mode,true);
+        emit onHIDConnect(mode,true);
+        qDebug() << "Open HID:"<< m_strDevPath;
 
         readSN();
         QThread::msleep(20);
@@ -457,7 +458,7 @@ void CHidWorker::run()
         hid_close(pDev);
         m_pDev = nullptr;
 
-        emit onConnect(mode,false);
+        emit onHIDConnect(mode,false);
     }
 }
 

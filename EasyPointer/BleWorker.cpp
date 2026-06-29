@@ -193,7 +193,7 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
                 {
                     QLowEnergyDescriptor descriptor = bleChar.descriptor(QBluetoothUuid::DescriptorType::ClientCharacteristicConfiguration);
                     //qDebug().noquote()<<"descriptor isValid:" << descriptor.isValid() ;
-                    m_service1->writeDescriptor(descriptor,QByteArray::fromHex("0100"));
+                    //m_service1->writeDescriptor(descriptor,QByteArray::fromHex("0100"));
                 }
 
                 if(props&QLowEnergyCharacteristic::WriteNoResponse || props&QLowEnergyCharacteristic::Write)
@@ -251,7 +251,7 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
                 {
                     QLowEnergyDescriptor descriptor = bleChar.descriptor(QBluetoothUuid::DescriptorType::ClientCharacteristicConfiguration);
                     //qDebug().noquote()<<"descriptor isValid:" << descriptor.isValid() ;
-                    m_service2->writeDescriptor(descriptor,QByteArray::fromHex("0100"));
+                    //m_service2->writeDescriptor(descriptor,QByteArray::fromHex("0100"));
                 }
 
                 if(props&QLowEnergyCharacteristic::WriteNoResponse || props&QLowEnergyCharacteristic::Write)
@@ -362,8 +362,9 @@ void BleWorker::connectBle(const QString&strMac)
 
 void BleWorker::ReadRealData(bool read)
 {
-    m_service0->writeCharacteristic(m_write0,QByteArray(read ? 0x01 : 0x02,1));
-    qDebug() << "ReadRealData" ;
+    quint8 data  = (read ? 0x01 : 0x02) ;
+    m_service0->writeCharacteristic(m_write0,QByteArray(1,data));
+    qDebug() << "ReadRealData" << data ;
 }
 
 void BleWorker::ReadHWInfo()

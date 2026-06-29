@@ -12,7 +12,7 @@ DialogHealth::DialogHealth(QWidget *parent)
         m_Reader->ReadRealData();
     });
     connect(ui->pushButtonStop,&QPushButton::clicked,this,[=]{
-        m_Reader->ReadRealData();
+        m_Reader->ReadRealData(false);
     });
     connect(ui->pushButtonHWInfo,&QPushButton::clicked,this,[=]{
         m_Reader->ReadHWInfo();

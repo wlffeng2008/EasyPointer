@@ -32,7 +32,7 @@
 #include <QScreen>
 #include <QApplication>
 
-bool g_bCommentVer=false;
+bool g_bCommentVer=true;
 
 static QList<quint32> colors={0xFF0000,0x00FF00,0x0000FF,0xFFFFFF,0xFF8000,0x800080,0xFFFF00,0x00FFFF,0x000000};
 
@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowTitle("Nmy Pointer");
 
-    m_pKBM = new KeyBoardMonitor(this);
+    //m_pKBM = new KeyBoardMonitor(this);
 
     pFuncPad  = new DialogBoard();
     m_ModeTip = new DialogTip();
@@ -67,10 +67,10 @@ MainWindow::MainWindow(QWidget *parent)
     m_pCmd->m_pPad = pFuncPad;
 
     m_pBLE = new BleWorker(this);
-    m_pBLE->scanBleDevices("NMY");
     m_Health->m_Reader = m_pBLE;
 
     ui->labelColor->hide();
+    ui->pushButton5->hide();
 
     if(g_bCommentVer)
     {
@@ -277,14 +277,17 @@ MainWindow::MainWindow(QWidget *parent)
         m_pCmd->startupApp(text);
     });
 
-    connect(m_pHID,&CHidWorker::onConnect,this,[=](int nMode,bool connected){
+    connect(m_pHID,&CHidWorker::onHIDConnect,this,[=](int nMode,bool connected){
         m_bConnected = connected;
+        qDebug() << "CHidWorker::onHIDConnect: " << nMode << connected ;
         if(connected)
         {
             ui->labelConnect->setPixmap(QPixmap(nMode == 1 ? ":/images/2.4g.png" : ":/images/blue.png").scaled(24,24));
             trayIcon->setIcon(QIcon(":/images/logo.jpg"));
             setWindowIcon(QIcon(":/images/logo.jpg"));
             m_pNoCnn->accept();
+
+            m_pBLE->scanBleDevices("NMY");
         }
         else
         {
@@ -294,8 +297,8 @@ MainWindow::MainWindow(QWidget *parent)
             setWindowIcon(QIcon(":/images/logo-gray.png"));
 
             m_pNoCnn->setGeometry(this->geometry().adjusted(0,50,0,0));
-            if(this->isVisible() && !this->isMinimized())
-                m_pNoCnn->show();
+            //if(this->isVisible() && !this->isMinimized())
+            //    m_pNoCnn->show();
             m_pTSet->hide();
             m_pCmd->hide();
         }
@@ -861,7 +864,7 @@ bool MainWindow::event(QEvent *event)
         if(!m_pNoCnn->isMaximized())
         {
             m_pNoCnn->setGeometry(this->geometry().adjusted(0,50,0,0));
-            m_pNoCnn->show();
+            //m_pNoCnn->show();
 
             m_pTSet->hide();
             m_pCmd->hide();
@@ -1079,10 +1082,9 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     qDebug() << "MainWindow::closeEvent" ;
-    m_pKBM->DoStop();
+    //m_pKBM->DoStop();
 
     this->hide();
-    QThread::msleep(100);
-    qApp->quit();
+    exit(0);
     QMainWindow::closeEvent(event);
 }
