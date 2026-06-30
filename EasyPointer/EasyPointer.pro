@@ -36,6 +36,7 @@ SOURCES += \
     DialogDeviceSet.cpp \
     DialogHealth.cpp \
     DialogMKeySet.cpp \
+    DialogManager.cpp \
     DialogNoConnect.cpp \
     DialogRecord.cpp \
     DialogTip.cpp \
@@ -61,6 +62,7 @@ HEADERS += \
     DialogDeviceSet.h \
     DialogHealth.h \
     DialogMKeySet.h \
+    DialogManager.h \
     DialogNoConnect.h \
     DialogRecord.h \
     DialogTip.h \
@@ -84,6 +86,7 @@ FORMS += \
     DialogDeviceSet.ui \
     DialogHealth.ui \
     DialogMKeySet.ui \
+    DialogManager.ui \
     DialogNoConnect.ui \
     DialogRecord.ui \
     DialogTip.ui \

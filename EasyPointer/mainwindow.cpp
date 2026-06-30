@@ -23,6 +23,7 @@
 #include "DialogTypeWord.h"
 #include "DialogDeviceSet.h"
 #include "DialogMKeySet.h"
+#include "DialogManager.h"
 #include "DialogHealth.h"
 
 #include "TxASRClient.h"
@@ -51,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_ModeTip = new DialogTip();
     m_RecPad  = new DialogRecord();
     m_Health  = new DialogHealth(this);
+    m_pRMan  = new DialogManager(this);
 
     m_pNoCnn = new DialogNoConnect(this);
 
@@ -259,6 +261,9 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
+    connect(ui->pushButtonManager,&QPushButton::clicked,this,[=]{
+        m_pRMan->show();
+    });
     connect(ui->checkBoxRecord,&QCheckBox::clicked,this,[=](bool checked){
         if(checked)
         {

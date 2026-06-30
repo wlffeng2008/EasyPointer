@@ -6,6 +6,7 @@
 #include "DialogNoConnect.h"
 #include "KeyBoardMonitor.h"
 
+
 #include <QMainWindow>
 #include <QTimer>
 #include <QTranslator>
@@ -28,6 +29,7 @@ class DialogTypeWord;
 class DialogDeviceSet;
 class DialogMKeySet;
 class DialogHealth;
+class DialogManager;
 
 class MainWindow : public QMainWindow
 {
@@ -66,6 +68,7 @@ private:
     DialogTypeWord *m_pTSet = nullptr;
     DialogCloudCmd *m_pCmd = nullptr;
     DialogNoConnect *m_pNoCnn = nullptr;
+    DialogManager *m_pRMan = nullptr;
     bool m_bConnected=false;
 
     DialogDeviceSet *m_pDSet;

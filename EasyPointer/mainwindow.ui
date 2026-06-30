@@ -2976,6 +2976,44 @@ QPushButton:checked  {
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="pushButtonManager">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">    QPushButton {
+            color: white;
+            border: none;
+            background: none;
+            padding: 0px 0px;
+            outline: none;
+        }
+
+    QPushButton:hover    { background-color: #D8D8D8; border: 1px solid #EAEAEA;}
+    QPushButton:pressed  { background-color: #D8D8D8; color: white; }
+    QPushButton:checked  { background-color: #df6e35; color: white; }</string>
+        </property>
+        <property name="text">
+         <string>录音管理</string>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>false</bool>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QCheckBox" name="checkBoxRecord">
         <property name="cursor">
          <cursorShape>PointingHandCursor</cursorShape>
@@ -3087,8 +3125,8 @@ QPushButton:checked  {
  <buttongroups>
   <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupCount"/>
-  <buttongroup name="buttonGroupShape"/>
   <buttongroup name="buttonGroupSpot"/>
+  <buttongroup name="buttonGroupShape"/>
   <buttongroup name="buttonGroupColor"/>
  </buttongroups>
 </ui>
