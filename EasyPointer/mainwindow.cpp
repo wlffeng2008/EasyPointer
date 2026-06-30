@@ -73,6 +73,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->labelColor->hide();
     ui->pushButton5->hide();
+    ui->pushButtonManager->hide();
+    ui->pushButtonMKey->hide();
+    ui->pushButtonHealth->hide();
 
     if(g_bCommentVer)
     {
@@ -302,8 +305,8 @@ MainWindow::MainWindow(QWidget *parent)
             setWindowIcon(QIcon(":/images/logo-gray.png"));
 
             m_pNoCnn->setGeometry(this->geometry().adjusted(0,50,0,0));
-            //if(this->isVisible() && !this->isMinimized())
-            //    m_pNoCnn->show();
+            if(this->isVisible() && !this->isMinimized())
+                m_pNoCnn->show();
             m_pTSet->hide();
             m_pCmd->hide();
         }
@@ -869,7 +872,7 @@ bool MainWindow::event(QEvent *event)
         if(!m_pNoCnn->isMaximized())
         {
             m_pNoCnn->setGeometry(this->geometry().adjusted(0,50,0,0));
-            //m_pNoCnn->show();
+            m_pNoCnn->show();
 
             m_pTSet->hide();
             m_pCmd->hide();
