@@ -9,6 +9,7 @@
 #include <QMenu>
 #include <QPainterPath>
 #include <QApplication>
+#include <QMessageBox>
 
 #include "DialogBoard.h"
 #include "DialogTypeWord.h"
@@ -46,7 +47,14 @@ MainWindow::MainWindow(QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowTitle("Nmy Pointer");
 
-    //m_pKBM = new KeyBoardMonitor(this);
+    m_pKBM = new KeyBoardMonitor(this);
+    connect(m_pKBM,&KeyBoardMonitor::onKeypress,this,[=](int code, bool pressed){
+        //qDebug() << (pressed ? "按下：": "松开：") << (char)code << code;
+    });
+    connect(m_pKBM,&KeyBoardMonitor::onMousepress,this,[=](quint32 message,quint32 nMkey,bool pressed,bool bDbClk){
+        //qDebug() << "鼠标事件：" << message;
+    });
+
 
     pFuncPad  = new DialogBoard();
     m_ModeTip = new DialogTip();
@@ -141,10 +149,12 @@ MainWindow::MainWindow(QWidget *parent)
         saveLoadParams();
     });
 
+#define BTNGROUPID(id) (abs(id)-2)
+
     connect(ui->buttonGroupColor,&QButtonGroup::idClicked,this,[=](int id){
         if(m_bLoading) return;
         int index = abs(id)-2;
-        m_iColor = index;
+        m_iColor = BTNGROUPID(id);
 
         updateValue();
         saveLoadParams();
@@ -287,7 +297,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(m_pHID,&CHidWorker::onHIDConnect,this,[=](int nMode,bool connected){
         m_bConnected = connected;
-        qDebug() << "CHidWorker::onHIDConnect: " << nMode << connected ;
+        qDebug() << "CHidWorker::onHIDConnect: " << nMode << connected;
         if(connected)
         {
             ui->labelConnect->setPixmap(QPixmap(nMode == 1 ? ":/images/2.4g.png" : ":/images/blue.png").scaled(24,24));
@@ -304,9 +314,6 @@ MainWindow::MainWindow(QWidget *parent)
             trayIcon->setIcon(QIcon(":/images/logo-gray.png"));
             setWindowIcon(QIcon(":/images/logo-gray.png"));
 
-            m_pNoCnn->setGeometry(this->geometry().adjusted(0,45,0,0));
-            if(this->isVisible() && !this->isMinimized())
-                m_pNoCnn->show();
             m_pTSet->hide();
             m_pCmd->hide();
         }
@@ -711,15 +718,13 @@ MainWindow::MainWindow(QWidget *parent)
     });
     pTMEf->start(20);
 
-
     this->setAutoFillBackground(false);
 
     this->setStyleSheet(R"(
-            #MainWindow{
-            background-color:transparent; color:black;}
-            QLabel{color:white;font-size:15px;font-weight:600;}
-            QCheckBox{color:white;font-size:15px;font-weight:600;}
-            QPushButton{color:white;font-size:15px;font-weight:600;}
+            #MainWindow{ background-color:transparent; color:black; }
+            QLabel { color:white;font-size:16px;font-weight:600;}
+            QCheckBox { color:white;font-size:16px;font-weight:600;}
+            QPushButton{ color:white;font-size:16px;font-weight:600;}
     )");
 }
 
@@ -800,7 +805,6 @@ void MainWindow::updateValue()
 
     case 1:
         m_radius1 = ui->horizontalSlider2->value() / 2;
-        //m_nMgfShape = ui->pushButtonRound->isChecked();
         break;
 
     case 2:
@@ -825,12 +829,12 @@ void MainWindow::updateValue()
     pFuncPad->m_radius3 = m_radius3;
 
     pFuncPad->m_nMgfShape = m_nMgfShape;
-    pFuncPad->m_enlarge = m_enlarge;
+    pFuncPad->m_enlarge   = m_enlarge;
     int showTime = 3600;
     if(m_show == 1) showTime = 1800;
     if(m_show == 2) showTime = 600;
     if(m_show == 3) showTime = ui->lineEditSetTime->text().toInt() * 60;
-    pFuncPad->m_tmCount= showTime;
+    pFuncPad->m_tmCount = showTime;
     pFuncPad->m_showTime= ui->checkBoxBlack->isChecked();
 
     pFuncPad->m_color0 = m_color0;
@@ -857,9 +861,9 @@ void MainWindow::paintEvent(QPaintEvent *event)
     static QImage ImgBG=QImage(QApplication::applicationDirPath()+"/images/bground.png");
     static QImage ImgLG=QImage(QApplication::applicationDirPath()+"/images/nmyLogo.png");
 
-    p.drawImage(this->rect(),      ImgBG);
+    p.drawImage(this->rect(),ImgBG);
     if(!g_bCommentVer)
-        p.drawImage(QRect(0,2,132,44), ImgLG);
+        p.drawImage(QRect(2,2,132,44), ImgLG);
 
     event->accept();
 }
@@ -871,8 +875,8 @@ bool MainWindow::event(QEvent *event)
     {
         if(!m_pNoCnn->isMaximized())
         {
-            m_pNoCnn->setGeometry(this->geometry().adjusted(0,50,0,0));
-            m_pNoCnn->show();
+            m_pNoCnn->setGeometry(this->geometry().adjusted(0,45,0,0));
+            //m_pNoCnn->show();
 
             m_pTSet->hide();
             m_pCmd->hide();
@@ -1033,7 +1037,10 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    qDebug() << "MainWindow::keyPressEvent" << event->key() << event;
+    //qDebug() << "MainWindow::keyPressEvent" << event->key() << event;
+
+    if(event->key() == Qt::Key_Escape)
+        this->close();
 
     QMainWindow::keyPressEvent(event);
 }
@@ -1042,11 +1049,11 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton && !m_pNoCnn->isVisible())
     {
-        if (event->pos().y() < 60)
+        if (event->pos().y() < 45)
         {
-            m_dragPosition = event->globalPosition().toPoint() - frameGeometry().topLeft();
             event->accept();
             m_dragging = true;
+            m_dragPosition = event->globalPosition().toPoint() - frameGeometry().topLeft();
             return;
         }
     }
@@ -1089,10 +1096,16 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    qDebug() << "MainWindow::closeEvent" ;
-    //m_pKBM->DoStop();
+    if(QMessageBox::question(nullptr,"提示","确定要退出 NMY 吗？") != QMessageBox::Yes)
+    {
+        event->ignore();
+        return;
+    }
 
-    this->hide();
-    exit(0);
+    if(m_pKBM) m_pKBM->DoStop();
+
+    hide();
+    ::exit(0);
+
     QMainWindow::closeEvent(event);
 }

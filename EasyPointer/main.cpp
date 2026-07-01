@@ -53,7 +53,6 @@ int main(int argc, char *argv[])
 
     QSlider::handle:horizontal:disabled { border: 2px solid #B3B3B3; }
     QLabel#labelLarge{color:white; font-size: 24px; font-weight:600;}
-    QPushButton{color:white;font-weight:600;}
 
     QCheckBox::indicator:unchecked {
             width: 18px;

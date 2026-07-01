@@ -250,7 +250,7 @@ QWidget{color:white; font-size:18px; font-weight:bold;background-color: rgb(76,1
           <rect>
            <x>72</x>
            <y>26</y>
-           <width>224</width>
+           <width>511</width>
            <height>40</height>
           </rect>
          </property>
@@ -261,7 +261,7 @@ QWidget{color:white; font-size:18px; font-weight:bold;background-color: rgb(76,1
           <property name="rightMargin">
            <number>20</number>
           </property>
-          <item>
+          <item alignment="Qt::AlignmentFlag::AlignLeft">
            <widget class="QLabel" name="label_2">
             <property name="font">
              <font>
@@ -277,7 +277,7 @@ QWidget{color:white; font-size:18px; font-weight:bold;background-color: rgb(76,1
             </property>
            </widget>
           </item>
-          <item>
+          <item alignment="Qt::AlignmentFlag::AlignLeft">
            <widget class="ToggleButton" name="checkBoxBlack">
             <property name="minimumSize">
              <size>
@@ -298,6 +298,19 @@ QWidget{color:white; font-size:18px; font-weight:bold;background-color: rgb(76,1
              <string/>
             </property>
            </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_13">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -1372,13 +1385,13 @@ background-image: url(:/images/jd.png);
               <property name="minimumSize">
                <size>
                 <width>24</width>
-                <height>40</height>
+                <height>16</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>24</width>
-                <height>40</height>
+                <height>16</height>
                </size>
               </property>
               <property name="cursor">
@@ -1441,7 +1454,7 @@ background-image: url(:/images/jd.png);
              <widget class="QComboBox" name="comboBoxEnlarge">
               <property name="minimumSize">
                <size>
-                <width>0</width>
+                <width>90</width>
                 <height>24</height>
                </size>
               </property>
@@ -3123,9 +3136,9 @@ QPushButton:checked  {
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupSpot"/>
   <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupCount"/>
-  <buttongroup name="buttonGroupSpot"/>
   <buttongroup name="buttonGroupShape"/>
   <buttongroup name="buttonGroupColor"/>
  </buttongroups>
