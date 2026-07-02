@@ -6,6 +6,8 @@ DialogManager::DialogManager(QWidget *parent)
     , ui(new Ui::DialogManager)
 {
     ui->setupUi(this);
+
+    setStyleSheet("color:black; font-size:10px;");
 }
 
 DialogManager::~DialogManager()
