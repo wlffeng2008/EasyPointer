@@ -283,8 +283,6 @@ void adpcm_to_pcm (signed short *ps, signed short *pd, int len)
 
 }
 
-static QString g_strWork;
-
 CHidWorker::CHidWorker()
 {
     m_pDev = nullptr;
@@ -302,10 +300,6 @@ CHidWorker::CHidWorker()
             askBattery();
         }
     });
-
-    g_strWork = QApplication::applicationDirPath() + "/recordfile";
-    QDir D(g_strWork);
-    if(!D.exists()) D.mkdir(g_strWork);
 }
 
 CHidWorker::~CHidWorker()
@@ -656,12 +650,10 @@ void CHidWorker::StarRecorFile(const QString&strFile)
             return;
     }
 
-    m_strTemp = g_strWork + "/temp.pcm";
+    m_strTemp = strFile +"-temp.pcm";
     m_RecFile.setFileName(m_strTemp);
 
     m_strFile = strFile;
-    if(!strFile.contains(":"))
-        m_strFile = g_strWork + QString("/") + strFile;
     if(m_RecFile.open(QIODevice::WriteOnly))
     {
         m_recordTime = time(nullptr);
@@ -703,6 +695,7 @@ void CHidWorker::StopRecorFile()
         WAVFile2MP3File(m_strFile,strMP3);
 
         QFile::remove(m_strFile);
+        QFile::remove(m_strTemp);
     }
 }
 

@@ -3,6 +3,7 @@
 
 #include "hidworker.h"
 #include "DialogBoard.h"
+#include "DialogManager.h"
 
 #include <QDialog>
 #include <QStandardItemModel>
@@ -23,6 +24,7 @@ public:
 
     CHidWorker *m_pWork = nullptr;
     DialogBoard *m_pPad = nullptr;
+    DialogManager *m_pMng= nullptr;
 
 private:
     Ui::DialogCloudCmd *ui;

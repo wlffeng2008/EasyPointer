@@ -35,6 +35,7 @@ using namespace QXlsx;
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QDesktopServices>
+#include <mainwindow.h>
 
 #include <shlobj.h>
 #include <shlguid.h>
@@ -104,7 +105,6 @@ QPixmap getShortcutPixmap(const QString& targetPath, int iconIndex)
     return QPixmap();
 }
 
-static QSettings Set(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)+"/NMYPointSetting.ini",QSettings::IniFormat);
 
 static QList<FrameAppTemplate *>g_APPs;
 static QStringList g_Checks;
@@ -228,7 +228,8 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
     }
 
     {
-        g_Checks = Set.value("checkedApps").toStringList();
+        QSettings *pSet = ::getUserSetting();
+        g_Checks = pSet->value("checkedApps").toStringList();
 
         QVBoxLayout *pVLayout = (QVBoxLayout *)ui->scrollAreaWidgetContents->layout();
         pVLayout->setContentsMargins(5, 0, 5, 0);
@@ -273,7 +274,7 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
                     FrameAppTemplate *pAppItem = new FrameAppTemplate(this);
 
                     QString strUuid = QString("%1").arg(qHash(targetPath));
-                    QString strCmd = Set.value(strUuid).toString();
+                    QString strCmd = pSet->value(strUuid).toString();
                     pAppItem->setInfo(getShortcutPixmap(targetPath, iconIndex),strName,targetPath,strShort,strCmd);
                     pVLayout->addWidget(pAppItem,nCount);
 
@@ -288,12 +289,12 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
                             if(app->isChecked())
                                 g_Checks.append(app->m_strShortCut);
                         }
-                        Set.setValue("checkedApps",g_Checks);
+                        pSet->setValue("checkedApps",g_Checks);
                     }) ;
 
                     connect(pAppItem,&FrameAppTemplate::commandChanged,this,[=](const QString&command, const QString&strExePath){
                         QString strUuid = QString("%1").arg(qHash(strExePath));
-                        Set.setValue(strUuid,command);
+                        pSet->setValue(strUuid,command);
                     }) ;
                 }
             }
@@ -314,27 +315,27 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
                 if(app->isChecked())
                     g_Checks.append(app->m_strShortCut);
             }
-            Set.setValue("checkedApps",g_Checks);
+            pSet->setValue("checkedApps",g_Checks);
         });
 
-        ui->checkBoxIgnore0->setChecked(Set.value("Ignore0").toBool());
-        ui->checkBoxIgnore1->setChecked(Set.value("Ignore1").toBool());
-        ui->checkBoxIgnore2->setChecked(Set.value("Ignore2").toBool());
-        ui->checkBoxSearch->setChecked(Set.value("Search").toBool());
-        ui->comboBoxEngine->setCurrentIndex(Set.value("SearchEngine").toInt());
+        ui->checkBoxIgnore0->setChecked(pSet->value("Ignore0").toBool());
+        ui->checkBoxIgnore1->setChecked(pSet->value("Ignore1").toBool());
+        ui->checkBoxIgnore2->setChecked(pSet->value("Ignore2").toBool());
+        ui->checkBoxSearch->setChecked(pSet->value("Search").toBool());
+        ui->comboBoxEngine->setCurrentIndex(pSet->value("SearchEngine").toInt());
 
-        connect(ui->checkBoxIgnore0,&QCheckBox::clicked,this,[=](bool clicked){ Set.setValue("Ignore0",clicked);});
-        connect(ui->checkBoxIgnore1,&QCheckBox::clicked,this,[=](bool clicked){ Set.setValue("Ignore1",clicked);});
-        connect(ui->checkBoxIgnore2,&QCheckBox::clicked,this,[=](bool clicked){ Set.setValue("Ignore2",clicked);});
-        connect(ui->checkBoxSearch,&QCheckBox::clicked,this,[=](bool clicked){ Set.setValue("Search",clicked);});
-        connect(ui->comboBoxEngine,&QComboBox::currentIndexChanged,this,[=](int index){ Set.setValue("SearchEngine",index); });
+        connect(ui->checkBoxIgnore0,&QCheckBox::clicked,this,[=](bool clicked){ pSet->setValue("Ignore0",clicked);});
+        connect(ui->checkBoxIgnore1,&QCheckBox::clicked,this,[=](bool clicked){ pSet->setValue("Ignore1",clicked);});
+        connect(ui->checkBoxIgnore2,&QCheckBox::clicked,this,[=](bool clicked){ pSet->setValue("Ignore2",clicked);});
+        connect(ui->checkBoxSearch,&QCheckBox::clicked,this,[=](bool clicked){ pSet->setValue("Search",clicked);});
+        connect(ui->comboBoxEngine,&QComboBox::currentIndexChanged,this,[=](int index){ pSet->setValue("SearchEngine",index); });
     }
     ui->tabWidget->setCurrentIndex(2);
 }
 
 void DialogCloudCmd::saveLoadCommand(bool save)
 {
-    QString strCmdFile = QApplication::applicationDirPath() + "/command.json";
+    QString strCmdFile = getUserDataPath() + "/command.json";
 
     QFile file(strCmdFile);
     if(save)
@@ -740,7 +741,7 @@ bool DialogCloudCmd::startupApp(const QString&command)
                     QScreen* primaryScreen = QGuiApplication::primaryScreen();
                     if(primaryScreen)
                     {
-                        QString strPath = QApplication::applicationDirPath() + "/CaptureFile";
+                        QString strPath = m_pMng->getCapturePath();
                         QDir CD(strPath);
                         if(!CD.exists()) CD.mkdir(strPath);
                         QString strTime = QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss");

@@ -36,6 +36,22 @@
 
 bool g_bCommentVer=true;
 
+QString getUserDataPath()
+{
+    QString strPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + QString("/AppData/Local/NMYStudio");
+    QDir DData(strPath);
+    if(!DData.exists())
+        DData.mkdir(strPath);
+    return strPath;
+}
+
+QSettings *getUserSetting()
+{
+    static QSettings Set(::getUserDataPath()+"/NMYPointSetting.ini",QSettings::IniFormat);
+    return &Set;
+}
+
+
 static QList<quint32> colors={0xFF0000,0x00FF00,0x0000FF,0xFFFFFF,0xFF8000,0x800080,0xFFFF00,0x00FFFF,0x000000};
 
 MainWindow::MainWindow(QWidget *parent)
@@ -65,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_pNoCnn = new DialogNoConnect(this);
 
     m_pTSet = new DialogTypeWord(this);
-    m_pCmd = new DialogCloudCmd(this);
+    m_pCmd  = new DialogCloudCmd(this);
     m_RecPad->setRelate(m_pCmd,m_pTSet);
 
     m_pDSet = new DialogDeviceSet();
@@ -75,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_pCmd->m_pWork = m_pHID;
     m_pDSet->m_pWork = m_pHID;
     m_pCmd->m_pPad = pFuncPad;
+    m_pCmd->m_pMng = m_pRMan;
 
     m_pBLE = new BleWorker(this);
     m_Health->m_Reader = m_pBLE;
@@ -277,12 +294,16 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButtonManager,&QPushButton::clicked,this,[=]{
         m_pRMan->show();
     });
+    connect(m_pRMan,&DialogManager::onRecord,this,[=](bool record){
+        ui->checkBoxRecord->click();
+    });
     connect(ui->checkBoxRecord,&QCheckBox::clicked,this,[=](bool checked){
+        QString strFile = m_pRMan->StartRecord(checked);
         if(checked)
         {
             m_RecPad->show();
             m_RecPad->setMode(4);
-            m_pHID->StarRecorFile(QString::asprintf("%d.wav",time(nullptr)));
+            m_pHID->StarRecorFile(strFile);
         }
         else
         {
@@ -366,8 +387,8 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(m_pHID,&CHidWorker::onDataIn,this,[=](quint8 *data,int len){
-        quint8 cmd = data[3];
-        m_bConnected=true;
+        quint8 cmd   = data[3];
+        m_bConnected = true;
         // 0c 4d 14 61 4d 4c 20 24 12 14 02 40 00 07 05 23 00 ce 5f 27 00 00 00 00 00 00 00 00 00 00 00 00
         // 10字节设备SN号
         // 1字节录音状态：1: 16k  0:8k
@@ -1103,6 +1124,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 
     if(m_pKBM) m_pKBM->DoStop();
+    trayIcon->hide();
 
     hide();
     ::exit(0);

@@ -168,7 +168,7 @@ color:white;font-size:14px;font-weight:600;</string>
       <widget class="QStackedWidget" name="stackedWidget0">
        <property name="geometry">
         <rect>
-         <x>130</x>
+         <x>124</x>
          <y>66</y>
          <width>600</width>
          <height>242</height>
@@ -903,7 +903,7 @@ background-image: url(:/images/jd.png);
       <widget class="QFrame" name="frameSetting">
        <property name="geometry">
         <rect>
-         <x>128</x>
+         <x>122</x>
          <y>422</y>
          <width>339</width>
          <height>24</height>
@@ -1014,7 +1014,7 @@ background-image: url(:/images/jd.png);
       <widget class="QStackedWidget" name="stackedWidget1">
        <property name="geometry">
         <rect>
-         <x>474</x>
+         <x>468</x>
          <y>320</y>
          <width>265</width>
          <height>126</height>
@@ -1724,7 +1724,7 @@ background-image: url(:/images/jd.png);
       <widget class="QFrame" name="frameShape">
        <property name="geometry">
         <rect>
-         <x>130</x>
+         <x>124</x>
          <y>318</y>
          <width>330</width>
          <height>62</height>
@@ -1981,7 +1981,7 @@ QPushButton:checked  {
       <widget class="QFrame" name="frameFunc">
        <property name="geometry">
         <rect>
-         <x>128</x>
+         <x>122</x>
          <y>14</y>
          <width>606</width>
          <height>48</height>
@@ -2161,7 +2161,7 @@ QPushButton:checked  {
       <widget class="QLabel" name="labelNotice">
        <property name="geometry">
         <rect>
-         <x>130</x>
+         <x>124</x>
          <y>318</y>
          <width>330</width>
          <height>34</height>
@@ -2181,7 +2181,7 @@ QPushButton:checked  {
       <widget class="QFrame" name="frameColor">
        <property name="geometry">
         <rect>
-         <x>130</x>
+         <x>124</x>
          <y>318</y>
          <width>330</width>
          <height>101</height>
@@ -2750,7 +2750,7 @@ QPushButton:checked  {
       <widget class="QLabel" name="labelContact">
        <property name="geometry">
         <rect>
-         <x>130</x>
+         <x>124</x>
          <y>316</y>
          <width>598</width>
          <height>110</height>

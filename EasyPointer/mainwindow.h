@@ -31,6 +31,9 @@ class DialogMKeySet;
 class DialogHealth;
 class DialogManager;
 
+QString getUserDataPath();
+QSettings *getUserSetting();
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
