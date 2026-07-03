@@ -136,14 +136,14 @@
            </size>
           </property>
           <property name="text">
-           <string>123456.mp3</string>
+           <string>None</string>
           </property>
          </widget>
         </item>
         <item row="0" column="2">
          <widget class="QLabel" name="labelFileTime">
           <property name="text">
-           <string>00:12:34</string>
+           <string>00:00</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignmentFlag::AlignCenter</set>

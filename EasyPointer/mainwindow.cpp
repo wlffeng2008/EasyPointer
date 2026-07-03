@@ -98,13 +98,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->labelColor->hide();
     ui->pushButton5->hide();
     //ui->pushButtonManager->hide();
-    //ui->pushButtonMKey->hide();
-    //ui->pushButtonHealth->hide();
+    ui->pushButtonMKey->hide();
+    ui->pushButtonHealth->hide();
 
     if(g_bCommentVer)
     {
         ui->labelSN->hide();
-        //ui->pushButton6->hide();
+        ui->pushButton6->hide();
     }
 
     QCoreApplication::setOrganizationName("NMY");

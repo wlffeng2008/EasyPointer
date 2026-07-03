@@ -159,6 +159,9 @@ color:white;font-size:14px;font-weight:600;</string>
     </item>
     <item>
      <widget class="QFrame" name="frameMain">
+      <property name="styleSheet">
+       <string notr="true">background-color: transparent;</string>
+      </property>
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
       </property>
@@ -1385,13 +1388,13 @@ background-image: url(:/images/jd.png);
               <property name="minimumSize">
                <size>
                 <width>24</width>
-                <height>16</height>
+                <height>40</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>24</width>
-                <height>16</height>
+                <height>40</height>
                </size>
               </property>
               <property name="cursor">
@@ -3069,7 +3072,7 @@ QPushButton:checked  {
       <item>
        <widget class="QLabel" name="label_18">
         <property name="text">
-         <string>软件版本：V1.0.1</string>
+         <string>软件版本：V1.0.3</string>
         </property>
        </widget>
       </item>

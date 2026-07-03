@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 #define AppName "NMY Pointer"
 #define AppId "E4CA0A60-4573-483B-8E56-884F20260908"
-#define AppVerName "NMY Pointer V1.0.1"
+#define AppVerName "NMY Pointer V1.0.3"
 #define AppExe "NmyStudio.exe"
 
 [Setup]
@@ -12,7 +12,10 @@
 AppId={#AppId}
 AppName={#AppName}
 AppVerName={#AppVerName}
-AppPublisher=深圳市诺咪雅电子商务有限公司
+;AppPublisher=深圳市诺咪雅电子商务有限公司
+AppPublisher=NMY
+AppVersion=2026.07.04
+VersionInfoVersion=2026.07.04
 AppPublisherURL=http://www.noomya.cn/
 AppSupportURL=http://www.noomya.cn/
 AppUpdatesURL=http://www.noomya.cn/
@@ -20,8 +23,8 @@ DefaultDirName={commonappdata}\NmyStudio
 DefaultGroupName={#AppName}
 AllowNoIcons=yes
 UsePreviousAppDir=yes
-OutputDir=D:\EasyPointer
-OutputBaseFilename=NmyStudioInstaller-V1.0.1
+OutputDir=..\
+OutputBaseFilename=NmyStudioInstaller-V1.0.3
 SetupIconFile=Nmy.ico
 Compression=lzma
 SolidCompression=yes
