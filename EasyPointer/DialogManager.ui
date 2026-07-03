@@ -82,14 +82,21 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <widget class="QTableView" name="tableView"/>
+    <widget class="QTableView" name="tableView">
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+     </property>
+    </widget>
    </item>
    <item row="2" column="0">
     <widget class="QFrame" name="frameCtrl">
      <property name="styleSheet">
       <string notr="true">background-color:rgb(230, 230, 255)</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0">
+     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="20,5">
       <property name="spacing">
        <number>40</number>
       </property>
@@ -134,7 +141,7 @@
          </widget>
         </item>
         <item row="0" column="2">
-         <widget class="QLabel" name="label_5">
+         <widget class="QLabel" name="labelFileTime">
           <property name="text">
            <string>00:12:34</string>
           </property>
@@ -151,12 +158,15 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QSlider" name="horizontalSlider">
+         <widget class="QSlider" name="horizontalSliderPrg">
           <property name="minimumSize">
            <size>
             <width>0</width>
             <height>30</height>
            </size>
+          </property>
+          <property name="maximum">
+           <number>100</number>
           </property>
           <property name="orientation">
            <enum>Qt::Orientation::Horizontal</enum>
@@ -185,6 +195,9 @@
             <height>30</height>
            </size>
           </property>
+          <property name="maximum">
+           <number>100</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Orientation::Horizontal</enum>
           </property>
@@ -206,7 +219,7 @@
         </property>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1">
-          <item>
+          <item alignment="Qt::AlignmentFlag::AlignRight">
            <widget class="QLabel" name="label_6">
             <property name="text">
              <string>录音:</string>

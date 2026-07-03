@@ -71,7 +71,6 @@ MainWindow::MainWindow(QWidget *parent)
         //qDebug() << "鼠标事件：" << message;
     });
 
-
     pFuncPad  = new DialogBoard();
     m_ModeTip = new DialogTip();
     m_RecPad  = new DialogRecord();
@@ -743,9 +742,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->setStyleSheet(R"(
             #MainWindow{ background-color:transparent; color:black; }
-            QLabel { color:white;font-size:16px;font-weight:600;}
-            QCheckBox { color:white;font-size:16px;font-weight:600;}
-            QPushButton{ color:white;font-size:16px;font-weight:600;}
+            QLabel { color:white;font-size:14px;font-weight:600;}
+            QCheckBox { color:white;font-size:14px;font-weight:600;}
+            QPushButton{ color:white;font-size:14px;font-weight:600;}
     )");
 }
 

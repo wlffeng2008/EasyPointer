@@ -48,7 +48,18 @@ private:
     bool m_bRecording = false;
     QTimer *m_pTMRec = nullptr;
 
-    void AddRecord(const QString&strFile,quint32 duration);
+    qint64 m_nDur = 0 ;
+    int m_nSelRow = 0 ;
+    int m_nPlayRow = -1 ;
+    int m_nItemCount = 0 ;
+
+    bool m_bPlaying = false;
+    bool m_bPaused = false;
+
+    void playNext(int nOffset);
+
+    void SaveLoadRecord(bool save=true);
+    void AddRecord(const QString&strFile,quint32 duration,bool newOne=true);
     QStandardItemModel *m_model=nullptr;
 };
 

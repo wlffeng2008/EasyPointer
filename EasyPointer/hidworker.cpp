@@ -650,10 +650,11 @@ void CHidWorker::StarRecorFile(const QString&strFile)
             return;
     }
 
-    m_strTemp = strFile +"-temp.pcm";
+    m_strTemp = strFile + "-temp.pcm";
     m_RecFile.setFileName(m_strTemp);
 
     m_strFile = strFile;
+    m_strFile.replace(".mp3",".wav");
     if(m_RecFile.open(QIODevice::WriteOnly))
     {
         m_recordTime = time(nullptr);
@@ -714,7 +715,7 @@ bool CHidWorker::startCapture()
     if(!m_audioSource)
         return false;
     m_audioDevice = m_audioSource->start();
-    m_audioSource->setBufferSize(1280);  // 建议每 40ms 读一次 → 16000 * 2 * 0.04 = 1280 bytes
+    m_audioSource->setBufferSize(1280);
     connect(m_audioDevice, &QIODevice::readyRead, this, [=]{
         QByteArray pcm = m_audioDevice->readAll();
         emit onMicPcmData(pcm);
