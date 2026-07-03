@@ -14,7 +14,6 @@ AppName={#AppName}
 AppVerName={#AppVerName}
 ;AppPublisher=深圳市诺咪雅电子商务有限公司
 AppPublisher=NMY
-AppVersion=2026.07.04
 VersionInfoVersion=2026.07.04
 AppPublisherURL=http://www.noomya.cn/
 AppSupportURL=http://www.noomya.cn/
