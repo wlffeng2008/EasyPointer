@@ -10,6 +10,7 @@
 #include <QPainterPath>
 #include <QApplication>
 #include <QMessageBox>
+#include <QListView>
 
 #include "DialogBoard.h"
 #include "DialogTypeWord.h"
@@ -70,6 +71,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_pKBM,&KeyBoardMonitor::onMousepress,this,[=](quint32 message,quint32 nMkey,bool pressed,bool bDbClk){
         //qDebug() << "鼠标事件：" << message;
     });
+
+    ui->comboBoxEffect->setView(new QListView());
+    ui->comboBoxEnlarge->setView(new QListView());
 
     pFuncPad  = new DialogBoard();
     m_ModeTip = new DialogTip();

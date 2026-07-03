@@ -160,7 +160,7 @@ color:white;font-size:14px;font-weight:600;</string>
     <item>
      <widget class="QFrame" name="frameMain">
       <property name="styleSheet">
-       <string notr="true">background-color: transparent;</string>
+       <string notr="true">#frameMain{background-color: transparent;}</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
@@ -3139,9 +3139,9 @@ QPushButton:checked  {
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupSpot"/>
   <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupCount"/>
+  <buttongroup name="buttonGroupSpot"/>
   <buttongroup name="buttonGroupShape"/>
   <buttongroup name="buttonGroupColor"/>
  </buttongroups>
