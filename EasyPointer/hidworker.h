@@ -45,6 +45,7 @@ public:
     void sendKey(quint8 key1, quint8 key0=0);
     void sendCmbKey(quint16 key);
     void setTime();
+    void userNew24G(bool use);
 
     void close();
 
@@ -74,8 +75,9 @@ private:
     quint16 m_VID = 0x248A;
     quint16 m_PID = 0x60AB;
 
-    bool m_bRecord=false;
     bool m_bOutPlay=false;
+    bool m_bRecord=false;
+    bool m_bNew24G=false;
 
     bool m_bEndWork = false;
     void sendCmd(quint8 *pCmd);

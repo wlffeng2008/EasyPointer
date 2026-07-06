@@ -513,7 +513,7 @@ void CHidWorker::setSample(quint8 index)
 
 void CHidWorker::sendKey(quint8 key1,quint8 key0)
 {
-    quint8 szCmd[33]={0x0C,0x4D,0x06,0x20,key0,key1,0x4C};
+    quint8 szCmd[33]={0x0C,0x4D,0x06, (quint8)(m_bNew24G ? 0xB8: 0x20),key0,key1,0x4C};
     sendCmd(szCmd);
 }
 
@@ -521,7 +521,7 @@ void CHidWorker::sendCmbKey(quint16 key)
 {
     quint8 key1 = (key&0xFF);
     quint8 key0 = (key&0xFF00)>>8;
-    quint8 szCmd[33]={0x0C,0x4D,0x06,0x20,key0,key1,0x4C};
+    quint8 szCmd[33]={0x0C,0x4D,0x06, (quint8)(m_bNew24G ? 0xB8: 0x20),key0,key1,0x4C};
     sendCmd(szCmd);
 }
 
@@ -572,6 +572,11 @@ void CHidWorker::changeRecord()
         startRecord();
     else
         stopRecord();
+}
+
+void CHidWorker::userNew24G(bool use)
+{
+    m_bNew24G = use;
 }
 
 /*
@@ -706,7 +711,7 @@ bool CHidWorker::startCapture()
     QAudioDevice inputDevice = QMediaDevices::defaultAudioInput();
     if(inputDevice.isNull())
         return false;
-
+    qDebug() << inputDevice.description();
     QAudioFormat fmt = inputDevice.preferredFormat();
     fmt.setSampleRate(16000);
     fmt.setChannelCount(1);

@@ -183,10 +183,11 @@ DialogManager::DialogManager(QWidget *parent)
             if(m_bPlaying) return;
             if(index.column() == 3)
             {
-                m_model->removeRow(index.row());
                 QFile::remove(getRecordPath() + "/" + m_model->item(index.row(),0)->text());
+                m_model->removeRow(index.row());
+
                 SaveLoadRecord();
-                m_nSelRow = true;
+                m_nSelRow = -1;
                 return;
             }
             m_nSelRow = index.row();
@@ -196,6 +197,7 @@ DialogManager::DialogManager(QWidget *parent)
         connect(ui->tableView,&QTableView::doubleClicked,this,[=](const QModelIndex &index){
             if(m_bPlaying) return;
             m_nSelRow = index.row();
+            m_nPlayRow= index.row();
             ui->labelPlayFile->setText(m_model->item(index.row(),0)->text());
             ui->labelFileTime->setText(m_model->item(index.row(),1)->text());
             playNext(0);

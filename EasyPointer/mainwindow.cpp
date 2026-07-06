@@ -118,7 +118,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButtonExit,&QPushButton::clicked,this,[=]{ close(); });
     connect(ui->pushButtonMin,&QPushButton::clicked,this,[=]{
         m_pNoCnn->hide();
-        this->showMinimized();
+        showMinimized();
     });
 
     connect(ui->buttonGroupMain,&QButtonGroup::idClicked,this,[=](int id){
@@ -313,6 +313,10 @@ MainWindow::MainWindow(QWidget *parent)
             m_RecPad->hide();
             m_pHID->StopRecorFile();
         }
+    });
+    connect(ui->checkBoxRecord,&QCheckBox::clicked,this,[=](bool checked){
+        updateValue();
+        saveLoadParams();
     });
 
     connect(m_RecPad,&DialogRecord::onFlushText,this,[=](const QString&text){
@@ -755,6 +759,7 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::saveLoadParams(bool save)
 {
     if(m_bLoading) return;
+
     m_set->beginGroup("settings");
     if(save)
     {
@@ -775,6 +780,7 @@ void MainWindow::saveLoadParams(bool save)
         m_set->setValue("showTime",ui->lineEditSetTime->text());
         m_set->setValue("showIndex",m_show);
         m_set->setValue("showVoice",m_voice);
+        m_set->setValue("new24G",ui->checkBoxNew24G->isChecked());
     }
     else
     {
@@ -788,6 +794,7 @@ void MainWindow::saveLoadParams(bool save)
         ui->horizontalSlider7->setValue(m_set->value("opacity3",80).toInt());
         ui->lineEditSetTime->setText(m_set->value("showTime","90").toString());
         ui->checkBoxBlack->setChecked(m_set->value("showBlack",false).toBool());
+        ui->checkBoxNew24G->setChecked(m_set->value("new24G",false).toBool());
         ui->comboBoxEnlarge->setCurrentIndex(m_set->value("enlarge",3).toInt());
         m_iColor0 = m_set->value("icolor0").toInt();
         m_iColor3 = m_set->value("icolor3").toInt();
@@ -807,6 +814,7 @@ void MainWindow::saveLoadParams(bool save)
         });
     }
     m_set->endGroup();
+    m_pHID->userNew24G(ui->checkBoxNew24G->isChecked());
 }
 
 MainWindow::~MainWindow()
