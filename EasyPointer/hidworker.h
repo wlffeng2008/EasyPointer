@@ -54,6 +54,7 @@ public:
 
     void StarRecorFile(const QString&strFile);
     void StopRecorFile();
+    bool m_bGotSN = false;
 
 protected:
     void run() override;

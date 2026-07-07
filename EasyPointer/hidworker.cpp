@@ -295,7 +295,9 @@ CHidWorker::CHidWorker()
     connect(tmReadSN,&QTimer::timeout,this,[=]{
         if(!m_bRecord)
         {
-            readSN();
+            if(!m_bGotSN)
+                readSN();
+
             QThread::msleep(20);
             askBattery();
         }
@@ -393,6 +395,7 @@ void CHidWorker::run()
 
         emit onHIDConnect(mode,true);
         qDebug() << "Open HID:"<< m_strDevPath;
+        m_bGotSN = false;
 
         readSN();
         QThread::msleep(20);

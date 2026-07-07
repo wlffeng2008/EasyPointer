@@ -618,6 +618,8 @@ MainWindow::MainWindow(QWidget *parent)
                 ui->labelSN->setText(strSN);
 
                 stBuf = data + 16;
+
+                m_pHID->m_bGotSN = true;
             }
 
             if(data[2] == 0x08)
