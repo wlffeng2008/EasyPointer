@@ -2206,6 +2206,9 @@ QPushButton:checked  {
          <height>101</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">#frameColor{background-color: transparent;}</string>
+       </property>
        <property name="frameShape">
         <enum>QFrame::Shape::StyledPanel</enum>
        </property>
@@ -3155,10 +3158,10 @@ QPushButton:checked  {
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupSpot"/>
   <buttongroup name="buttonGroupShape"/>
   <buttongroup name="buttonGroupColor"/>
-  <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupCount"/>
-  <buttongroup name="buttonGroupSpot"/>
+  <buttongroup name="buttonGroupMain"/>
  </buttongroups>
 </ui>
