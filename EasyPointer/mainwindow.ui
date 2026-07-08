@@ -181,7 +181,7 @@ color:white;font-size:14px;font-weight:600;</string>
         <string notr="true">#page01{background-color: rgb(170, 255, 255); } </string>
        </property>
        <property name="currentIndex">
-        <number>4</number>
+        <number>5</number>
        </property>
        <widget class="QWidget" name="page00">
         <property name="styleSheet">
@@ -1746,8 +1746,11 @@ background-image: url(:/images/jd.png);
          <x>124</x>
          <y>318</y>
          <width>330</width>
-         <height>62</height>
+         <height>61</height>
         </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">#frameShape{background-color: transparent;}</string>
        </property>
        <property name="frameShape">
         <enum>QFrame::Shape::StyledPanel</enum>
@@ -2203,7 +2206,7 @@ QPushButton:checked  {
          <x>124</x>
          <y>318</y>
          <width>330</width>
-         <height>101</height>
+         <height>100</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -2216,6 +2219,9 @@ QPushButton:checked  {
         <enum>QFrame::Shadow::Raised</enum>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1,0,0">
+        <property name="spacing">
+         <number>10</number>
+        </property>
         <property name="leftMargin">
          <number>0</number>
         </property>
@@ -3158,10 +3164,10 @@ QPushButton:checked  {
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupSpot"/>
   <buttongroup name="buttonGroupShape"/>
+  <buttongroup name="buttonGroupMain"/>
+  <buttongroup name="buttonGroupSpot"/>
   <buttongroup name="buttonGroupColor"/>
   <buttongroup name="buttonGroupCount"/>
-  <buttongroup name="buttonGroupMain"/>
  </buttongroups>
 </ui>
