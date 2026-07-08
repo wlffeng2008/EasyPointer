@@ -1786,6 +1786,9 @@ background-image: url(:/images/jd.png);
           <property name="spacing">
            <number>10</number>
           </property>
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
           <item>
            <widget class="QPushButton" name="pushButton_Shape0">
             <property name="minimumSize">
