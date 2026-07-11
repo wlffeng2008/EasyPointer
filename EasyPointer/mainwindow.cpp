@@ -35,7 +35,7 @@
 #include <QScreen>
 #include <QApplication>
 
-bool g_bCommentVer=true;
+bool g_bCommentVer=false;
 
 QString getUserDataPath()
 {
@@ -102,8 +102,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->labelColor->hide();
     ui->pushButton5->hide();
     //ui->pushButtonManager->hide();
-    ui->pushButtonMKey->hide();
-    ui->pushButtonHealth->hide();
+    //ui->pushButtonMKey->hide();
+    //ui->pushButtonHealth->hide();
 
     if(g_bCommentVer)
     {

@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
     a.setStyleSheet(R"(
 
-    * { font-size: 14px; font-weight: 400;}
+    * { font-size: 14px; font-weight: 400; color:#202020;}
 
     QTableView{ border: 1px solid gray; background-color: rgb(226, 240, 255) ; gridline-color: gray;}
     QTableView::Item{padding-left:2px; background-color: rgb(226, 240, 255) ; border-top: 0px solid gray; border-bottom: 1px solid transparent;border-right: 0px solid gray;}
@@ -52,7 +52,20 @@ int main(int argc, char *argv[])
     QSlider::handle:pressed { background: #E0E0E0; border-color: #2D7FDD; }
 
     QSlider::handle:horizontal:disabled { border: 2px solid #B3B3B3; }
-    QLabel#labelLarge{color:white; font-size: 24px; font-weight:600;}
+    QLabel#labelLarge{color:white; font-size: 24px; font-weight:600;color:#202020;}
+
+    QMessageBox QPushButton {
+            border: 1px solid #6C9F50;
+            background-color: #6329B6;
+            color: white;
+            border-radius: 8px;
+            padding: 2px 2px;
+            min-width: 80px;
+            min-height: 24px; }
+
+    QMessageBox {min-width: 400px; min-height: 150px;}
+    QMessageBox QLabel#qt_msgbox_label{min-width: 320px; min-height: 60px; max-width: 450px; max-height: 520px; qproperty-alignment: AlignLeft; white-space: pre-wrap;font: bold 12px 微软雅黑;}
+    QMessageBox QLabel#qt_msgboxex_icon_label{ min-width: 32px; min-height: 32px; max-width: 32px; max-height: 32px;qproperty-alignment: AlignTop;}
 
     QCheckBox::indicator:unchecked {
             width: 18px;
