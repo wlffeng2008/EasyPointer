@@ -26,7 +26,7 @@
    <string>录音管理</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">QPushButton{background-color: #ef99ec; min-height:20px;}</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,1,0" rowminimumheight="0,1,0">
    <item row="0" column="0">
