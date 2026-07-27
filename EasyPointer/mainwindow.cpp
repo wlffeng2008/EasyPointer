@@ -1055,14 +1055,17 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             p.setPen(LinePen);
 
             qreal fStep = rc.width()/20.0;
-
             QPoint A(20,my);
+
+            QPainterPath path;
+            path.moveTo(A);
+
             for(int i=1; i<20; i++)
             {
                 QPoint B(10 + i*fStep, my + rand()%50 * (rand() % 2 ? -1 : 1));
-                p.drawLine(A,B);
-                A = B;
+                path.lineTo(B);
             }
+            p.drawPath(path);
         }
     }
 

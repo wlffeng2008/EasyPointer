@@ -184,17 +184,24 @@ void DialogBoard::paintEvent(QPaintEvent *event)
         for(const linePoints &line:std::as_const(m_lines))
         {
             int count = line.count();
-            for(int i=0; i<count-1; i++)
+            QPainterPath path;
+            path.moveTo(line[0]);
+            for(int i=1; i<count; i++)
             {
-                painter.drawLine(line[i],line[i+1]);
+                path.lineTo(line[i]);
             }
+            painter.drawPath(path);
         }
 
         int count = m_record.count();
-        for(int i=0; i<count-1; i++)
+
+        QPainterPath path;
+        path.moveTo(m_record[0]);
+        for(int i=1; i<count; i++)
         {
-            painter.drawLine(m_record[i],m_record[i+1]);
+            path.lineTo(m_record[i]);
         }
+        painter.drawPath(path);
     }
     break;
 
