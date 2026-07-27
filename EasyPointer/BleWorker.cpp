@@ -1,5 +1,5 @@
 #include "BleWorker.h"
-
+#include <QtGlobal>
 
 bool isBluetoothAvailable()
 {
@@ -152,13 +152,13 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
             qDebug() << value.toHex(' ').toUpper();
         });
 
-        connect(m_service0, &QLowEnergyService::descriptorWritten,[=](QLowEnergyDescriptor,const QByteArray&value){
+        connect(m_service0, &QLowEnergyService::descriptorWritten, this, [=](QLowEnergyDescriptor,const QByteArray&value){
             qDebug().noquote() <<"描述符写入成功!"  << value.toHex();  });
 
-        connect(m_service0, &QLowEnergyService::errorOccurred, [=](QLowEnergyService::ServiceError error){
+        connect(m_service0, &QLowEnergyService::errorOccurred, this, [=](QLowEnergyService::ServiceError error){
             qDebug().noquote() << error;  });
 
-        connect(m_service0, &QLowEnergyService::characteristicRead,[=](const QLowEnergyCharacteristic &info, const QByteArray &value){
+        connect(m_service0, &QLowEnergyService::characteristicRead,this, [=](const QLowEnergyCharacteristic &info, const QByteArray &value){
             qDebug().noquote() << "Read1 <=:" << value.toHex(' ').toUpper() << value.data();  });
 
         m_service0->discoverDetails();
@@ -209,13 +209,13 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
             qDebug() << value.toHex(' ').toUpper();
         });
 
-        connect(m_service1, &QLowEnergyService::descriptorWritten,[=](QLowEnergyDescriptor,const QByteArray&value){
+        connect(m_service1, &QLowEnergyService::descriptorWritten,this, [=](QLowEnergyDescriptor,const QByteArray&value){
             qDebug().noquote() <<"描述符写入成功!"   << value.toHex();  });
 
-        connect(m_service1, &QLowEnergyService::errorOccurred, [=](QLowEnergyService::ServiceError error){
+        connect(m_service1, &QLowEnergyService::errorOccurred, this, [=](QLowEnergyService::ServiceError error){
             qDebug().noquote() << error;  });
 
-        connect(m_service1, &QLowEnergyService::characteristicRead,[=](const QLowEnergyCharacteristic &info, const QByteArray &value){
+        connect(m_service1, &QLowEnergyService::characteristicRead,this, [=](const QLowEnergyCharacteristic &info, const QByteArray &value){
             qDebug().noquote() << "Read3 <=:" << value.toHex(' ').toUpper() << value.data();  });
 
         m_service1->discoverDetails();
@@ -236,7 +236,6 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
 
         // 监听服务状态变化
         connect(m_service2,&QLowEnergyService::stateChanged ,this,[=](QLowEnergyService::ServiceState){
-
             QList<QLowEnergyCharacteristic> charList = m_service1->characteristics();
             for(const QLowEnergyCharacteristic &bleChar: std::as_const(charList))
             {
@@ -259,21 +258,20 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
                     m_write2 = bleChar;
                 }
             }
-
         });
 
         // 监听服务的characteristic变化，有数据传来
-        connect(m_service2,&QLowEnergyService::characteristicChanged, this,[=](const QLowEnergyCharacteristic &info, const QByteArray &value){
+        connect(m_service2,&QLowEnergyService::characteristicChanged, this, [=](const QLowEnergyCharacteristic &info, const QByteArray &value){
             qDebug() << value.toHex(' ').toUpper();
         });
 
         connect(m_service2, &QLowEnergyService::descriptorWritten,[=](QLowEnergyDescriptor,const QByteArray&value){
             qDebug().noquote() <<"描述符写入成功!"   << value.toHex();  });
 
-        connect(m_service2, &QLowEnergyService::error, [=](QLowEnergyService::ServiceError error){
+        connect(m_service2, &QLowEnergyService::errorOccurred, this, [=](QLowEnergyService::ServiceError error){
             qDebug().noquote() << error;  });
 
-        connect(m_service2, &QLowEnergyService::characteristicRead,[=](const QLowEnergyCharacteristic &info, const QByteArray &value){
+        connect(m_service2, &QLowEnergyService::characteristicRead,this, [=](const QLowEnergyCharacteristic &info, const QByteArray &value){
             qDebug().noquote() << "Read2 <=:" << value.toHex(' ').toUpper() << value.data();  });
 
         m_service2->discoverDetails();
