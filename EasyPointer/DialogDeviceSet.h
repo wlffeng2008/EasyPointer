@@ -15,7 +15,7 @@ class DialogDeviceSet : public QDialog
 public:
     explicit DialogDeviceSet(QWidget *parent = nullptr);
     ~DialogDeviceSet();
-    CHidWorker *m_pWork = nullptr;
+    HidWorker *m_pWork = nullptr;
 private slots:
     void on_pushButtonSendKey_clicked();
     void on_pushButtonMonitor_clicked();

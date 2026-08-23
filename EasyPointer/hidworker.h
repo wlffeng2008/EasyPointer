@@ -19,13 +19,13 @@
 bool PCMFile2WAVFile(const QString&strPCMFile,const QString&strWAVFile);
 bool WAVFile2MP3File(const QString&strWAVFile,const QString&strMP3File);
 
-class CHidWorker : public QThread
+class HidWorker : public QThread
 {
     Q_OBJECT
 
 public:
-    CHidWorker();
-    ~CHidWorker();
+    HidWorker();
+    ~HidWorker();
     void readSN();
     void setDPI(quint8 index=1);
     void setURL(bool on=true);

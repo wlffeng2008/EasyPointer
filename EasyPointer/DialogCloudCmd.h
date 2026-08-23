@@ -22,7 +22,7 @@ public:
 
     bool startupApp(const QString&command);
 
-    CHidWorker *m_pWork = nullptr;
+    HidWorker *m_pWork = nullptr;
     DialogBoard *m_pPad = nullptr;
     DialogManager *m_pMng= nullptr;
 

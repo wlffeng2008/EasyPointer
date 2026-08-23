@@ -159,7 +159,7 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
             qDebug().noquote() << error;  });
 
         connect(m_service0, &QLowEnergyService::characteristicRead,[=](const QLowEnergyCharacteristic &info, const QByteArray &value){
-            qDebug().noquote() << "Read <=:" << value.toHex(' ').toUpper() << value.data();  });
+            qDebug().noquote() << "Read1 <=:" << value.toHex(' ').toUpper() << value.data();  });
 
         m_service0->discoverDetails();
     }
@@ -216,7 +216,7 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
             qDebug().noquote() << error;  });
 
         connect(m_service1, &QLowEnergyService::characteristicRead,[=](const QLowEnergyCharacteristic &info, const QByteArray &value){
-            qDebug().noquote() << "Read <=:" << value.toHex(' ').toUpper() << value.data();  });
+            qDebug().noquote() << "Read3 <=:" << value.toHex(' ').toUpper() << value.data();  });
 
         m_service1->discoverDetails();
     }
@@ -270,11 +270,11 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
         connect(m_service2, &QLowEnergyService::descriptorWritten,[=](QLowEnergyDescriptor,const QByteArray&value){
             qDebug().noquote() <<"描述符写入成功!"   << value.toHex();  });
 
-        connect(m_service2, &QLowEnergyService::errorOccurred, [=](QLowEnergyService::ServiceError error){
+        connect(m_service2, &QLowEnergyService::error, [=](QLowEnergyService::ServiceError error){
             qDebug().noquote() << error;  });
 
         connect(m_service2, &QLowEnergyService::characteristicRead,[=](const QLowEnergyCharacteristic &info, const QByteArray &value){
-            qDebug().noquote() << "Read <=:" << value.toHex(' ').toUpper() << value.data();  });
+            qDebug().noquote() << "Read2 <=:" << value.toHex(' ').toUpper() << value.data();  });
 
         m_service2->discoverDetails();
     }
@@ -321,7 +321,6 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
 一、	采集控制
 开启采集  向uuid2写入0x01
 停止采集  向uuid2写入0x02
-
 
 static quint8 uuid0[]={0x9E, 0xCA, 0xDC, 0x24, 0x0E, 0xE5, 0xA9, 0xE0, 0x93, 0xF3, 0xA3, 0xB5, 0x01, 0x00, 0x40, 0x6E};
 */

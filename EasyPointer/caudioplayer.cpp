@@ -46,8 +46,14 @@ void CAudioPlayer::run()
         format.setSampleFormat(QAudioFormat::Int16); // 16位PCM
 
         QAudioDevice audioDevice = QMediaDevices::defaultAudioOutput();
+        qDebug() << audioDevice.description();
         QAudioSink audioSink(audioDevice, format);
         QIODevice *pDevice = audioSink.start();
+        if(!pDevice)
+        {
+            qCritical() << "无法播放声音，" ;
+        }
+
         audioSink.setVolume(0.99);
         audioSink.setBufferSize(32000);
         m_bset = false;
@@ -71,7 +77,7 @@ void CAudioPlayer::run()
             pDevice->write(data);
             pDevice->waitForBytesWritten(100);
         }
-        pDevice->close();
+        if(pDevice) pDevice->close();
         audioSink.stop();
     }
 }

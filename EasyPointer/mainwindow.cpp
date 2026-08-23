@@ -90,7 +90,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_pDSet = new DialogDeviceSet();
     m_pMSet = new DialogMKeySet();
 
-    m_pHID = new CHidWorker();
+    m_pHID = new HidWorker();
     m_pCmd->m_pWork = m_pHID;
     m_pDSet->m_pWork = m_pHID;
     m_pCmd->m_pPad = pFuncPad;
@@ -323,9 +323,9 @@ MainWindow::MainWindow(QWidget *parent)
         m_pCmd->startupApp(text);
     });
 
-    connect(m_pHID,&CHidWorker::onHIDConnect,this,[=](int nMode,bool connected){
+    connect(m_pHID,&HidWorker::onHIDConnect,this,[=](int nMode,bool connected){
         m_bConnected = connected;
-        qDebug() << "CHidWorker::onHIDConnect: " << nMode << connected;
+        qDebug() << "HidWorker::onHIDConnect: " << nMode << connected;
         if(connected)
         {
             ui->labelConnect->setPixmap(QPixmap(nMode == 1 ? ":/images/2.4g.png" : ":/images/blue.png").scaled(24,24));
@@ -347,7 +347,7 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    connect(m_pHID,&CHidWorker::onDevPcmData,this,[=](const QByteArray&pcm){
+    connect(m_pHID,&HidWorker::onDevPcmData,this,[=](const QByteArray&pcm){
         if(m_nModeS2 == 255)
         {
             m_pHID->stopRecord();
@@ -363,7 +363,7 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    connect(m_pHID,&CHidWorker::onMicPcmData,this,[=](const QByteArray&pcm){
+    connect(m_pHID,&HidWorker::onMicPcmData,this,[=](const QByteArray&pcm){
         m_RecPad->writePCM(pcm);
     });
 
@@ -393,7 +393,7 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    connect(m_pHID,&CHidWorker::onDataIn,this,[=](quint8 *data,int len){
+    connect(m_pHID,&HidWorker::onDataIn,this,[=](quint8 *data,int len){
         quint8 cmd   = data[3];
         m_bConnected = true;
         // 0c 4d 14 61 4d 4c 20 24 12 14 02 40 00 07 05 23 00 ce 5f 27 00 00 00 00 00 00 00 00 00 00 00 00

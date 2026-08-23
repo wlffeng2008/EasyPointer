@@ -283,7 +283,7 @@ void adpcm_to_pcm (signed short *ps, signed short *pd, int len)
 
 }
 
-CHidWorker::CHidWorker()
+HidWorker::HidWorker()
 {
     m_pDev = nullptr;
     QTimer::singleShot(200,this,[=]{
@@ -304,7 +304,7 @@ CHidWorker::CHidWorker()
     });
 }
 
-CHidWorker::~CHidWorker()
+HidWorker::~HidWorker()
 {
     m_pAPlayer->forceExit();
     m_bEndWork = true;
@@ -312,20 +312,20 @@ CHidWorker::~CHidWorker()
     terminate();
 }
 
-void CHidWorker::close()
+void HidWorker::close()
 {
     if(m_pDev)
         hid_close(m_pDev);
     m_pDev = nullptr;
 }
 
-void CHidWorker::setHidVIDPID(quint16 VID, quint16 PID)
+void HidWorker::setHidVIDPID(quint16 VID, quint16 PID)
 {
     m_VID = VID;
     m_PID = PID;
 }
 
-void CHidWorker::run()
+void HidWorker::run()
 {
     QThread::msleep(200);
     emit onHIDConnect(1,false);
@@ -459,7 +459,7 @@ void CHidWorker::run()
     }
 }
 
-void CHidWorker::sendCmd(quint8 *pCmd)
+void HidWorker::sendCmd(quint8 *pCmd)
 {
     if(!m_pDev)
         return;
@@ -469,58 +469,58 @@ void CHidWorker::sendCmd(quint8 *pCmd)
     hid_write(m_pDev,pCmd,32);
 }
 
-void CHidWorker::hearBeat()
+void HidWorker::hearBeat()
 {
     quint8 szCmd[33]={0x0C,0x4D,0x05,0x10,00,0x4C};
     sendCmd(szCmd);
 }
 
-void CHidWorker::readSN()
+void HidWorker::readSN()
 {
     quint8 szCmd[33]={0x0C,0x4D,0x01,0x61,00,0x4C};
     sendCmd(szCmd);
 }
 
-void CHidWorker::setMouse(bool on)
+void HidWorker::setMouse(bool on)
 {
     quint8 nSet = on ? 0xB0 : 0xB1;
     quint8 szCmd[33]={0x0C,0x4D,0x05,nSet,00,0x4C};
     sendCmd(szCmd);
 }
 
-void CHidWorker::setLaser(bool on)
+void HidWorker::setLaser(bool on)
 {
     quint8 nSet = on ? 0xB4 : 0xB5;
     quint8 szCmd[33]={0x0C,0x4D,0x05,nSet,00,0x4C};
     sendCmd(szCmd);
 }
 
-void CHidWorker::setDPI(quint8 index) //1-3
+void HidWorker::setDPI(quint8 index) //1-3
 {
     quint8 szCmd[33]={0x0C,0x4D,0x05,0x68,index,0x4C};
     sendCmd(szCmd);
 }
 
-void CHidWorker::setURL(bool on)
+void HidWorker::setURL(bool on)
 {
     quint8 nSet = on ? 0x66 : 0x67;
     quint8 szCmd[33]={0x0C,0x4D,0x05,nSet,00,0x4C};
     sendCmd(szCmd);
 }
 
-void CHidWorker::setSample(quint8 index)
+void HidWorker::setSample(quint8 index)
 {
     quint8 szCmd[33]={0x0C,0x4D,0x05,0x6D,index,0x4C};
     sendCmd(szCmd);
 }
 
-void CHidWorker::sendKey(quint8 key1,quint8 key0)
+void HidWorker::sendKey(quint8 key1,quint8 key0)
 {
     quint8 szCmd[33]={0x0C,0x4D,0x06, (quint8)(m_bNew24G ? 0xB8: 0x20),key0,key1,0x4C};
     sendCmd(szCmd);
 }
 
-void CHidWorker::sendCmbKey(quint16 key)
+void HidWorker::sendCmbKey(quint16 key)
 {
     quint8 key1 = (key&0xFF);
     quint8 key0 = (key&0xFF00)>>8;
@@ -528,40 +528,40 @@ void CHidWorker::sendCmbKey(quint16 key)
     sendCmd(szCmd);
 }
 
-void CHidWorker::setOnline(bool on)
+void HidWorker::setOnline(bool on)
 {
     quint8 nSet = on ? 0x66 : 0x67;
     quint8 szCmd[33]={0x0C,0x4D,0x05,nSet,0,0x4C};
     sendCmd(szCmd);
 }
 
-void CHidWorker::askBattery()
+void HidWorker::askBattery()
 {
     quint8 szCmd[33]={0x0C,0x4D,0x02,0x90,00,0x4C};
     sendCmd(szCmd);
 }
 
-void CHidWorker::askStatus()
+void HidWorker::askStatus()
 {
     quint8 szCmd[33]={0x0C,0x4D,0x02,0x69,00,0x4C};
     sendCmd(szCmd);
 }
 
-void CHidWorker::startRecord()
+void HidWorker::startRecord()
 {
     m_bRecord=true;
     quint8 szCmd[33]={0x0C,0x4D,0x05,0xB2,00,0x4C};
     sendCmd(szCmd);
 }
 
-void CHidWorker::stopRecord()
+void HidWorker::stopRecord()
 {
     m_bRecord=false;
     quint8 szCmd[33]={0x0C,0x4D,0x05,0xB3,00,0x4C};
     sendCmd(szCmd);
 }
 
-void CHidWorker::setTime()
+void HidWorker::setTime()
 {
     quint32 now = time(nullptr);
     quint8 szCmd[33]={0x0C,0x4F,0x05,0xB3,00,00};
@@ -569,7 +569,7 @@ void CHidWorker::setTime()
     sendCmd(szCmd);
 }
 
-void CHidWorker::changeRecord()
+void HidWorker::changeRecord()
 {
     if(m_bRecord)
         startRecord();
@@ -577,7 +577,7 @@ void CHidWorker::changeRecord()
         stopRecord();
 }
 
-void CHidWorker::userNew24G(bool use)
+void HidWorker::userNew24G(bool use)
 {
     m_bNew24G = use;
 }
@@ -639,18 +639,18 @@ void CHidWorker::userNew24G(bool use)
     AUDIO_AI_LONG_UP = 0xEB,
 
 */
-void CHidWorker::setMouseBtn(quint8 func)
+void HidWorker::setMouseBtn(quint8 func)
 {
     quint8 szCmd[33]={0x0C,0x4D,0x04,func,00,0x4C};
     sendCmd(szCmd);
 }
 
-void CHidWorker::setRecordPlay(bool set)
+void HidWorker::setRecordPlay(bool set)
 {
     m_bOutPlay = set;
 }
 
-void CHidWorker::StarRecorFile(const QString&strFile)
+void HidWorker::StarRecorFile(const QString&strFile)
 {
     if(!m_pDev)
     {
@@ -670,7 +670,7 @@ void CHidWorker::StarRecorFile(const QString&strFile)
     }
 }
 
-bool CHidWorker::WritePCMData(const QByteArray&data)
+bool HidWorker::WritePCMData(const QByteArray&data)
 {
     if(m_RecFile.isOpen())
     {
@@ -683,7 +683,7 @@ bool CHidWorker::WritePCMData(const QByteArray&data)
     return false;
 }
 
-void CHidWorker::StopRecorFile()
+void HidWorker::StopRecorFile()
 {
     if(m_RecFile.isOpen())
     {
@@ -709,7 +709,7 @@ void CHidWorker::StopRecorFile()
 }
 
 
-bool CHidWorker::startCapture()
+bool HidWorker::startCapture()
 {
     QAudioDevice inputDevice = QMediaDevices::defaultAudioInput();
     if(inputDevice.isNull())

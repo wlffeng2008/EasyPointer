@@ -62,8 +62,8 @@ private:
     quint8 m_nModeS1  = -1;
     quint8 m_nModeS2  = -1;
     quint8 m_press  =  0;
-    CHidWorker *m_pHID = nullptr;
-    BleWorker  *m_pBLE = nullptr;
+    HidWorker *m_pHID = nullptr;
+    BleWorker *m_pBLE = nullptr;
     DialogBoard *pFuncPad = nullptr;
     DialogRecord *m_RecPad = nullptr;
     DialogHealth *m_Health = nullptr;
