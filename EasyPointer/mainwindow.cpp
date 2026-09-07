@@ -37,7 +37,7 @@
 #include <QSharedMemory>
 
 
-bool g_bCommentVer=false;
+bool g_bCommentVer=true;
 
 QString getUserDataPath()
 {
@@ -102,13 +102,13 @@ MainWindow::MainWindow(QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowTitle("Nmy Pointer");
 
-    m_pKBM = new KeyBoardMonitor(this);
-    connect(m_pKBM,&KeyBoardMonitor::onKeypress,this,[=](int code, bool pressed){
-        //qDebug() << (pressed ? "按下：": "松开：") << (char)code << code;
-    });
-    connect(m_pKBM,&KeyBoardMonitor::onMousepress,this,[=](quint32 message,quint32 nMkey,bool pressed,bool bDbClk){
-        //qDebug() << "鼠标事件：" << message;
-    });
+    // m_pKBM = new KeyBoardMonitor(this);
+    // connect(m_pKBM,&KeyBoardMonitor::onKeypress,this,[=](int code, bool pressed){
+    //     //qDebug() << (pressed ? "按下：": "松开：") << (char)code << code;
+    // });
+    // connect(m_pKBM,&KeyBoardMonitor::onMousepress,this,[=](quint32 message,quint32 nMkey,bool pressed,bool bDbClk){
+    //     //qDebug() << "鼠标事件：" << message;
+    // });
 
     ui->comboBoxEffect->setView(new QListView());
     ui->comboBoxEnlarge->setView(new QListView());
@@ -139,14 +139,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->labelColor->hide();
     ui->pushButton5->hide();
-    //ui->pushButtonManager->hide();
-    //ui->pushButtonMKey->hide();
-    //ui->pushButtonHealth->hide();
 
-    ui->labelSN->hide();
     if(g_bCommentVer)
     {
+        ui->labelSN->hide();
+        ui->pushButtonDevice->hide();
+        ui->pushButtonMKey->hide();
+        ui->pushButtonHealth->hide();
         ui->pushButton6->hide();
+        ui->checkBoxTXASR->hide();
     }
 
     QCoreApplication::setOrganizationName("NMY");
@@ -1191,7 +1192,7 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if(QMessageBox::question(nullptr,"提示","确定要退出 NMY 吗？") != QMessageBox::Yes)
+    if(m_bConnected && QMessageBox::question(nullptr,"提示","确定要退出 NMY 吗？") != QMessageBox::Yes)
     {
         event->ignore();
         return;
