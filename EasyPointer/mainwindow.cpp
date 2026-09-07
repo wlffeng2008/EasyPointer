@@ -34,6 +34,8 @@
 #include <highlevelmonitorconfigurationapi.h>
 #include <QScreen>
 #include <QApplication>
+#include <QSharedMemory>
+
 
 bool g_bCommentVer=false;
 
@@ -60,6 +62,42 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    {
+        static int bufLenght = 1024;
+        static std::string szActiveFlag("abcdefgh");
+
+        static QSharedMemory sharedMemory("AkkoUsbViewerApp_71A7F2D4-5566-88AA");
+        if (sharedMemory.attach())
+        {
+            hide();
+            sharedMemory.lock();
+            memset(sharedMemory.data(), 0, bufLenght);
+            memcpy(sharedMemory.data(), szActiveFlag.c_str(), strlen(szActiveFlag.c_str()));
+            sharedMemory.unlock();
+            exit(0);
+            return;
+        }
+        sharedMemory.create(bufLenght);
+
+        static QTimer *pTMCheckSM = new QTimer(this);
+        connect(pTMCheckSM,&QTimer::timeout,this,[=]{
+            sharedMemory.lock();
+            QString signalFlag = QString::fromLocal8Bit((char*)sharedMemory.data()).trimmed();
+            sharedMemory.unlock();
+            if(signalFlag == QString(szActiveFlag.c_str()) && !signalFlag.isEmpty())
+            {
+                showNormal();
+                raise();
+                activateWindow();
+                setFocus();
+
+                sharedMemory.lock();
+                memset(sharedMemory.data(), 0, bufLenght);
+                sharedMemory.unlock();
+            };
+        });
+        pTMCheckSM->start(200);
+    }
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint);
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowTitle("Nmy Pointer");
@@ -105,9 +143,9 @@ MainWindow::MainWindow(QWidget *parent)
     //ui->pushButtonMKey->hide();
     //ui->pushButtonHealth->hide();
 
+    ui->labelSN->hide();
     if(g_bCommentVer)
     {
-        ui->labelSN->hide();
         ui->pushButton6->hide();
     }
 
@@ -249,17 +287,6 @@ MainWindow::MainWindow(QWidget *parent)
         updateValue();
     });
 
-    static QSettings regSet("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",QSettings::NativeFormat);
-    ui->checkBoxStart->setChecked(!regSet.value("NMYPointer").toString().isEmpty());
-    connect(ui->checkBoxStart,&QCheckBox::clicked,this,[=](bool checked){
-        regSet.remove("NMYPointer");
-        if(checked)
-        {
-            QString strFile = QString("\"%1\"").arg(QApplication::applicationFilePath().replace("/","\\"));
-            regSet.setValue("NMYPointer",strFile);
-        }
-    });
-
     static auto *pAsrClient = DoASRWork(false);
     connect(pAsrClient,&TxAsrClient::onASRText,this,[=](const QString&text,int state){
         if(m_nModeS2 == 2)
@@ -318,6 +345,9 @@ MainWindow::MainWindow(QWidget *parent)
         updateValue();
         saveLoadParams();
     });
+    connect(ui->checkBoxHideWin,&QCheckBox::clicked,this,[=](bool checked){
+        saveLoadParams();
+    });
 
     connect(m_RecPad,&DialogRecord::onFlushText,this,[=](const QString&text){
         m_pCmd->startupApp(text);
@@ -334,6 +364,7 @@ MainWindow::MainWindow(QWidget *parent)
             m_pNoCnn->accept();
 
             m_pBLE->scanBleDevices("NMY");
+            this->show();
         }
         else
         {
@@ -344,6 +375,7 @@ MainWindow::MainWindow(QWidget *parent)
 
             m_pTSet->hide();
             m_pCmd->hide();
+            this->hide();
         }
     });
 
@@ -756,6 +788,27 @@ MainWindow::MainWindow(QWidget *parent)
             QCheckBox { color:white;font-size:14px;font-weight:600;}
             QPushButton{ color:white;font-size:14px;font-weight:600;}
     )");
+
+    static QSettings regSet("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
+    regSet.remove("NMYPointer");
+    ui->checkBoxStart->setChecked(!regSet.value("NMYPointer2").toString().isEmpty());
+    connect(ui->checkBoxStart,&QCheckBox::clicked,this,[=](bool checked){
+        regSet.remove("NMYPointer2");
+        if(checked)
+        {
+            QString strFile = QString("\"%1\" /autostart").arg(QApplication::applicationFilePath().replace("/","\\"));
+            regSet.setValue("NMYPointer2",strFile);
+        }
+    });
+
+    QTimer::singleShot(200,this,[=]{
+        QStringList args = QCoreApplication::arguments();
+        qDebug() << args;
+        if((args.count() && args[0].trimmed() == QString("/autostart")) || ui->checkBoxHideWin->isChecked())
+        {
+            this->hide();
+        }
+    });
 }
 
 void MainWindow::saveLoadParams(bool save)
@@ -783,6 +836,7 @@ void MainWindow::saveLoadParams(bool save)
         m_set->setValue("showIndex",m_show);
         m_set->setValue("showVoice",m_voice);
         m_set->setValue("new24G",ui->checkBoxNew24G->isChecked());
+        m_set->setValue("hideWin",ui->checkBoxHideWin->isChecked());
     }
     else
     {
@@ -797,6 +851,7 @@ void MainWindow::saveLoadParams(bool save)
         ui->lineEditSetTime->setText(m_set->value("showTime","90").toString());
         ui->checkBoxBlack->setChecked(m_set->value("showBlack",false).toBool());
         ui->checkBoxNew24G->setChecked(m_set->value("new24G",false).toBool());
+        ui->checkBoxHideWin->setChecked(m_set->value("hideWin",false).toBool());
         ui->comboBoxEnlarge->setCurrentIndex(m_set->value("enlarge",3).toInt());
         m_iColor0 = m_set->value("icolor0").toInt();
         m_iColor3 = m_set->value("icolor3").toInt();
@@ -910,7 +965,10 @@ bool MainWindow::event(QEvent *event)
         if(!m_pNoCnn->isMaximized())
         {
             m_pNoCnn->setGeometry(this->geometry().adjusted(0,45,0,0));
-            //m_pNoCnn->show();
+            if(this->isVisible())
+                m_pNoCnn->show();
+            else
+                m_pNoCnn->hide();
 
             m_pTSet->hide();
             m_pCmd->hide();
