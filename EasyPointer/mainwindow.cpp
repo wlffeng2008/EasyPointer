@@ -37,7 +37,7 @@
 #include <QSharedMemory>
 
 
-bool g_bCommentVer=true;
+bool g_bCommentVer=false;
 
 QString getUserDataPath()
 {
@@ -138,15 +138,15 @@ MainWindow::MainWindow(QWidget *parent)
     m_Health->m_Reader = m_pBLE;
 
     ui->labelColor->hide();
-    ui->pushButton5->hide();
 
     if(g_bCommentVer)
     {
+        ui->pushButtonLang->hide();
         ui->labelSN->hide();
         ui->pushButtonDevice->hide();
         ui->pushButtonMKey->hide();
         ui->pushButtonHealth->hide();
-        ui->pushButton6->hide();
+        ui->pushButtonAbout->hide();
         ui->checkBoxTXASR->hide();
     }
 
@@ -322,7 +322,7 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    connect(ui->pushButtonManager,&QPushButton::clicked,this,[=]{
+    connect(ui->pushButtonRecorder,&QPushButton::clicked,this,[=]{
         m_pRMan->show();
     });
     connect(m_pRMan,&DialogManager::onRecord,this,[=](bool record){

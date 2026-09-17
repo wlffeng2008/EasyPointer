@@ -56,7 +56,7 @@ protected:
 private:
     Ui::MainWindow *ui;
     KeyBoardMonitor *m_pKBM = nullptr;
-    QPoint m_dragPosition;
+    QPoint m_dragPosition={0,0};
     bool m_dragging = false;
 
     quint8 m_nModeS1  = -1;
