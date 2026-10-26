@@ -2,7 +2,6 @@
 #include "qtimer.h"
 #include "ui_DialogBoard.h"
 #include <QPainter>
-#include <QScreenCapture>
 #include <QScreen>
 #include <QMouseEvent>
 #include <QKeyEvent>
@@ -79,7 +78,8 @@ DialogBoard::~DialogBoard()
 
 void DialogBoard::capScreen()
 {
-    m_screen = QApplication::screens().at(0)->grabWindow();
+    m_screen = QApplication::screens().at(0)->grabWindow(0);
+    //m_screen.save("./test.png");
 }
 
 void DialogBoard::setMode(int mode)
@@ -125,8 +125,8 @@ void DialogBoard::paintEvent(QPaintEvent *event)
     painter.drawPixmap(0,0,m_screen);
 
     QPoint newPos = m_curPos;
-    newPos.setX(newPos.x());
-    newPos.setY(newPos.y());
+    newPos.setX(newPos.x() * m_display);
+    newPos.setY(newPos.y() * m_display);
 
     int w = m_screen.width() / m_display;
     int h = m_screen.height() / m_display;
@@ -155,10 +155,14 @@ void DialogBoard::paintEvent(QPaintEvent *event)
 
     case 1:
     {
-        int dist = m_radius1*m_display;
-        QPixmap tmp = m_screen.copy(QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
+        int dist = m_radius1;
+        if(dist<20) dist=20;
+        if(dist>500) dist=500;
+        QPixmap tmp = m_screen.copy(QRect(newPos-QPoint(dist,dist),newPos+QPoint(dist,dist)));
 
         qreal factor = m_enlarge;
+        if(factor <= 0)  factor = 1.5;
+        if(factor > 4.0) factor = 4.0;
         QRect tarRect(m_curPos-QPoint(dist*factor,dist*factor),m_curPos+QPoint(dist*factor,dist*factor));
 
         QPainterPath path;
@@ -194,7 +198,7 @@ void DialogBoard::paintEvent(QPaintEvent *event)
         if(m_iSpot == 3) path.addRect(tmp.adjusted(dist*0.3,0,-dist*0.3,0));
         painter.setClipPath(path);
 
-        painter.drawPixmap(m_curPos-QPoint(dist,dist),m_screen,tmp);
+        painter.drawPixmap(QPoint(0,0),m_screen);
     }
     break;
 

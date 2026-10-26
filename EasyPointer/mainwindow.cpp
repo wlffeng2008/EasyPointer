@@ -747,9 +747,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->page02->installEventFilter(this);
     ui->page03->installEventFilter(this);
 
-    saveLoadParams(false);
-    ui->pushButton0->click();
-    updateValue();
+    QTimer::singleShot(500,this,[=]{
+        saveLoadParams(false);
+        ui->pushButton0->click();
+        updateValue();
+    });
 
     m_EfOpticy = 0;
     QTimer *pTMEf = new QTimer(this);
@@ -869,6 +871,7 @@ void MainWindow::saveLoadParams(bool save)
             ui->buttonGroupShape->button(-m_nMgfShape-2)->click();
             ui->comboBoxEffect->setCurrentIndex(m_iEffect);
             m_bLoading = false;
+            updateValue();
         });
     }
     m_set->endGroup();
@@ -883,35 +886,24 @@ MainWindow::~MainWindow()
 void MainWindow::updateValue()
 {
     int nAlph = 0;
-    switch(m_index)
-    {
-    case 0:
-        m_iColor0 = m_iColor;
-        m_radius0 = ui->horizontalSlider0->value() / 2;
-        nAlph = ui->horizontalSlider1->value() * 255 / 100.0;
-        m_color0 = colors[m_iColor];
-        m_color0.setAlpha(nAlph);
-        break;
+    m_iColor0 = m_iColor;
+    m_radius0 = ui->horizontalSlider0->value() / 2;
+    nAlph = ui->horizontalSlider1->value() * 255 / 100.0;
+    m_color0 = colors[m_iColor];
+    m_color0.setAlpha(nAlph);
 
-    case 1:
-        m_radius1 = ui->horizontalSlider2->value() / 2;
-        break;
+    m_radius1 = ui->horizontalSlider2->value() / 2;
 
-    case 2:
-        m_radius2 = ui->horizontalSlider4->value();
-        nAlph = ui->horizontalSlider5->value() * 255 / 100.0;
-        m_color2 = Qt::black;
-        m_color2.setAlpha(nAlph);
-        break;
+    m_radius2 = ui->horizontalSlider4->value();
+    nAlph = ui->horizontalSlider5->value() * 255 / 100.0;
+    m_color2 = Qt::black;
+    m_color2.setAlpha(nAlph);
 
-    case 3:
-        m_iColor3 = m_iColor;
-        m_radius3 = ui->horizontalSlider6->value();
-        nAlph = ui->horizontalSlider7->value() * 255 / 100.0;
-        m_color3 = colors[m_iColor];
-        m_color3.setAlpha(nAlph);
-        break;
-    }
+    m_iColor3 = m_iColor;
+    m_radius3 = ui->horizontalSlider6->value();
+    nAlph = ui->horizontalSlider7->value() * 255 / 100.0;
+    m_color3 = colors[m_iColor];
+    m_color3.setAlpha(nAlph);
 
     pFuncPad->m_radius0 = m_radius0;
     pFuncPad->m_radius1 = m_radius1;
@@ -958,10 +950,36 @@ void MainWindow::paintEvent(QPaintEvent *event)
     event->accept();
 }
 
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    //qDebug() << "MainWindow::keyPressEvent" << event->key() << event;
+
+    if(event->key() == Qt::Key_Escape)
+        this->close();
+
+
+    if(event->key() == Qt::Key_F9)
+    {
+        pFuncPad->capScreen();
+        pFuncPad->setMode(1);
+        pFuncPad->showFullScreen();
+    }
+
+    if(event->key() == Qt::Key_F10)
+    {
+        pFuncPad->capScreen();
+        pFuncPad->setMode(2);
+        pFuncPad->showFullScreen();
+    }
+
+    QMainWindow::keyPressEvent(event);
+}
+
 bool MainWindow::event(QEvent *event)
 {
     //qDebug() << event->type();
-    if( (event->type() == QEvent::WindowActivate || event->type() == QEvent::Show) && !m_bConnected)
+    if( (event->type() == QEvent::WindowActivate || event->type() == QEvent::Show || event->type() == QEvent::WindowDeactivate) && !m_bConnected)
     {
         if(!m_pNoCnn->isMaximized())
         {
@@ -980,6 +998,8 @@ bool MainWindow::event(QEvent *event)
         {
             m_pNoCnn->hide();
         }
+
+        m_pNoCnn->hide();
     }
 
     if( event->type() == QEvent::Hide)
@@ -1131,15 +1151,6 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
     return QMainWindow::eventFilter(watched,event);
 }
 
-void MainWindow::keyPressEvent(QKeyEvent *event)
-{
-    //qDebug() << "MainWindow::keyPressEvent" << event->key() << event;
-
-    if(event->key() == Qt::Key_Escape)
-        this->close();
-
-    QMainWindow::keyPressEvent(event);
-}
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {

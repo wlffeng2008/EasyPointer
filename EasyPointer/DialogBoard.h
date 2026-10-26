@@ -26,10 +26,10 @@ public:
     void showBlack(bool show=true);
     void showMagnify(bool show=true);
 
-    quint16 m_radius0;
-    quint16 m_radius1;
-    quint16 m_radius2;
-    quint16 m_radius3;
+    quint16 m_radius0=100;
+    quint16 m_radius1=100;
+    quint16 m_radius2=100;
+    quint16 m_radius3=100;
 
     quint8 m_nMgfShape  = 0;
     qreal m_enlarge= 1.5;
