@@ -86,6 +86,7 @@ void DialogBoard::setMode(int mode)
 {
     qDebug() << "DialogBoard::setMode" << mode;
     m_mode = mode;
+    m_curPos=QCursor::pos();
     clearLines();
 }
 

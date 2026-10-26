@@ -960,32 +960,48 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     if(event->key() == Qt::Key_Escape)
         this->close();
 
-    if(event->modifiers() == (Qt::ShiftModifier) && !event->isAutoRepeat())
+    if(event->modifiers() == (Qt::ShiftModifier|Qt::ControlModifier) && !event->isAutoRepeat())
     {
-        pFuncPad->capScreen();
-        qDebug() << event->key() ;
+        qDebug() << "11111111111111" << event->key() ;
 
+        if(event->key() == Qt::Key_F8)
+        {
+            pFuncPad->capScreen();
+            pFuncPad->setMode(0);
+            pFuncPad->showFullScreen();
+            m_ModeTip->showMode(0);
+        }
         if(event->key() == Qt::Key_F9)
         {
+            pFuncPad->capScreen();
             pFuncPad->setMode(1);
+            pFuncPad->showFullScreen();
+            m_ModeTip->showMode(1);
         }
 
         if(event->key() == Qt::Key_F10)
         {
+            pFuncPad->capScreen();
             pFuncPad->setMode(2);
+            pFuncPad->showFullScreen();
+            m_ModeTip->showMode(2);
         }
 
         if(event->key() == Qt::Key_F11)
         {
+            pFuncPad->capScreen();
             pFuncPad->setMode(3);
+            pFuncPad->showFullScreen();
+            m_ModeTip->showMode(3);
         }
 
         if(event->key() == Qt::Key_F12)
         {
+            pFuncPad->capScreen();
             pFuncPad->setMode(4);
+            pFuncPad->showFullScreen();
+            m_ModeTip->showMode(4);
         }
-
-        pFuncPad->showFullScreen();
     }
 
     QMainWindow::keyPressEvent(event);
