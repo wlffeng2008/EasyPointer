@@ -27,7 +27,8 @@
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(32, 136, 180);
-color:white;font-size:14px;font-weight:600;</string>
+color:white;font-size:14px;font-weight:600;
+</string>
   </property>
   <property name="iconSize">
    <size>
@@ -593,7 +594,7 @@ QPushButton:checked  {
            <string notr="true">#page01{background-color: rgb(170, 255, 255); } </string>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>4</number>
           </property>
           <widget class="QWidget" name="page00">
            <property name="styleSheet">
@@ -1353,7 +1354,7 @@ background-image: url(:/images/jd.png);
             <x>38</x>
             <y>314</y>
             <width>330</width>
-            <height>100</height>
+            <height>104</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -1837,6 +1838,12 @@ QPushButton:checked  {
            </item>
            <item>
             <widget class="QFrame" name="horizontalFrame">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>32</height>
+              </size>
+             </property>
              <layout class="QHBoxLayout" name="horizontalLayout_19">
               <property name="spacing">
                <number>12</number>
@@ -1868,7 +1875,7 @@ QPushButton:checked  {
                 <property name="minimumSize">
                  <size>
                   <width>80</width>
-                  <height>24</height>
+                  <height>0</height>
                  </size>
                 </property>
                 <property name="maxVisibleItems">
@@ -2379,8 +2386,7 @@ QPushButton:checked  {
                   </size>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">
-</string>
+                  <string notr="true"/>
                  </property>
                  <property name="maxVisibleItems">
                   <number>20</number>
@@ -3163,7 +3169,14 @@ QPushButton:checked  {
       <item>
        <widget class="QLabel" name="label_18">
         <property name="text">
-         <string>软件版本：V1.0.3</string>
+         <string>版本：</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelVersion">
+        <property name="text">
+         <string>V1.0.4</string>
         </property>
        </widget>
       </item>

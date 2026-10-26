@@ -84,6 +84,7 @@ void DialogBoard::capScreen()
 
 void DialogBoard::setMode(int mode)
 {
+    qDebug() << "DialogBoard::setMode" << mode;
     m_mode = mode;
     clearLines();
 }
@@ -127,10 +128,6 @@ void DialogBoard::paintEvent(QPaintEvent *event)
     QPoint newPos = m_curPos;
     newPos.setX(newPos.x() * m_display);
     newPos.setY(newPos.y() * m_display);
-
-    int w = m_screen.width() / m_display;
-    int h = m_screen.height() / m_display;
-    //QPixmap scImage = m_screen.scaled(w,h);
 
     switch(m_mode)
     {
@@ -180,6 +177,7 @@ void DialogBoard::paintEvent(QPaintEvent *event)
         }
         painter.setClipPath(path);
 
+        painter.setRenderHint(QPainter::SmoothPixmapTransform);
         painter.drawPixmap(tarRect,tmp);
     }
     break;
@@ -220,6 +218,7 @@ void DialogBoard::paintEvent(QPaintEvent *event)
         }
 
         int count = m_record.count();
+        if(count == 0) break;
 
         QPainterPath path;
         path.moveTo(m_record[0]);
@@ -317,8 +316,6 @@ void DialogBoard::mouseDoubleClickEvent(QMouseEvent *event)
 void DialogBoard::mouseMoveEvent(QMouseEvent *event)
 {
     QPoint cur = event->pos();
-    //cur.setX(cur.x()/m_display);
-    //cur.setY(cur.y()/m_display);
     m_curPos = cur;
 
     if(m_bDraging)

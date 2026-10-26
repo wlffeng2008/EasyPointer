@@ -138,11 +138,11 @@ MainWindow::MainWindow(QWidget *parent)
     m_Health->m_Reader = m_pBLE;
 
     ui->labelColor->hide();
+    ui->labelSN->hide();
 
     if(g_bCommentVer)
     {
         ui->pushButtonLang->hide();
-        ui->labelSN->hide();
         ui->pushButtonDevice->hide();
         ui->pushButtonMKey->hide();
         ui->pushButtonHealth->hide();
@@ -356,7 +356,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(m_pHID,&HidWorker::onHIDConnect,this,[=](int nMode,bool connected){
         m_bConnected = connected;
-        qDebug() << "HidWorker::onHIDConnect: " << nMode << connected;
+        qDebug() << "HidWorker::onHIDConnect: mode" << nMode << connected;
         if(connected)
         {
             ui->labelConnect->setPixmap(QPixmap(nMode == 1 ? ":/images/2.4g.png" : ":/images/blue.png").scaled(24,24));
@@ -376,7 +376,9 @@ MainWindow::MainWindow(QWidget *parent)
 
             m_pTSet->hide();
             m_pCmd->hide();
-            this->hide();
+
+            if(ui->checkBoxHideWin->isChecked())
+                this->hide();
         }
     });
 
@@ -732,7 +734,7 @@ MainWindow::MainWindow(QWidget *parent)
         connect(showAction, &QAction::triggered, this, &QMainWindow::showNormal);
         connect(hideAction, &QAction::triggered, this, &QMainWindow::hide);
         trayIcon->setContextMenu(trayMenu);
-        trayMenu->setStyleSheet("color:red;");
+        trayMenu->setStyleSheet("color:white;");
     }
 
     ui->labelAudioSet->installEventFilter(this);
@@ -809,7 +811,7 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << args;
         if((args.count() && args[0].trimmed() == QString("/autostart")) || ui->checkBoxHideWin->isChecked())
         {
-            this->hide();
+           this->hide();
         }
     });
 }
@@ -958,18 +960,31 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     if(event->key() == Qt::Key_Escape)
         this->close();
 
-
-    if(event->key() == Qt::Key_F9)
+    if(event->modifiers() == (Qt::ShiftModifier) && !event->isAutoRepeat())
     {
         pFuncPad->capScreen();
-        pFuncPad->setMode(1);
-        pFuncPad->showFullScreen();
-    }
+        qDebug() << event->key() ;
 
-    if(event->key() == Qt::Key_F10)
-    {
-        pFuncPad->capScreen();
-        pFuncPad->setMode(2);
+        if(event->key() == Qt::Key_F9)
+        {
+            pFuncPad->setMode(1);
+        }
+
+        if(event->key() == Qt::Key_F10)
+        {
+            pFuncPad->setMode(2);
+        }
+
+        if(event->key() == Qt::Key_F11)
+        {
+            pFuncPad->setMode(3);
+        }
+
+        if(event->key() == Qt::Key_F12)
+        {
+            pFuncPad->setMode(4);
+        }
+
         pFuncPad->showFullScreen();
     }
 

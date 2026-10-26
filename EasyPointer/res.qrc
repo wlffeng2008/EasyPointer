@@ -44,5 +44,9 @@
         <file>images/devicebook.jpg</file>
         <file>images/logo.jpg</file>
         <file>images/logo-gray.png</file>
+        <file>images/arrow-down.png</file>
+        <file>images/arrow-left.png</file>
+        <file>images/arrow-right.png</file>
+        <file>images/arrow-up.png</file>
     </qresource>
 </RCC>

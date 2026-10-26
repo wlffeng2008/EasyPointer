@@ -100,32 +100,60 @@ int main(int argc, char *argv[])
     padding-left:10px;
     }
 
-    QComboBox::drop-down{
-    width:16px;
-    height:16px;
-    margin-right:2px;
-    subcontrol-origin:padding;
-    subcontrol-position: right;
-    border-left-width: 0px;/* 下拉框的左边界线宽度 */
-        border-left-color: darkgray;/* 下拉框的左边界线颜色 */
-        border-left-style: solid; /* 下拉框的左边界线为实线 */
-        border-top-right-radius: 3px;/* 下拉框的右上边界线的圆角半径（应和整个QComboBox右上边界线的圆角半径一致） */
-        border-bottom-right-radius: 3px; /* 同上 */
-        background: white;
-        image:url(:/images/down-arrow.png);
-    }
-    QComboBox QAbstractItemView{
-    border:1px solid rgb(0, 0, 0);
-    background-color: rgb(255, 255, 255);
+    /* ---------- 1. 收起状态：主体 ---------- */
+    QComboBox {
+        color: #FFFFFF;             /* 文字颜色 */
+        background-color: transparent;  /* 背景色 */
+        border: 1px solid white;
+        border-radius: 4px;
+        padding: 4px 8px;
+        min-height: 20px;
     }
 
-    QComboBox QAbstractItemView::item:hover{
-      background-color:#409CE1;
-      color:#ffffff;
+    /* ---------- 2. 下拉列表：整体容器 ---------- */
+    QComboBox QAbstractItemView {
+        background-color: gray;             /* 列表背景 */
+        color: #FFFFFF;                        /* 列表文字（兜底） */
+        border: 1px solid #555555;
+        border-radius: 4px;
+        outline: 0px;                          /* 去掉选中虚线框 */
+        /* 这两行决定"鼠标悬停/选中"时的配色 */
+        selection-background-color: #0A84FF;
+        selection-color: #FFFFFF;
     }
-    QComboBox QAbstractItemView::item:selected{
-      background-color:#409CE1;
-      color:#ffffff;
+
+    /* ---------- 3. 下拉列表：单个条目 ---------- */
+    QComboBox QAbstractItemView::item {
+        color: #FFFFFF;
+        background-color:gray;  /* 必须设，否则行间会露出容器底色 */
+        min-height: 28px;
+        padding-left: 8px;
+    }
+
+    QComboBox QAbstractItemView::item:hover {
+        background-color: #3E3E42;
+        color: #FFFFFF;
+    }
+
+    QComboBox QAbstractItemView::item:selected {
+        background-color: #0A84FF;
+        color: #FFFFFF;
+    }
+
+    QComboBox::drop-down {
+        subcontrol-origin: padding;
+        subcontrol-position: center right;
+        width: 20px;
+        border-left: none;
+        background-color: transparent;
+    }
+    QComboBox::down-arrow {
+        width: 16px; height: 16px;
+        image: url(:/images/arrow-down.png);
+    }
+
+    QComboBox::down-arrow:on {
+        image: url(:/images/arrow-up.png);
     }
 
 )");
