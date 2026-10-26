@@ -45,6 +45,7 @@ public:
     int m_EfOpticy=0;
     quint32 m_tmCount = 1800;
     quint32 m_showTime = true;
+    float m_display = 1.0;
 
 signals:
     void onCallunction(int function=0);

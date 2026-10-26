@@ -167,7 +167,8 @@ color:white;font-size:14px;font-weight:600;</string>
     <item>
      <widget class="QFrame" name="frameMain">
       <property name="styleSheet">
-       <string notr="true">#frameMain{background-color: transparent;}</string>
+       <string notr="true">#frameMain,#frameWork{background-color: transparent; border:none;}
+</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
@@ -189,12 +190,15 @@ color:white;font-size:14px;font-weight:600;</string>
         <number>0</number>
        </property>
        <item alignment="Qt::AlignmentFlag::AlignHCenter">
-        <widget class="QFrame" name="frame">
+        <widget class="QFrame" name="frameWork">
          <property name="minimumSize">
           <size>
            <width>670</width>
            <height>0</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
          </property>
          <property name="frameShape">
           <enum>QFrame::Shape::StyledPanel</enum>
@@ -2298,13 +2302,13 @@ QPushButton:checked  {
                  <property name="minimumSize">
                   <size>
                    <width>24</width>
-                   <height>24</height>
+                   <height>40</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
                    <width>24</width>
-                   <height>24</height>
+                   <height>40</height>
                   </size>
                  </property>
                  <property name="cursor">
@@ -2370,9 +2374,69 @@ QPushButton:checked  {
                 <widget class="QComboBox" name="comboBoxEnlarge">
                  <property name="minimumSize">
                   <size>
-                   <width>90</width>
-                   <height>24</height>
+                   <width>0</width>
+                   <height>38</height>
                   </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">
+/* ── 1. 主体 ── */
+QComboBox {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 4px 10px;
+    padding-right: 28px;          /* 关键：给箭头让位，否则文字压上去 */
+    min-height: 28px;
+    color: #1f2328;
+    font: 14px &quot;Microsoft YaHei&quot;;
+}
+QComboBox:hover     { border-color: #409eff; }
+QComboBox:focus     { border-color: #409eff; outline: none; }
+QComboBox:on        { border-color: #409eff; }   /* 列表展开时 */
+QComboBox:disabled  { background: #f5f5f5; color: #a8abb2; border-color: #e4e7ed; }
+
+/* ── 2. 箭头区域 ── */
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 24px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-left: 1px solid #e4e7ed;   /* 竖分隔线，可去掉 */
+}
+
+/* ── 3. 箭头本体（纯 CSS 三角形，免图片） ── */
+QComboBox::down-arrow {
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #606266;
+    margin-right: 4px;
+}
+QComboBox::down-arrow:hover     { border-top-color: #409eff; }
+QComboBox::down-arrow:on        { border-top-color: #409eff; }  /* 展开时变色 */
+QComboBox::down-arrow:disabled  { border-top-color: #c0c4cc; }
+
+/* ── 4. 下拉列表容器 ── */
+QComboBox QAbstractItemView {
+    background: #ffffff;
+    border: 1px solid #e4e7ed;
+    border-radius: 6px;
+    padding: 4px;
+    outline: 0px;                 /* 去掉选中虚线框 */
+}
+
+/* ── 5. 列表项 ── */
+QComboBox QAbstractItemView::item {
+    min-height: 30px;
+    padding: 0 10px;
+    color: #1f2328;
+    border-radius: 4px;
+}
+QComboBox QAbstractItemView::item:hover    { background: #f0f4ff; }
+QComboBox QAbstractItemView::item:selected { background: #409eff; color: #ffffff; }
+</string>
                  </property>
                  <property name="maxVisibleItems">
                   <number>20</number>
@@ -3223,9 +3287,9 @@ QPushButton:checked  {
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupShape"/>
-  <buttongroup name="buttonGroupMain"/>
-  <buttongroup name="buttonGroupColor"/>
   <buttongroup name="buttonGroupCount"/>
+  <buttongroup name="buttonGroupColor"/>
   <buttongroup name="buttonGroupSpot"/>
+  <buttongroup name="buttonGroupMain"/>
  </buttongroups>
 </ui>

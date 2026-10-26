@@ -10,6 +10,19 @@
 #include <QPainterPath>
 
 
+static qreal globalScale() {
+    qreal s = 1.0;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+    const auto screens = QGuiApplication::screens();
+    for (QScreen *sc : screens)
+        s = qMax(s, sc->devicePixelRatio());   // 多屏取最大，避免跨屏拖动时模糊
+#else
+    s = qApp->desktop()->devicePixelRatio();
+#endif
+    return s;
+}
+
+
 DialogBoard::DialogBoard(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::DialogBoard)
@@ -56,6 +69,7 @@ DialogBoard::DialogBoard(QWidget *parent)
         pTMEf->start(interval);
     });
     pTMEf->start(200);
+    m_display = globalScale();
 }
 
 DialogBoard::~DialogBoard()
@@ -110,11 +124,19 @@ void DialogBoard::paintEvent(QPaintEvent *event)
 
     painter.drawPixmap(0,0,m_screen);
 
+    QPoint newPos = m_curPos;
+    newPos.setX(newPos.x());
+    newPos.setY(newPos.y());
+
+    int w = m_screen.width() / m_display;
+    int h = m_screen.height() / m_display;
+    //QPixmap scImage = m_screen.scaled(w,h);
+
     switch(m_mode)
     {
     case 0:
     {
-        int dist = m_radius0;
+        int dist = m_radius0 ;
         QRect tarRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist));
         QColor tmpColor(m_color0);
         if(m_iEffect != 0)
@@ -133,7 +155,7 @@ void DialogBoard::paintEvent(QPaintEvent *event)
 
     case 1:
     {
-        int dist = m_radius1;
+        int dist = m_radius1*m_display;
         QPixmap tmp = m_screen.copy(QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
 
         qreal factor = m_enlarge;
@@ -172,7 +194,7 @@ void DialogBoard::paintEvent(QPaintEvent *event)
         if(m_iSpot == 3) path.addRect(tmp.adjusted(dist*0.3,0,-dist*0.3,0));
         painter.setClipPath(path);
 
-        painter.drawPixmap(m_curPos-QPoint(dist,dist),m_screen,QRect(m_curPos-QPoint(dist,dist),m_curPos+QPoint(dist,dist)));
+        painter.drawPixmap(m_curPos-QPoint(dist,dist),m_screen,tmp);
     }
     break;
 
@@ -290,10 +312,14 @@ void DialogBoard::mouseDoubleClickEvent(QMouseEvent *event)
 
 void DialogBoard::mouseMoveEvent(QMouseEvent *event)
 {
-    m_curPos = event->pos();
+    QPoint cur = event->pos();
+    //cur.setX(cur.x()/m_display);
+    //cur.setY(cur.y()/m_display);
+    m_curPos = cur;
+
     if(m_bDraging)
     {
-        m_record.push_back(event->pos());
+        m_record.push_back(cur);
     }
     update();
 
