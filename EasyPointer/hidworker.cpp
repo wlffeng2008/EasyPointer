@@ -401,7 +401,7 @@ void HidWorker::run()
         QThread::msleep(20);
         setMouse(false);
         QThread::msleep(20);
-        setLaser(false);
+        // setLaser(false);
         QThread::msleep(20);
         stopRecord();
         QThread::msleep(20);

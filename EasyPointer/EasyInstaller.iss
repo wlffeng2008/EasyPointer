@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 #define AppName "NMY Pointer"
 #define AppId "E4CA0A60-4573-483B-8E56-884F20260908"
-#define AppVerName "NMY Pointer V1.0.5"
+#define AppVerName "NMY Pointer V1.0.6"
 #define AppExe "NmyStudio.exe"
 
 [Setup]
@@ -23,7 +23,7 @@ DefaultGroupName={#AppName}
 AllowNoIcons=yes
 UsePreviousAppDir=yes
 OutputDir=..\
-OutputBaseFilename=NmyStudioInstaller-V1.0.5
+OutputBaseFilename=NmyStudioInstaller-V1.0.6
 SetupIconFile=Nmy.ico
 Compression=lzma
 SolidCompression=yes
