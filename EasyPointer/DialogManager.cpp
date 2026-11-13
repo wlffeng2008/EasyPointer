@@ -13,6 +13,7 @@
 #include <QFile>
 #include <QDateTime>
 #include <mainwindow.h>
+#include <QAudioOutput>
 
 QString formatTimeLen(int nLen, bool bHour = false)
 {
@@ -107,9 +108,15 @@ DialogManager::DialogManager(QWidget *parent)
         float volume = pSet->value("Volume",60).toInt();
         ui->horizontalSliderVol->setValue(volume);
         m_pPlayer = new QMediaPlayer(this);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         m_pAudOut = new QAudioOutput(this);
         m_pPlayer->setAudioOutput(m_pAudOut);
         m_pAudOut->setVolume(volume/100);
+#else
+        m_pAudOut = new QAudioOutput();
+        m_pPlayer->setVolume(volume);
+#endif
 
         connect(ui->horizontalSliderVol,&QSlider::valueChanged,[=](int value){
             m_pAudOut->setVolume(value/100.0);
@@ -118,7 +125,7 @@ DialogManager::DialogManager(QWidget *parent)
         connect(ui->pushButtonPlay,&QPushButton::clicked,[=](bool checked){
             if(m_bPlaying)
             {
-                if(m_pPlayer->isPlaying())
+                if(m_pPlayer->state() == QMediaPlayer::PlayingState)
                     m_pPlayer->pause();
                 else
                     m_pPlayer->play();
@@ -142,6 +149,8 @@ DialogManager::DialogManager(QWidget *parent)
             m_bPaused = false ;
         });
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+
         connect(m_pPlayer,&QMediaPlayer::playbackStateChanged,[=](QMediaPlayer::PlaybackState newState){
             qDebug()<< newState ;
             if(newState == QMediaPlayer::StoppedState)
@@ -151,6 +160,19 @@ DialogManager::DialogManager(QWidget *parent)
                 ui->horizontalSliderPrg->setValue(0);
             }
         });
+
+#else
+        connect(m_pPlayer,&QMediaPlayer::stateChanged,[=](QMediaPlayer::State newState){
+            qDebug()<< newState ;
+            if(newState == QMediaPlayer::StoppedState)
+            {
+                m_bPaused = false ;
+                m_bPlaying = false ;
+                ui->horizontalSliderPrg->setValue(0);
+            }
+        });
+
+#endif
 
         connect(m_pPlayer,&QMediaPlayer::mediaStatusChanged,[=](QMediaPlayer::MediaStatus status){
             qDebug()<< status ;
@@ -244,7 +266,15 @@ void DialogManager::playNext(int nOffset)
     QString strFile = getRecordPath() + QString("/") + strText ;
     m_bPaused = false;
     m_pPlayer->stop();
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     m_pPlayer->setSource(QUrl::fromLocalFile(strFile));
+#else
+    QMediaContent connent(strFile);
+    QMediaPlaylist *list = connent.playlist();
+    m_pPlayer->setPlaylist(list);
+#endif
+
     m_pPlayer->play();
 }
 

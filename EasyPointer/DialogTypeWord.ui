@@ -68,7 +68,6 @@ QLabel{color:black;}</string>
      <property name="font">
       <font>
        <pointsize>-1</pointsize>
-       <fontweight>DemiBold</fontweight>
       </font>
      </property>
      <property name="styleSheet">
@@ -79,8 +78,13 @@ QLabel{color:black;}</string>
      </property>
     </widget>
    </item>
-   <item alignment="Qt::AlignmentFlag::AlignTop">
+   <item alignment="Qt::AlignTop">
     <widget class="QLabel" name="label_4">
+     <property name="font">
+      <font>
+       <pointsize>-1</pointsize>
+      </font>
+     </property>
      <property name="styleSheet">
       <string notr="true">QLabel{font-size:16px; font-weight:600; color: black;}</string>
      </property>
@@ -88,7 +92,7 @@ QLabel{color:black;}</string>
       <string>启用语音打字功能后开始说话，实现文字翻译录入</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
+      <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -136,7 +140,7 @@ QLabel{color:black;}</string>
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
+         <enum>Qt::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -154,7 +158,6 @@ QLabel{color:black;}</string>
      <property name="font">
       <font>
        <pointsize>-1</pointsize>
-       <fontweight>DemiBold</fontweight>
       </font>
      </property>
      <property name="styleSheet">
@@ -165,12 +168,11 @@ QLabel{color:black;}</string>
      </property>
     </widget>
    </item>
-   <item alignment="Qt::AlignmentFlag::AlignTop">
+   <item alignment="Qt::AlignTop">
     <widget class="QLabel" name="label_9">
      <property name="font">
       <font>
        <pointsize>-1</pointsize>
-       <fontweight>DemiBold</fontweight>
       </font>
      </property>
      <property name="styleSheet">
@@ -180,7 +182,7 @@ QLabel{color:black;}</string>
       <string>启用语音翻译功能后，母语会被翻译成设置好的目标语言文字，实现文字翻译录入</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
+      <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -231,7 +233,7 @@ QLabel{color:black;}</string>
          <string>翻译为</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -260,7 +262,7 @@ QLabel{color:black;}</string>
       <item>
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
+         <enum>Qt::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -273,7 +275,7 @@ QLabel{color:black;}</string>
      </layout>
     </widget>
    </item>
-   <item alignment="Qt::AlignmentFlag::AlignHCenter">
+   <item alignment="Qt::AlignHCenter">
     <widget class="QPushButton" name="pushButtonOK">
      <property name="minimumSize">
       <size>

@@ -276,13 +276,13 @@ MainWindow::MainWindow(QWidget *parent)
         ui->labelValue31->setText(QString::asprintf("%1%%").arg(value));
     });
 
-    connect(ui->comboBoxEnlarge,&QComboBox::activated,this,[=](int index){        
+    connect(ui->comboBoxEnlarge,QOverload<int>::of(&QComboBox::activated),this,[=](int index){
         if(m_bLoading) return;
         m_enlarge = (index * 25 + 100)/100.0;
         updateValue();
     });
 
-    connect(ui->comboBoxEffect,&QComboBox::activated,this,[=](int index){
+    connect(ui->comboBoxEffect,QOverload<int>::of(&QComboBox::activated),this,[=](int index){
         if(m_bLoading) return;
         m_iEffect= index;
         updateValue();
@@ -1191,7 +1191,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
         {
             event->accept();
             m_dragging = true;
-            m_dragPosition = event->globalPosition().toPoint() - frameGeometry().topLeft();
+            m_dragPosition = event->globalPos() - frameGeometry().topLeft();
             return;
         }
     }
@@ -1203,7 +1203,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
     if (event->buttons() & Qt::LeftButton && m_dragging)
     {
-        move(event->globalPosition().toPoint() - m_dragPosition);
+        move(event->globalPos() - m_dragPosition);
         event->accept();
     }
 

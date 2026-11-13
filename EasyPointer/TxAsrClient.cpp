@@ -1,13 +1,7 @@
 #include "TxAsrClient.h"
-#include "qtimer.h"
 
-#include <QAudioFormat>
-#include <QAudioDevice>
-#include <QMediaDevices>
-#include <QAudioInput>
-#include <QAudioSource>
-#include <QAudioSink>
-#include <QIODevice>
+#include <QTimer>
+
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -69,7 +63,7 @@ TxAsrClient::TxAsrClient(const QUrl& url, bool bUseMic, QObject* parent)
         }
     });
 
-    connect(m_ws, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::errorOccurred),this,[=](QAbstractSocket::SocketError e){
+    connect(m_ws, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),this,[=](QAbstractSocket::SocketError e){
         qDebug() << "QWebSocket Error:" << e;
         stop();
     });
@@ -93,8 +87,6 @@ void TxAsrClient::stop()
     m_connect = false;
     emit onASRConnect(false);
 
-    if(m_audioDevice) m_audioDevice->close();
-    if(m_audioSource) m_audioSource->stop();
 }
 
 void TxAsrClient::start()
@@ -124,28 +116,26 @@ void TxAsrClient::writePCM(const QByteArray&data)
 
 void TxAsrClient::startCapture()
 {
-    QAudioDevice inputDevice = QMediaDevices::defaultAudioInput();
-    QAudioFormat fmt = inputDevice.preferredFormat();
-    fmt.setSampleRate(16000);
-    fmt.setChannelCount(1);
-    fmt.setSampleFormat(QAudioFormat::Int16);
-    m_working = true;
-    m_audioSource = new QAudioSource(inputDevice,fmt);
-    m_audioDevice = m_audioSource->start();
-    m_audioSource->setBufferSize(1280);  // 建议每 40ms 读一次 → 16000 * 2 * 0.04 = 1280 bytes
-    connect(m_audioDevice, &QIODevice::readyRead, this, [=]{
-        while (m_audioDevice->bytesAvailable() >= 1280 && m_useMic)
-        {
-            QByteArray pcm = m_audioDevice->read(1280);
-            writePCM(pcm);
-            emit onMicPcmData(pcm);
-            if(!m_working)
+    if(m_recorder == nullptr)
+    {
+        m_recorder = new genAudioRecorder(this);
+        connect(m_recorder,&genAudioRecorder::audioDataIn,this,[=](const QByteArray&data){
+
+            if(m_useMic)
             {
-                stop();
-                break;
+                writePCM(data);
+                emit onMicPcmData(data);
+                if(!m_working)
+                {
+                    stop();
+                }
             }
-        }
-    });
+
+        });
+    }
+    m_working = true;
+
+    m_recorder->startRecord();
 }
 
 
@@ -173,10 +163,10 @@ void TxAsrClient::translateText(const QString &sourceText,const QString &from,co
 
     // --- 2. 构造请求体 (Payload) ---
     QJsonObject payloadObj;
-    payloadObj.insert("SourceText", sourceText);
-    payloadObj.insert("Source", from);    // 源语言：中文
-    payloadObj.insert("Target", to);      // 目标语言：英文
-    payloadObj.insert("ProjectId", 0);
+    payloadObj["SourceText"]= QJsonValue(sourceText);
+    payloadObj["Source"]=  QJsonValue(from);    // 源语言：中文
+    payloadObj["Target"]= QJsonValue(to);      // 目标语言：英文
+    payloadObj["ProjectId"]=0;
 
     QJsonDocument payloadDoc(payloadObj);
     QByteArray payload = payloadDoc.toJson(QJsonDocument::Compact);

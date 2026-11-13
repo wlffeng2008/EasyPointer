@@ -151,7 +151,7 @@ XFTextToSpeech::XFTextToSpeech(QObject *parent)
         }
     });
 
-    QObject::connect(webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::errorOccurred), [](QAbstractSocket::SocketError error) {
+    QObject::connect(webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), [](QAbstractSocket::SocketError error) {
         qDebug() << "WebSocket error:" << error;
     });
 

@@ -2,285 +2,117 @@
 #include "hidworker.h"
 #include "hidapi.h"
 
-#include "lame.h"
-#pragma comment(lib,"libmp3lame.lib")
 
 #include <QDebug>
 #include <QTimer>
 #include <QApplication>
 #include <QMutexLocker>
 #include <QDir>
-#include <QMediaDevices>
 #include <QJsonObject>
-
-class WaveUntils
-{
-public:
-    static bool WavToMp3(const QString& wavPath, const QString& mp3Path)
-    {
-        QFile wavFile(wavPath);
-        if (!wavFile.open(QIODevice::ReadOnly))
-        {
-            qDebug() << "打开 WAV 文件失败：" << wavPath;
-            return false;
-        }
-
-        QFile mp3File(mp3Path);
-        if (!mp3File.open(QIODevice::WriteOnly))
-        {
-            qDebug() << "创建 MP3 文件失败：" << mp3Path;
-            wavFile.close();
-            return false;
-        }
-
-        char wavHeader[44] = {0};
-        if (wavFile.read(wavHeader, 44) != 44)
-        {
-            qDebug() << "WAV 文件格式错误！";
-            return false;
-        }
-
-        int sampleRate = ( unsigned char)wavHeader[24] |
-                         ((unsigned char)wavHeader[25] << 8) |
-                         ((unsigned char)wavHeader[26] << 16) |
-                         ((unsigned char)wavHeader[27] << 24);
-
-        short channels = (unsigned char)wavHeader[22] | ((unsigned char)wavHeader[23] << 8);
-        short bits     = (unsigned char)wavHeader[34] | ((unsigned char)wavHeader[35] << 8);
-
-        qDebug() << "WAV信息：采样率=" << sampleRate << " 通道数=" << channels << " 位深=" << bits;
-
-        lame_global_flags* lame = lame_init();
-        if (!lame)
-        {
-            qDebug() << "LAME 初始化失败！";
-            return false;
-        }
-
-        lame_set_in_samplerate(lame, sampleRate);    // 输入采样率
-        lame_set_num_channels(lame, channels);       // 通道数
-        lame_set_mode(lame, channels == 1 ? MONO : STEREO); // 单声道/立体声
-        lame_set_brate(lame, 192);                  // MP3 码率（128/192/320）
-        lame_set_quality(lame, 2);                   // 质量 0~9，2=高品质
-
-        if (lame_init_params(lame) < 0)
-        {
-            qDebug() << "LAME 参数设置失败！";
-            lame_close(lame);
-            return false;
-        }
-
-        const int BUFFER_SIZE = 8192;
-        char readBuffer[BUFFER_SIZE];
-        qint64 readLen=0;
-
-        QDateTime startTime = QDateTime::currentDateTime();
-
-        while ((readLen = wavFile.read(readBuffer, BUFFER_SIZE)) > 0)
-        {
-            // 16bit WAV 数据转成 LAME 需要的格式
-            short* pcmData = (short*)readBuffer;
-            int pcmSamples = readLen / 2;
-
-            unsigned char mp3Buffer[BUFFER_SIZE * 5 / 4 + 7200];
-            int encodedLen;
-
-            if (channels == 1)
-            {
-                encodedLen = lame_encode_buffer(lame, pcmData, nullptr, pcmSamples, mp3Buffer, sizeof(mp3Buffer));
-            }
-            else
-            {
-                encodedLen = lame_encode_buffer_interleaved(lame, pcmData, pcmSamples / 2, mp3Buffer, sizeof(mp3Buffer));
-            }
-
-            if (encodedLen > 0) {
-                mp3File.write((char*)mp3Buffer, encodedLen);
-            }
-        }
-
-        unsigned char finalBuffer[7200];
-        int finalLen = lame_encode_flush(lame, finalBuffer, sizeof(finalBuffer));
-        if (finalLen > 0) {
-            mp3File.write((char*)finalBuffer, finalLen);
-        }
-
-        lame_close(lame);
-        wavFile.close();
-        mp3File.close();
-
-        qDebug() << "转换完成！耗时：" << startTime.msecsTo(QDateTime::currentDateTime()) << "ms";
-        return true;
-    }
-
-    static bool Pcm2Wav(const QString&strPCMFile,const QString&strWAVFile)
-    {
-        struct WAVFILEHEADER
-        {
-            char RiffName[4];
-            unsigned long nRiffLength;
-            char WavName[4];
-            char FmtName[4];
-            unsigned long nFmtLength;
-            unsigned short nAudioFormat;
-            unsigned short nChannleNumber;
-            unsigned long nSampleRate;
-            unsigned long nBytesPerSecond;
-            unsigned short nBytesPerSample;
-            unsigned short nBitsPerSample;
-            char    DATANAME[4];
-            unsigned long   nDataLength;
-        };
-
-        WAVFILEHEADER WavFileHeader;
-        qstrcpy(WavFileHeader.RiffName,"RIFF");
-        qstrcpy(WavFileHeader.WavName, "WAVE");
-        qstrcpy(WavFileHeader.FmtName, "fmt ");
-        qstrcpy(WavFileHeader.DATANAME,"data");
-
-        WavFileHeader.nFmtLength = 16;
-        WavFileHeader.nAudioFormat = 1;
-        WavFileHeader.nChannleNumber = 1;
-        WavFileHeader.nSampleRate = 16000;
-        WavFileHeader.nBytesPerSample = 2;
-        WavFileHeader.nBytesPerSecond = 32000;
-        WavFileHeader.nBitsPerSample = 16;
-
-        QFile pcmFile(strPCMFile);
-        QFile wavFile(strWAVFile);
-        if (!pcmFile.open(QIODevice::ReadOnly))
-            return false;
-        if (!wavFile.open(QIODevice::WriteOnly))
-            return false;
-
-        int nSize = sizeof(WavFileHeader);
-        qint64 nFileLen = pcmFile.bytesAvailable();
-        WavFileHeader.nRiffLength = static_cast<unsigned long>(nFileLen - 8 + nSize);
-        WavFileHeader.nDataLength = static_cast<unsigned long>(nFileLen);
-
-        wavFile.write((const char *)&WavFileHeader,nSize);
-        wavFile.write(pcmFile.readAll());
-
-        pcmFile.close();
-        wavFile.close();
-        return true;
-    }
-};
-
-bool WAVFile2MP3File(const QString&strWAVFile,const QString&strMP3File)
-{
-    return WaveUntils::WavToMp3(strWAVFile,strMP3File);
-}
-
-bool PCMFile2WAVFile(const QString&strPCMFile,const QString&strWAVFile)
-{
-    return WaveUntils::Pcm2Wav(strPCMFile,strWAVFile);
-}
 
 
 namespace MicLink {
 
-unsigned char BKEY[100]={
-    0x31, 0xec, 0x06, 0xa2, 0x0c, 0x90, 0x12, 0x9d, 0x20, 0xa3,
-    0x6b, 0x41, 0xbb, 0x40, 0x68, 0x5a, 0x4b, 0x12, 0xf4, 0x11,
-    0x03, 0x9a, 0x4b, 0x12, 0xf6, 0x11, 0x03, 0x76, 0x0a, 0x12,
-    0xd4, 0x48, 0x10, 0x49, 0x20, 0xf2, 0x20, 0x03, 0x54, 0x49,
-    0x24, 0xf4, 0x20, 0x03, 0x92, 0x12, 0xf6, 0x02, 0x03, 0x20,
-    0xa4, 0x91, 0x02, 0xdb, 0xc1, 0xda, 0x49, 0x19, 0x4a, 0x09,
-    0x6e, 0xed, 0x6b, 0x49, 0xf8, 0xab, 0x94, 0xc1, 0x77, 0x48,
-    0x01, 0xaf, 0x28, 0xc0, 0x2a, 0x39, 0x9f, 0x08, 0x90, 0x01,
-    0x9e, 0x01, 0xa0, 0x09, 0x90, 0x74, 0x9a, 0x81, 0x87, 0x2b,
-    0x4d, 0xab, 0x20, 0xc0, 0x75, 0x87, 0xbe, 0xec, 0x30, 0xec};
+    unsigned char BKEY[100]={
+        0x31, 0xec, 0x06, 0xa2, 0x0c, 0x90, 0x12, 0x9d, 0x20, 0xa3,
+        0x6b, 0x41, 0xbb, 0x40, 0x68, 0x5a, 0x4b, 0x12, 0xf4, 0x11,
+        0x03, 0x9a, 0x4b, 0x12, 0xf6, 0x11, 0x03, 0x76, 0x0a, 0x12,
+        0xd4, 0x48, 0x10, 0x49, 0x20, 0xf2, 0x20, 0x03, 0x54, 0x49,
+        0x24, 0xf4, 0x20, 0x03, 0x92, 0x12, 0xf6, 0x02, 0x03, 0x20,
+        0xa4, 0x91, 0x02, 0xdb, 0xc1, 0xda, 0x49, 0x19, 0x4a, 0x09,
+        0x6e, 0xed, 0x6b, 0x49, 0xf8, 0xab, 0x94, 0xc1, 0x77, 0x48,
+        0x01, 0xaf, 0x28, 0xc0, 0x2a, 0x39, 0x9f, 0x08, 0x90, 0x01,
+        0x9e, 0x01, 0xa0, 0x09, 0x90, 0x74, 0x9a, 0x81, 0x87, 0x2b,
+        0x4d, 0xab, 0x20, 0xc0, 0x75, 0x87, 0xbe, 0xec, 0x30, 0xec};
 
-void encrypt(unsigned char *indata, unsigned char *outdata, unsigned int len)
-{
-    for (int i = 0; i < len; i++) {
-        outdata[i] = indata[i] ^ BKEY[i];
-    }
-}
-
-static const signed char idxtbl[] = { -1, -1, -1, -1, 2, 4, 6, 8, -1, -1, -1, -1, 2, 4, 6, 8};
-static const unsigned short steptbl[] = {
-    7,  8,  9,  10,  11,  12,  13,  14,  16,  17,
-    19,  21,  23,  25,  28,  31,  34,  37,  41,  45,
-    50,  55,  60,  66,  73,  80,  88,  97,  107, 118,
-    130, 143, 157, 173, 190, 209, 230, 253, 279, 307,
-    337, 371, 408, 449, 494, 544, 598, 658, 724, 796,
-    876, 963, 1060, 1166, 1282, 1411, 1552, 1707, 1878, 2066,
-    2272, 2499, 2749, 3024, 3327, 3660, 4026, 4428, 4871, 5358,
-    5894, 6484, 7132, 7845, 8630, 9493, 10442, 11487, 12635, 13899,
-    15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767   };
-
-
-#define	 NUM_OF_ORIG_SAMPLE	2
-
-void adpcm_to_pcm (signed short *ps, signed short *pd, int len)
-{
-    int i;
-
-    //byte2,byte1: predict;  byte3: predict_idx; byte4:adpcm data len
-    int predict = ps[0];
-    int predict_idx = ps[1] & 0xff;
-    //	int adpcm_len = (ps[1]>>8) & 0xff;
-
-    unsigned char *pcode = (unsigned char *) (ps + NUM_OF_ORIG_SAMPLE);
-
-    unsigned char code;
-    code = *pcode ++;
-
-    //byte5- byte128: 124 byte(62 sample) adpcm data
-    for (i=0; i<len; i++)
+    void encrypt(unsigned char *indata, unsigned char *outdata, unsigned int len)
     {
-        int step = steptbl[predict_idx];
-
-        int diffq = step >> 3;
-
-        if (code & 4) {
-            diffq = diffq + step;
+        for (int i = 0; i < len; i++) {
+            outdata[i] = indata[i] ^ BKEY[i];
         }
-        step = step >> 1;
-        if (code & 2) {
-            diffq = diffq + step;
-        }
-        step = step >> 1;
-        if (code & 1) {
-            diffq = diffq + step;
-        }
-
-        if (code & 8) {
-            predict = predict - diffq;
-        }
-        else {
-            predict = predict + diffq;
-        }
-
-        if (predict > 32767) {
-            predict = 32767;
-        }
-        else if (predict < -32768) {
-            predict = -32768;
-        }
-
-        predict_idx = predict_idx + idxtbl[code & 15];
-
-        if(predict_idx < 0) {
-            predict_idx = 0;
-        }
-        else if(predict_idx > 88) {
-            predict_idx = 88;
-        }
-
-        if (i&1) {
-            code = *pcode ++;
-        }
-        else {
-            code = code >> 4;
-        }
-
-        *pd++ = predict;
     }
-}
 
+    static const signed char idxtbl[] = { -1, -1, -1, -1, 2, 4, 6, 8, -1, -1, -1, -1, 2, 4, 6, 8};
+    static const unsigned short steptbl[] = {
+        7,  8,  9,  10,  11,  12,  13,  14,  16,  17,
+        19,  21,  23,  25,  28,  31,  34,  37,  41,  45,
+        50,  55,  60,  66,  73,  80,  88,  97,  107, 118,
+        130, 143, 157, 173, 190, 209, 230, 253, 279, 307,
+        337, 371, 408, 449, 494, 544, 598, 658, 724, 796,
+        876, 963, 1060, 1166, 1282, 1411, 1552, 1707, 1878, 2066,
+        2272, 2499, 2749, 3024, 3327, 3660, 4026, 4428, 4871, 5358,
+        5894, 6484, 7132, 7845, 8630, 9493, 10442, 11487, 12635, 13899,
+        15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767   };
+
+
+    #define	 NUM_OF_ORIG_SAMPLE	2
+
+    static void adpcm_to_pcm (signed short *ps, signed short *pd, int len)
+    {
+        int i;
+
+        //byte2,byte1: predict;  byte3: predict_idx; byte4:adpcm data len
+        int predict = ps[0];
+        int predict_idx = ps[1] & 0xff;
+        //	int adpcm_len = (ps[1]>>8) & 0xff;
+
+        unsigned char *pcode = (unsigned char *) (ps + NUM_OF_ORIG_SAMPLE);
+
+        unsigned char code;
+        code = *pcode ++;
+
+        //byte5- byte128: 124 byte(62 sample) adpcm data
+        for (i=0; i<len; i++)
+        {
+            int step = steptbl[predict_idx];
+
+            int diffq = step >> 3;
+
+            if (code & 4) {
+                diffq = diffq + step;
+            }
+            step = step >> 1;
+            if (code & 2) {
+                diffq = diffq + step;
+            }
+            step = step >> 1;
+            if (code & 1) {
+                diffq = diffq + step;
+            }
+
+            if (code & 8) {
+                predict = predict - diffq;
+            }
+            else {
+                predict = predict + diffq;
+            }
+
+            if (predict > 32767) {
+                predict = 32767;
+            }
+            else if (predict < -32768) {
+                predict = -32768;
+            }
+
+            predict_idx = predict_idx + idxtbl[code & 15];
+
+            if(predict_idx < 0) {
+                predict_idx = 0;
+            }
+            else if(predict_idx > 88) {
+                predict_idx = 88;
+            }
+
+            if (i&1) {
+                code = *pcode ++;
+            }
+            else {
+                code = code >> 4;
+            }
+
+            *pd++ = predict;
+        }
+    }
 }
 
 HidWorker::HidWorker()
@@ -461,11 +293,11 @@ void HidWorker::run()
 
 void HidWorker::sendCmd(quint8 *pCmd)
 {
-    if(!m_pDev)
-        return;
+    if(!m_pDev) return;
 
     //QByteArray Log((char *)pCmd,32);
     //qDebug().noquote()<<"USB =>: "<< Log.toHex(' ');
+
     hid_write(m_pDev,pCmd,32);
 }
 
@@ -690,45 +522,34 @@ void HidWorker::StopRecorFile()
         onRecordFile(-1);
         stopRecord();
 
-        if(m_audioDevice) m_audioDevice->close();
-        if(m_audioSource) m_audioSource->stop();
-
-        m_audioDevice = nullptr;
-        m_audioSource = nullptr;
+        if(m_recorder) m_recorder->stopRecord();
 
         m_RecFile.close();
 
-        PCMFile2WAVFile(m_strTemp,m_strFile);
+        ::PCMFile2WAVFile(m_strTemp,m_strFile);
         QString strMP3 = m_strFile;
         strMP3.replace(".wav",".mp3");
-        WAVFile2MP3File(m_strFile,strMP3);
+        ::WAVFile2MP3File(m_strFile,strMP3);
 
         QFile::remove(m_strFile);
         QFile::remove(m_strTemp);
     }
 }
 
-
 bool HidWorker::startCapture()
 {
-    QAudioDevice inputDevice = QMediaDevices::defaultAudioInput();
-    if(inputDevice.isNull())
-        return false;
-    qDebug() << inputDevice.description();
-    QAudioFormat fmt = inputDevice.preferredFormat();
-    fmt.setSampleRate(16000);
-    fmt.setChannelCount(1);
-    fmt.setSampleFormat(QAudioFormat::Int16);
-    m_audioSource = new QAudioSource(inputDevice,fmt);
-    if(!m_audioSource)
-        return false;
-    m_audioDevice = m_audioSource->start();
-    m_audioSource->setBufferSize(1280);
-    connect(m_audioDevice, &QIODevice::readyRead, this, [=]{
-        QByteArray pcm = m_audioDevice->readAll();
-        emit onMicPcmData(pcm);
-        WritePCMData(pcm);
-    });
+    if(!m_recorder)
+    {
+        m_recorder = new genAudioRecorder(this);
+
+        connect(m_recorder,&genAudioRecorder::audioDataIn,this,[=](const QByteArray&tata){
+            emit onMicPcmData(tata);
+            WritePCMData(tata);
+        });
+    }
+
+    m_recorder->startRecord();
+
     return true;
 }
 

@@ -5,9 +5,6 @@
 #include <windows.h>
 #include <winuser.h>
 
-#include <QXlsx>
-using namespace QXlsx;
-
 #include <QJsonArray>
 #include <QProcess>
 #include <QJsonDocument>
@@ -42,6 +39,8 @@ using namespace QXlsx;
 #include <objbase.h>
 #include <atlbase.h>
 #include <atlconv.h>
+
+#include <QtWin>
 
 #define MONITOR_CONFIGURATION_API 1   // ⭐ 关键
 
@@ -100,11 +99,10 @@ QPixmap getShortcutPixmap(const QString& targetPath, int iconIndex)
     if (result)
     {
         hIcon = shfi.hIcon;
-        return QPixmap::fromImage(QImage::fromHICON(hIcon));
+        return QtWin::fromHICON(hIcon);
     }
     return QPixmap();
 }
-
 
 static QList<FrameAppTemplate *>g_APPs;
 static QStringList g_Checks;
@@ -328,7 +326,7 @@ DialogCloudCmd::DialogCloudCmd(QWidget *parent)
         connect(ui->checkBoxIgnore1,&QCheckBox::clicked,this,[=](bool clicked){ pSet->setValue("Ignore1",clicked);});
         connect(ui->checkBoxIgnore2,&QCheckBox::clicked,this,[=](bool clicked){ pSet->setValue("Ignore2",clicked);});
         connect(ui->checkBoxSearch,&QCheckBox::clicked,this,[=](bool clicked){ pSet->setValue("Search",clicked);});
-        connect(ui->comboBoxEngine,&QComboBox::currentIndexChanged,this,[=](int index){ pSet->setValue("SearchEngine",index); });
+        connect(ui->comboBoxEngine, QOverload<int>::of(&QComboBox::currentIndexChanged),this,[=](int index){ pSet->setValue("SearchEngine",index); });
     }
     ui->tabWidget->setCurrentIndex(2);
 }

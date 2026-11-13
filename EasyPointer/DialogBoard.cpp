@@ -7,6 +7,7 @@
 #include <QKeyEvent>
 #include <QWheelEvent>
 #include <QPainterPath>
+#include <QDebug>
 
 
 static qreal globalScale() {

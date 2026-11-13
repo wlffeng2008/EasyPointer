@@ -4,11 +4,14 @@
 #include <QUrl>
 #include <QWebSocket>
 #include <QObject>
-#include <QAudioSource>
+#include <QTimer>
 
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+
+#include "genAudioRecorder.h"
+
 
 class HttpHandler : public QObject
 {
@@ -53,19 +56,20 @@ private:
         {
             QString error = reply->errorString();
             qDebug() << "HttpHandler Error:" << error;
+            emit httpError(error);
         }
         else
         {
             int code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-            QString text = reply->readAll();
-            emit onHttpReturn(text,code);
+            QByteArray data = reply->readAll();
+            emit onHttpReturn(data,code);
         }
         reply->deleteLater();
     }
 
 signals:
-    void onHttpReturn(const QString&text,int code);
-    void onHttpWrror(const QString&error);
+    void onHttpReturn(const QByteArray&data,int code);
+    void httpError(const QString&error);
 
 private:
     QNetworkAccessManager *manager=nullptr;
@@ -95,15 +99,17 @@ private:QByteArray m_buf;
     bool m_useMic = true;
     bool m_working = false;
     bool m_connect=false;
+
     QUrl  m_url;
     QWebSocket   *m_ws = nullptr;
-    QIODevice    *m_audioDevice = nullptr;
-    QAudioSource *m_audioSource = nullptr;
+    HttpHandler *m_http = nullptr;
+
+    genAudioRecorder *m_recorder = nullptr;
+
     void startCapture();
     QString m_strText;
     QTimer *m_pTMPush = nullptr;
 
-    HttpHandler *m_http = nullptr;
 };
 
 TxAsrClient *DoASRWork(bool toStart=true);

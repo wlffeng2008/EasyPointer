@@ -13,16 +13,22 @@ win32-msvc* {
     #QMAKE_CXXFLAGS += /execution-charset:utf-8
 }
 
-include(./QXlsx/QXlsx.pri)
+msvc {
+    QMAKE_CFLAGS   += /utf-8
+    QMAKE_CXXFLAGS += /utf-8
+}
 
-DESTDIR = ../../bin
+QT += winextras
+
+
+DESTDIR = ../../binX86
 RC_ICONS = nmy.ico
 VERSION = 1.0.0.0
 TARGET = NmyStudio
 QMAKE_TARGET_COMPANY = "Nmy"
 QMAKE_TARGET_PRODUCT = "Nmy"
 QMAKE_TARGET_DESCRIPTION = "Nmy Pointer"
-QMAKE_TARGET_COPYRIGHT = "Nmy(2026.07)"
+QMAKE_TARGET_COPYRIGHT = "Nmy(2026.11)"
 RC_LANG = 0x0004
 
 # 仅Windows平台生效
@@ -50,6 +56,7 @@ SOURCES += \
     TxAsrClient.cpp \
     caudioplayer.cpp \
     frameapptemplate.cpp \
+    genAudioRecorder.cpp \
     hidworker.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -76,6 +83,7 @@ HEADERS += \
     TxAsrClient.h \
     caudioplayer.h \
     frameapptemplate.h \
+    genAudioRecorder.h \
     hidworker.h \
     mainwindow.h \
     typeword.h \

@@ -13,14 +13,14 @@
   <property name="font">
    <font>
     <pointsize>-1</pointsize>
-    <fontweight>DemiBold</fontweight>
+    
    </font>
   </property>
   <property name="cursor">
    <cursorShape>ArrowCursor</cursorShape>
   </property>
   <property name="focusPolicy">
-   <enum>Qt::FocusPolicy::StrongFocus</enum>
+   <enum>Qt::StrongFocus</enum>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -49,7 +49,7 @@ color:white;font-size:14px;font-weight:600;
       <item>
        <spacer name="horizontalSpacerT">
         <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
+         <enum>Qt::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -65,7 +65,7 @@ color:white;font-size:14px;font-weight:600;
          <string>未连接</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -76,7 +76,7 @@ color:white;font-size:14px;font-weight:600;
         </property>
        </widget>
       </item>
-      <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
+      <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
        <widget class="QLabel" name="labelBattery">
         <property name="text">
          <string/>
@@ -104,7 +104,7 @@ color:white;font-size:14px;font-weight:600;
          <cursorShape>PointingHandCursor</cursorShape>
         </property>
         <property name="focusPolicy">
-         <enum>Qt::FocusPolicy::NoFocus</enum>
+         <enum>Qt::NoFocus</enum>
         </property>
         <property name="styleSheet">
          <string notr="true">QPushButton{background-color:transparent;}</string>
@@ -139,7 +139,7 @@ color:white;font-size:14px;font-weight:600;
          <cursorShape>PointingHandCursor</cursorShape>
         </property>
         <property name="focusPolicy">
-         <enum>Qt::FocusPolicy::NoFocus</enum>
+         <enum>Qt::NoFocus</enum>
         </property>
         <property name="styleSheet">
          <string notr="true">QPushButton{background-color:transparent;}
@@ -167,15 +167,20 @@ color:white;font-size:14px;font-weight:600;
     </item>
     <item>
      <widget class="QFrame" name="frameMain">
+      <property name="font">
+       <font>
+        <pointsize>-1</pointsize>
+       </font>
+      </property>
       <property name="styleSheet">
        <string notr="true">#frameMain,#frameWork{background-color: transparent; border:none;}
 </string>
       </property>
       <property name="frameShape">
-       <enum>QFrame::Shape::StyledPanel</enum>
+       <enum>QFrame::StyledPanel</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Shadow::Raised</enum>
+       <enum>QFrame::Raised</enum>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <property name="leftMargin">
@@ -190,7 +195,7 @@ color:white;font-size:14px;font-weight:600;
        <property name="bottomMargin">
         <number>0</number>
        </property>
-       <item alignment="Qt::AlignmentFlag::AlignHCenter">
+       <item alignment="Qt::AlignHCenter">
         <widget class="QFrame" name="frameWork">
          <property name="minimumSize">
           <size>
@@ -202,10 +207,10 @@ color:white;font-size:14px;font-weight:600;
           <string notr="true"/>
          </property>
          <property name="frameShape">
-          <enum>QFrame::Shape::StyledPanel</enum>
+          <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Shadow::Raised</enum>
+          <enum>QFrame::Raised</enum>
          </property>
          <widget class="QFrame" name="frameSetting">
           <property name="geometry">
@@ -235,7 +240,7 @@ color:white;font-size:14px;font-weight:600;
               <string>开机启动</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -273,7 +278,7 @@ color:white;font-size:14px;font-weight:600;
               <string>声音设置</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -299,7 +304,7 @@ color:white;font-size:14px;font-weight:600;
               <string>云指令</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -331,10 +336,10 @@ color:white;font-size:14px;font-weight:600;
            <string notr="true">#frameShape{background-color: transparent;}</string>
           </property>
           <property name="frameShape">
-           <enum>QFrame::Shape::StyledPanel</enum>
+           <enum>QFrame::StyledPanel</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Shadow::Raised</enum>
+           <enum>QFrame::Raised</enum>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,1">
            <property name="spacing">
@@ -567,7 +572,7 @@ QPushButton:checked  {
              <item>
               <spacer name="horizontalSpacer_11">
                <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -677,7 +682,7 @@ QWidget{color:white; font-size:18px; font-weight:bold;background-color: rgb(76,1
              <property name="rightMargin">
               <number>20</number>
              </property>
-             <item alignment="Qt::AlignmentFlag::AlignLeft">
+             <item alignment="Qt::AlignLeft">
               <widget class="QLabel" name="label_2">
                <property name="font">
                 <font>
@@ -693,7 +698,7 @@ QWidget{color:white; font-size:18px; font-weight:bold;background-color: rgb(76,1
                </property>
               </widget>
              </item>
-             <item alignment="Qt::AlignmentFlag::AlignLeft">
+             <item alignment="Qt::AlignLeft">
               <widget class="ToggleButton" name="checkBoxBlack">
                <property name="minimumSize">
                 <size>
@@ -718,7 +723,7 @@ QWidget{color:white; font-size:18px; font-weight:bold;background-color: rgb(76,1
              <item>
               <spacer name="horizontalSpacer_13">
                <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -882,14 +887,13 @@ QWidget{color:white; font-size:18px; font-weight:bold;background-color: rgb(76,1
             <property name="font">
              <font>
               <pointsize>-1</pointsize>
-              <fontweight>DemiBold</fontweight>
              </font>
             </property>
             <property name="text">
              <string>软件语音选择</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignmentFlag::AlignCenter</set>
+             <set>Qt::AlignCenter</set>
             </property>
            </widget>
            <widget class="QPushButton" name="pushButtonL0">
@@ -904,7 +908,6 @@ QWidget{color:white; font-size:18px; font-weight:bold;background-color: rgb(76,1
             <property name="font">
              <font>
               <pointsize>-1</pointsize>
-              <fontweight>DemiBold</fontweight>
              </font>
             </property>
             <property name="cursor">
@@ -950,7 +953,6 @@ QPushButton:checked{ color:blue;
             <property name="font">
              <font>
               <pointsize>-1</pointsize>
-              <fontweight>DemiBold</fontweight>
              </font>
             </property>
             <property name="cursor">
@@ -996,7 +998,6 @@ QPushButton:checked{ color:blue;
             <property name="font">
              <font>
               <pointsize>-1</pointsize>
-              <fontweight>DemiBold</fontweight>
              </font>
             </property>
             <property name="cursor">
@@ -1042,7 +1043,6 @@ QPushButton:checked{ color:blue;
             <property name="font">
              <font>
               <pointsize>-1</pointsize>
-              <fontweight>DemiBold</fontweight>
              </font>
             </property>
             <property name="cursor">
@@ -1088,7 +1088,6 @@ QPushButton:checked{ color:blue;
             <property name="font">
              <font>
               <pointsize>-1</pointsize>
-              <fontweight>DemiBold</fontweight>
              </font>
             </property>
             <property name="cursor">
@@ -1134,7 +1133,6 @@ QPushButton:checked{ color:blue;
             <property name="font">
              <font>
               <pointsize>-1</pointsize>
-              <fontweight>DemiBold</fontweight>
              </font>
             </property>
             <property name="cursor">
@@ -1218,7 +1216,7 @@ background-image: url(:/images/jd.png);
 点击进入</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                  <set>Qt::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -1258,7 +1256,7 @@ background-image: url(:/images/jd.png);
 点击进入</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                  <set>Qt::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -1298,7 +1296,7 @@ background-image: url(:/images/jd.png);
 点击进入</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                  <set>Qt::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -1338,7 +1336,7 @@ background-image: url(:/images/jd.png);
 点击进入</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                  <set>Qt::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -1361,10 +1359,10 @@ background-image: url(:/images/jd.png);
            <string notr="true">#frameColor{background-color: transparent;}</string>
           </property>
           <property name="frameShape">
-           <enum>QFrame::Shape::StyledPanel</enum>
+           <enum>QFrame::StyledPanel</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Shadow::Raised</enum>
+           <enum>QFrame::Raised</enum>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1,0,0">
            <property name="spacing">
@@ -1901,7 +1899,7 @@ QPushButton:checked  {
               <item>
                <spacer name="horizontalSpacer_12">
                 <property name="orientation">
-                 <enum>Qt::Orientation::Horizontal</enum>
+                 <enum>Qt::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1917,7 +1915,7 @@ QPushButton:checked  {
            <item>
             <spacer name="verticalSpacer">
              <property name="orientation">
-              <enum>Qt::Orientation::Vertical</enum>
+              <enum>Qt::Vertical</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -1982,7 +1980,7 @@ QPushButton:checked  {
                <item>
                 <spacer name="horizontalSpacer_2">
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -2016,7 +2014,7 @@ QPushButton:checked  {
                 <number>10</number>
                </property>
                <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -2032,7 +2030,7 @@ QPushButton:checked  {
                <item>
                 <spacer name="horizontalSpacer_3">
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -2060,7 +2058,7 @@ QPushButton:checked  {
                 <number>100</number>
                </property>
                <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -2105,7 +2103,7 @@ QPushButton:checked  {
                <item>
                 <spacer name="horizontalSpacer_5">
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -2139,7 +2137,7 @@ QPushButton:checked  {
                 <number>10</number>
                </property>
                <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -2155,7 +2153,7 @@ QPushButton:checked  {
                <item>
                 <spacer name="horizontalSpacer_10">
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -2179,7 +2177,7 @@ QPushButton:checked  {
                <property name="spacing">
                 <number>20</number>
                </property>
-               <item alignment="Qt::AlignmentFlag::AlignVCenter">
+               <item alignment="Qt::AlignVCenter">
                 <widget class="QPushButton" name="pushButtonRound">
                  <property name="minimumSize">
                   <size>
@@ -2243,7 +2241,7 @@ QPushButton:checked  {
                  </attribute>
                 </widget>
                </item>
-               <item alignment="Qt::AlignmentFlag::AlignVCenter">
+               <item alignment="Qt::AlignVCenter">
                 <widget class="QPushButton" name="pushButtonRect">
                  <property name="minimumSize">
                   <size>
@@ -2298,7 +2296,7 @@ QPushButton:checked  {
                  </attribute>
                 </widget>
                </item>
-               <item alignment="Qt::AlignmentFlag::AlignVCenter">
+               <item alignment="Qt::AlignVCenter">
                 <widget class="QPushButton" name="pushButtonRect2">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -2315,7 +2313,7 @@ QPushButton:checked  {
                  <property name="maximumSize">
                   <size>
                    <width>24</width>
-                   <height>40</height>
+                   <height>24</height>
                   </size>
                  </property>
                  <property name="cursor">
@@ -2367,7 +2365,7 @@ QPushButton:checked  {
                <item>
                 <spacer name="horizontalSpacer_4">
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -2436,7 +2434,7 @@ QPushButton:checked  {
                <item>
                 <spacer name="horizontalSpacer_6">
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -2470,7 +2468,7 @@ QPushButton:checked  {
                 <number>10</number>
                </property>
                <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -2486,7 +2484,7 @@ QPushButton:checked  {
                <item>
                 <spacer name="horizontalSpacer_7">
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -2520,7 +2518,7 @@ QPushButton:checked  {
                 <number>10</number>
                </property>
                <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -2565,7 +2563,7 @@ QPushButton:checked  {
                <item>
                 <spacer name="horizontalSpacer_8">
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -2596,7 +2594,7 @@ QPushButton:checked  {
                 <number>100</number>
                </property>
                <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -2612,7 +2610,7 @@ QPushButton:checked  {
                <item>
                 <spacer name="horizontalSpacer_9">
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -2643,7 +2641,7 @@ QPushButton:checked  {
                 <number>10</number>
                </property>
                <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -2843,7 +2841,6 @@ QPushButton:checked  {
           <property name="font">
            <font>
             <pointsize>-1</pointsize>
-            <fontweight>DemiBold</fontweight>
            </font>
           </property>
           <property name="text">
@@ -2863,7 +2860,6 @@ QPushButton:checked  {
           <property name="font">
            <font>
             <pointsize>-1</pointsize>
-            <fontweight>DemiBold</fontweight>
            </font>
           </property>
           <property name="text">
@@ -2874,7 +2870,7 @@ QPushButton:checked  {
 服务微信: Noomya2025</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
           </property>
          </widget>
          <zorder>labelContact</zorder>
@@ -3156,7 +3152,7 @@ QPushButton:checked  {
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
+         <enum>Qt::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -3243,10 +3239,10 @@ QPushButton:checked  {
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupSpot"/>
-  <buttongroup name="buttonGroupColor"/>
   <buttongroup name="buttonGroupCount"/>
   <buttongroup name="buttonGroupMain"/>
   <buttongroup name="buttonGroupShape"/>
+  <buttongroup name="buttonGroupColor"/>
+  <buttongroup name="buttonGroupSpot"/>
  </buttongroups>
 </ui>

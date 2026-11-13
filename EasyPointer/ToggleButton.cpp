@@ -96,7 +96,7 @@ void ToggleButton::paintEvent(QPaintEvent *event)
     else
     {
         painter.setPen(0xE0E0E0);
-        painter.setBrush(0xE0E0E0);
+        painter.setBrush(QBrush(0xE0E0E0));
     }
 
     painter.drawRoundedRect(rc,nRadius,nRadius);

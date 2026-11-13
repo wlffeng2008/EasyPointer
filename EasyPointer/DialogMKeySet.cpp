@@ -3,6 +3,7 @@
 #include <QListView>
 #include <QSettings>
 #include <QStandardPaths>
+
 DialogMKeySet::DialogMKeySet(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::DialogMKeySet)
@@ -15,7 +16,7 @@ DialogMKeySet::DialogMKeySet(QWidget *parent)
     ui->comboBoxEngine->addItem(tr("雅虎"));
 
     static QSettings Set(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)+"/NMYPointSetting.ini",QSettings::IniFormat) ;
-    connect(ui->comboBoxEngine,&QComboBox::activated,this,[](int index){ Set.setValue("Engine",index) ; });
+    connect(ui->comboBoxEngine,QOverload<int>::of(&QComboBox::activated),this,[=](int index){ Set.setValue("Engine",index) ; });
 
     int nIndex = Set.value("Engine").toInt();
     ui->comboBoxEngine->setCurrentIndex(nIndex);

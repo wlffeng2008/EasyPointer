@@ -39,7 +39,7 @@ void DialogHealth::mousePressEvent(QMouseEvent *event)
         {
             event->accept();
             m_dragging = true;
-            m_dragPosition = event->globalPosition().toPoint() - frameGeometry().topLeft();
+            m_dragPosition = event->globalPos() - frameGeometry().topLeft();
             return;
         }
     }
@@ -51,7 +51,7 @@ void DialogHealth::mouseMoveEvent(QMouseEvent *event)
 {
     if (event->buttons() & Qt::LeftButton && m_dragging)
     {
-        move(event->globalPosition().toPoint() - m_dragPosition);
+        move(event->globalPos() - m_dragPosition);
         event->accept();
     }
 

@@ -1,5 +1,6 @@
 #include "BleWorker.h"
 #include <QtGlobal>
+#include <QDebug>
 
 bool isBluetoothAvailable()
 {
@@ -14,7 +15,7 @@ bool isBluetoothAvailable()
 
     // 检查蓝牙是否已开启
     if (localDevice.hostMode() == QBluetoothLocalDevice::HostPoweredOff) {
-        qDebug() << "蓝牙已关闭";
+       // qDebug() << "蓝牙已关闭";
         // localDevice.powerOn();
     }
 
@@ -81,7 +82,7 @@ void BleWorker::scanBleDevices(const QString &strDevName)
 
                             //connect(m_control, SIGNAL(discoveryFinished()), this, SLOT(onServerDiscoveryFinished()));
 
-                            connect(m_control, &QLowEnergyController::errorOccurred, this, [=](QLowEnergyController::Error error){  qDebug() << error; });
+                            //connect(m_control, &QLowEnergyController::error, this, [=](QLowEnergyController::Error error){  qDebug() << error; });
 
                             //connectBle("");
                             m_control->connectToDevice();
@@ -93,10 +94,10 @@ void BleWorker::scanBleDevices(const QString &strDevName)
                     }
                 });
 
-        connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::errorOccurred,
-                this,[=](QBluetoothDeviceDiscoveryAgent::Error error){
-                    qDebug()<< "onDeviceDiscoverError: " << error;
-                });
+        // connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::error,
+        //         this,[=](QBluetoothDeviceDiscoveryAgent::Error error){
+        //             qDebug()<< "onDeviceDiscoverError: " << error;
+        //         });
 
         discoveryAgent->stop() ;
         discoveryAgent->setLowEnergyDiscoveryTimeout(25000);
@@ -155,8 +156,7 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
         connect(m_service0, &QLowEnergyService::descriptorWritten, this, [=](QLowEnergyDescriptor,const QByteArray&value){
             qDebug().noquote() <<"描述符写入成功!"  << value.toHex();  });
 
-        connect(m_service0, &QLowEnergyService::errorOccurred, this, [=](QLowEnergyService::ServiceError error){
-            qDebug().noquote() << error;  });
+        //connect(m_service0, &QLowEnergyService::error, this, [=](QLowEnergyService::ServiceError error){ qDebug().noquote() << error;  });
 
         connect(m_service0, &QLowEnergyService::characteristicRead,this, [=](const QLowEnergyCharacteristic &info, const QByteArray &value){
             qDebug().noquote() << "Read1 <=:" << value.toHex(' ').toUpper() << value.data();  });
@@ -212,8 +212,7 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
         connect(m_service1, &QLowEnergyService::descriptorWritten,this, [=](QLowEnergyDescriptor,const QByteArray&value){
             qDebug().noquote() <<"描述符写入成功!"   << value.toHex();  });
 
-        connect(m_service1, &QLowEnergyService::errorOccurred, this, [=](QLowEnergyService::ServiceError error){
-            qDebug().noquote() << error;  });
+        //connect(m_service1, &QLowEnergyService::error, this, [=](QLowEnergyService::ServiceError error){ qDebug().noquote() << error;  });
 
         connect(m_service1, &QLowEnergyService::characteristicRead,this, [=](const QLowEnergyCharacteristic &info, const QByteArray &value){
             qDebug().noquote() << "Read3 <=:" << value.toHex(' ').toUpper() << value.data();  });
@@ -268,8 +267,7 @@ void BleWorker::connectService(const QBluetoothUuid&Uuid)
         connect(m_service2, &QLowEnergyService::descriptorWritten,[=](QLowEnergyDescriptor,const QByteArray&value){
             qDebug().noquote() <<"描述符写入成功!"   << value.toHex();  });
 
-        connect(m_service2, &QLowEnergyService::errorOccurred, this, [=](QLowEnergyService::ServiceError error){
-            qDebug().noquote() << error;  });
+        //connect(m_service2, &QLowEnergyService::error, this, [=](QLowEnergyService::ServiceError error){ qDebug().noquote() << error;  });
 
         connect(m_service2, &QLowEnergyService::characteristicRead,this, [=](const QLowEnergyCharacteristic &info, const QByteArray &value){
             qDebug().noquote() << "Read2 <=:" << value.toHex(' ').toUpper() << value.data();  });
@@ -343,9 +341,9 @@ QUuid raw16BytesToQUuid(const uint8_t* raw)
 
 void BleWorker::connectBle(const QString&strMac)
 {
-    QBluetoothUuid uuid0("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
-    QBluetoothUuid uuid1("6e400003-b5a3-f393-e0a9-e50e24dcca9e");
-    QBluetoothUuid uuid2("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
+    const QBluetoothUuid uuid0(QStringLiteral("6e400001-b5a3-f393-e0a9-e50e24dcca9e"));
+    const QBluetoothUuid uuid1(QStringLiteral("6e400003-b5a3-f393-e0a9-e50e24dcca9e"));
+    const QBluetoothUuid uuid2(QStringLiteral("6e400002-b5a3-f393-e0a9-e50e24dcca9e"));
 
     m_service0 = m_control->createServiceObject(uuid0,this); // 创建服务
     if (!m_service0)

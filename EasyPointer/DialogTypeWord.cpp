@@ -1579,9 +1579,9 @@ DialogTypeWord::DialogTypeWord(QWidget *parent)
     ui->comboBoxLang2->setView(new QListView());
     ui->comboBoxLang3->setView(new QListView());
 
-    connect(ui->comboBoxLang1,&QComboBox::activated,this,[](int index){Set.setValue("Lang1",index) ;}) ;
-    connect(ui->comboBoxLang2,&QComboBox::activated,this,[](int index){Set.setValue("Lang2",index) ;}) ;
-    connect(ui->comboBoxLang3,&QComboBox::activated,this,[](int index){Set.setValue("Lang3",index) ;}) ;
+    connect(ui->comboBoxLang1,QOverload<int>::of(&QComboBox::activated),this,[=](int index){Set.setValue("Lang1",index) ;}) ;
+    connect(ui->comboBoxLang2,QOverload<int>::of(&QComboBox::activated),this,[=](int index){Set.setValue("Lang2",index) ;}) ;
+    connect(ui->comboBoxLang3,QOverload<int>::of(&QComboBox::activated),this,[=](int index){Set.setValue("Lang3",index) ;}) ;
 }
 
 DialogTypeWord::~DialogTypeWord()

@@ -4,6 +4,7 @@
 #include "hidapi.h"
 
 #include "caudioplayer.h"
+#include "genAudioRecorder.h"
 
 #include <QString>
 #include <QRunnable>
@@ -11,13 +12,8 @@
 #include <QList>
 #include <QStringList>
 #include <QMutex>
-#include <QAudioSource>
 
 #include <QFile>
-
-
-bool PCMFile2WAVFile(const QString&strPCMFile,const QString&strWAVFile);
-bool WAVFile2MP3File(const QString&strWAVFile,const QString&strMP3File);
 
 class HidWorker : public QThread
 {
@@ -83,9 +79,7 @@ private:
     bool m_bEndWork = false;
     void sendCmd(quint8 *pCmd);
 
-
-    QIODevice    *m_audioDevice = nullptr;
-    QAudioSource *m_audioSource = nullptr;
+    genAudioRecorder *m_recorder = nullptr;
     bool startCapture();
 
     quint32 m_recordTime=0;
